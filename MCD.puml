@@ -1,0 +1,87 @@
+@startuml MCD
+
+package "Données" {
+  class Sensor {
+    - id : string
+    - lat : double
+    - lon : double
+    - measurements : list<Measurement>
+    - userId : string
+    + distanceTo(lat,lon) : double
+    + getSensorNeighbours() : list<Sensor>
+    + getMeasurements(period_start : DateTime, period_end : DateTime) : list<list<Measurement>>
+    + getClosestMeasurements(instant : DateTime, before_after : int) : list<Measurement>
+  }
+
+  class Measurement {
+    - ts : DateTime
+    - attr_unit : string
+    - attr_desc : string
+    - value : double
+    + isWithin(period_start : DateTime, period_end : DateTime) : bool
+  }
+
+  class Cleaners {
+    - id : string
+    - lat : double
+    - lon : double
+    - start : DateTime
+    - stop  : DateTime
+    + getNeighbouringSensors(radius : int) : list<Sensor>
+  }
+}
+
+package "Services" {
+  class Statistics {
+    + analyzeSensor(sensorID: string) : int
+    + analyzeCleaner(cleanerID: string) : list<int>
+    + computeZone(lat : double, lng : double, period_start : DateTime, period_end : DateTime, radius : int) : list<Measurement>
+    + compareSensors(sensorID: string, period_start : DateTime, period_end : DateTime) : list<Sensor>
+    + extrapolateAQI(lat : double, lng : double, period_start : DateTime, period_end : DateTime) : list<Measurement>
+  }
+
+  class PointsManager {
+    + award(sensorsUsed : list<string>)
+    + getPoints(userId : string) : int
+  }
+
+  class AdminServices {
+    + excludeSensor(sensorID: string)
+  }
+}
+
+package "Accès aux données" {
+  class DataLoader {
+    - sensors : list<Sensor*>
+    - cleaners : list<Cleaner*>
+    + loadData()
+    + getSensor(sensorId : string) : Sensor*
+    + getSensors() : list<Sensor*>
+    + getCleaner(cleanerId : string) : Cleaner*
+  }
+
+  class userDataAcces {
+    + loadUserPoints(userID : string) : int
+    + updateUserPoints(userID : string)
+    + loadExcludedUsers() : list<string>
+    + addExcludedUser(userID : string)
+  }
+}
+
+/'
+package "Interface utilisateur" {
+  class Console {
+    ???
+  }
+}
+
+package "Authentification" {
+  class Authentification {
+    ???
+  }
+}
+'/
+
+Sensor "1  " --> "n  " Measurement
+
+@enduml
