@@ -1,0 +1,63 @@
+@startuml
+left to right direction
+
+
+' Actors on the left
+actor "Administrateur" as A
+actor "Fournisseur" as F
+actor "Particulier (capteur privé)" as P
+actor "Utilisateur" as U
+
+rectangle "AirWatcher System" {
+  usecase "S'authentifier" as UC_Auth
+  usecase "Mesurer la performance\ndes algorithmes" as UC_AnalyzeSensorPerf
+  usecase "Analyser fiabilité\nd'un capteur" as UC_AnalyzeSensor
+  usecase "Exclure capteur\nnon fiable" as UC_ExcludeSensor
+  usecase "Calculer qualité\nde l'air (AQI)" as UC_CalcAverage
+  usecase "Comparer capteurs\npour similarité" as UC_CompareSensors
+  usecase "Consulter points\nd'un utilisateur privé" as UC_ShowPoints
+  usecase "Suivre impact\nd'un air cleaner" as UC_TrackCleaner
+  
+  usecase "Calculer/Estimer\nà un point précis" as UC_GivenPoint
+  usecase "Calculer/Estimer\nsur une zone" as UC_Area
+  usecase "Calculer/Estimer\nsur un moment donné" as UC_GivenMoment
+  usecase "Calculer/Estimer\nsur une periode spécifiée" as UC_SpecifiedPeriod
+  usecase "Suivre l'impact d'une\nzone nettoyée sur\nun rayon" as UC_CleanedRadius
+  usecase "Suivre l'impact sur\nle niveau d'amélioration\nde la qualité de l'air" as UC_AirQualityImprovement
+}
+
+' L'administrateur
+A --> UC_AnalyzeSensor
+A --> UC_ExcludeSensor
+A --> UC_AnalyzeSensorPerf
+A --|> U
+A --> UC_Auth
+
+' Le fournisseur
+F --> UC_TrackCleaner
+F --> UC_Auth
+
+' Le particulier
+P --> UC_ShowPoints
+P --|> U
+P --> UC_Auth
+
+' L'utilisateur
+U --> UC_CompareSensors
+U --> UC_CalcAverage
+U --> UC_Auth
+
+UC_CalcAverage <|-- UC_SpecifiedPeriod
+UC_CalcAverage <|-- UC_GivenMoment
+UC_CalcAverage <|-- UC_GivenPoint
+UC_CalcAverage <|-- UC_Area
+UC_TrackCleaner .-> UC_AirQualityImprovement : include
+UC_TrackCleaner .-> UC_CleanedRadius : include
+
+
+actor "Serveur central" as S
+
+' Use cases utilisant les données -> Serveur central
+UC_Auth ---> S
+
+@enduml
