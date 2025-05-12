@@ -21,7 +21,7 @@ package "Données" {
     + isWithin(period_start : DateTime, period_end : DateTime) : bool
   }
 
-  class Cleaners {
+  class Cleaner {
     - id : string
     - lat : double
     - lon : double
@@ -29,7 +29,14 @@ package "Données" {
     - stop  : DateTime
     + getNeighbouringSensors(radius : int) : list<Sensor>
   }
+
+    class Credentials {
+    - login : string
+    - password : string
+    - userType : UserType
+  }
 }
+
 
 package "Services" {
   class Statistics {
@@ -50,38 +57,66 @@ package "Services" {
   }
 }
 
+
 package "Accès aux données" {
   class DataLoader {
     - sensors : list<Sensor*>
-    - cleaners : list<Cleaner*>
+    - Cleaner : list<Cleaner*>
     + loadData()
     + getSensor(sensorId : string) : Sensor*
     + getSensors() : list<Sensor*>
     + getCleaner(cleanerId : string) : Cleaner*
   }
 
-  class userDataAcces {
+  class UserDataAccess {
     + loadUserPoints(userID : string) : int
     + updateUserPoints(userID : string)
     + loadExcludedUsers() : list<string>
     + addExcludedUser(userID : string)
   }
-}
 
-/'
-package "Interface utilisateur" {
-  class Console {
-    ???
+  class AuthDataAccess {
+    + loadCredentials() : list<Credentials>
+    + findCredential(login : string) : Credentials
   }
 }
+
 
 package "Authentification" {
-  class Authentification {
-    ???
+    enum UserType {
+    - Admin
+    - User
+    - Particulier
+    - Fournisseur
+  }
+
+  class Session {
+    - userId : string
+    - userType : UserType
+    + getUserId() : string
+    + getUserType() : UserType
+  }
+
+  class AuthService {
+    + login(login : string, password : string) : Session
+    + checkRequiredRole(session : Session, role : UserType) : bool
   }
 }
-'/
+
+
+package "Interface utilisateur" {
+  class CLI {
+    + run()
+  }
+}
+
 
 Sensor "1  " --> "n  " Measurement
 
+CLI --> AuthService : authentifie()
+AuthService --> AuthDataAccess : cherche()
+AuthService --> Session : crée
+AdminServices ..> AuthService : « checkRequiredRole(ADMIN) »
+Statistics     ..> AuthService : « checkRequiredRole(USER) »
+PointsManager  ..> AuthService : « checkRequiredRole(Particulier) »
 @enduml
