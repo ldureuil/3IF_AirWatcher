@@ -41,7 +41,7 @@ package "Données" {
 package "Services" {
   class Statistics {
     + analyzeSensor(sensorID: string) : int
-    + analyzeCleaner(cleanerID: string) : list<int>
+    + analyzeCleaner(cleanerID: string, radius : int) : list<long>
     + computeZone(lat : double, lng : double, period_start : DateTime, period_end : DateTime, radius : int) : list<Measurement>
     + compareSensors(sensorID: string, period_start : DateTime, period_end : DateTime) : list<Sensor>
     + extrapolateAQI(lat : double, lng : double, period_start : DateTime, period_end : DateTime) : list<Measurement>
@@ -62,7 +62,7 @@ package "Accès aux données" {
   class DataLoader {
     - sensors : list<Sensor*>
     - Cleaner : list<Cleaner*>
-    + loadData()
+    + loadData(userType : UserType)
     + getSensor(sensorId : string) : Sensor*
     + getSensors() : list<Sensor*>
     + getCleaner(cleanerId : string) : Cleaner*
@@ -111,6 +111,7 @@ package "Interface utilisateur" {
 }
 
 
+
 Sensor  "1" --> "n" Measurement
 DataLoader --> Sensor
 DataLoader --> Cleaner
@@ -118,9 +119,9 @@ AuthDataAccess --> Credentials
 
 CLI --> AuthService
 
-Statistics     ..> AuthService            : checkRequiredRole()
-PointsManager  ..> AuthService            : checkRequiredRole()
-AdminServices  ..> AuthService            : checkRequiredRole()
+Statistics     ..> AuthService : checkRequiredRole
+PointsManager  ..> AuthService : checkRequiredRole
+AdminServices  ..> AuthService : checkRequiredRole
 
 Statistics     ..> DataLoader
 Statistics     ..> UserDataAccess

@@ -1,0 +1,95 @@
+@startuml Capteur
+title Diagramme de Séquence - Détection des données frauduleuses des capteurs privés
+
+actor "Administrateur" as admin
+
+participant "CLI" as cli
+
+participant "AuthService" as auth
+participant "AuthDataAccess" as authdata
+
+participant "Statistics" as service
+participant "AdminServices" as adminservice
+
+participant "DataLoader" as dl
+participant "UserDataAccess" as uda
+
+== Authentification d'un utilisateur ==
+admin -> cli : 1. Authentification
+activate cli
+cli -> auth : 2. login(login, mdp)
+
+    activate auth
+        auth -> authdata : 3. findCredential(login)
+
+        activate authdata
+            authdata -> auth : 4. Credentials
+        deactivate authdata
+
+        create "s :  Session(ADMIN)" as s
+        auth -> s : 5. <<create>>
+        auth --> cli : 6. s
+        cli --> admin : 7. Authentification réussie
+
+== Chargement des données ==
+    cli -> dl  : 8. loadData(s.userType)
+    activate dl
+    alt s.userType == ADMIN
+        dl -> dl : charge tous les jeux de données  (capteurs, mesures, cleaners, exclusions, points)
+    else s.userType == admin
+        dl -> dl : charge capteurs fiables, mesures et cleaners
+    else s.userType == PARTICULIER
+        dl -> dl : charge capteurs appartenant au particulier, capteurs fiables, mesures, cleaners et points
+    else s.userType == FOURNISSEUR
+        dl -> dl : charge cleaners appartenant au fournisseur
+    end
+    create "s1 : Sensor" as s1
+    dl -> s1 : <<create>>
+    dl --> cli  : 9. données chargées
+    deactivate dl
+
+== Analyse du capteur ==
+    admin -> cli : 10. analyzeSensor(sensorId, date_debut, date_fin)
+    cli -> service : 11. analyzeSensor(SensorID, date_debut, date_fin)
+    activate service
+    service -> auth : 12. checkRequiredRole(USER)
+    auth --> service : 13. ADMIN
+            service -> dl : 14. getSensor(sensorID)
+            activate dl
+                dl --> service : 15. s1 : Sensor
+            deactivate dl
+
+            service -> s1 : 16. getSensorNeighbours(Sensor)
+            activate s1
+                create "list[i] : list<Sensor>" as list
+                s1 --> list : 17. <<create>>
+                s1 --> service : 18. list
+            deactivate s1
+
+            loop Pour chaque voisin
+                service -> list : 19. getMeasurements(l[i].id)
+                activate list
+                    list --> service : 20. Measurement
+                deactivate list
+            end
+        
+    service ->service : 21. analyse des données
+    service --> cli : 22. capteur analysé comme frauduleux
+    deactivate service
+
+== Exclusion du capteur ==
+admin -> cli : 23. excludeSensor(SensorID)
+    cli -> adminservice : 24. excludeSensor(SensorID)
+    activate adminservice
+        adminservice -> dl : 25. getSensor(sensorID)
+        activate dl
+            dl --> adminservice : 26. s1 : Sensor
+        deactivate dl
+
+        adminservice -> uda : 25. addExcludedUser(s1.userId)
+        activate uda
+        adminservice --> cli : 26. Particulier exclut
+        deactivate uda
+    deactivate adminservice
+deactivate cli
+@enduml

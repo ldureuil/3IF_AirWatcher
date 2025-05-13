@@ -31,33 +31,52 @@ cli -> auth : 2. login(login, mdp)
         auth --> cli : 6. s
         cli --> user : 7. Authentification réussie
 
+== Chargement des données ==
+    cli -> dl  : 8. loadData(s.userType)
+    activate dl
+    alt s.userType == ADMIN
+        dl -> dl : charge tous les jeux de données  (capteurs, mesures, cleaners, exclusions, points)
+    else s.userType == USER
+        dl -> dl : charge capteurs fiables, mesures et cleaners
+    else s.userType == PARTICULIER
+        dl -> dl : charge capteurs appartenant au particulier, capteurs fiables, mesures, cleaners et points
+    else s.userType == FOURNISSEUR
+        dl -> dl : charge cleaners appartenant au fournisseur
+    end
+    create "s1 : Sensor" as s1
+    dl -> s1 : <<create>>
+    dl --> cli  : 9. capteurs fiables, mesures et cleaners chargés
+    deactivate dl
+
 == Requête d’un utilisateur utilisant un capteur s1 ==
-        user -> cli : 8. computeZone(lat, lng, period_start, period_end, radius)
-        cli -> service : 9. computeZone(lat, lng, period_start, period_end, radius)
+        user -> cli : 10. computeZone(lat, lng, period_start, period_end, radius)
+        cli -> service : 11. computeZone(lat, lng, period_start, period_end, radius)
         
         activate service
-            service -> auth : 10. checkRequiredRole(USER)
-            auth --> service : 11. USER
+            service -> auth : 12. checkRequiredRole(USER)
+            auth --> service : 13. USER
 
-            service -> dl : 12. getSensor(s1.id)
+            service -> dl : 14. getSensor(s1.id)
             activate dl
-                dl --> service : 13. s1 : Sensor
+                dl --> service : 15. s1 : Sensor
             deactivate dl
 
-            service -> s1 : 14. getMeasurements()
+            service -> s1 : 16. getMeasurements()
             activate s1
-                s1 --> service : 15. list<Measurement>
+                s1 --> service : 17. list<Measurement>
             deactivate s1
 
-            service -> service : 16. calcule moyenne AQI
+            service -> service : 18. calcule moyenne AQI
 
-            service -> points : 17. award(s1)
+            service -> points : 19. award(s1)
             activate points
-                points -> uda : 18. updateUserPoints(s1.userId)
-                points --> service : 19. Points ajoutés
+                points -> uda : 20. updateUserPoints(s1.userId)
+                activate uda
+                    points --> service : 21. Points ajoutés
+                deactivate uda
             deactivate points
 
-            service --> cli : 20. AQI
+            service --> cli : 22. AQI
         deactivate service
     deactivate auth
 deactivate cli

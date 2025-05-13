@@ -1,0 +1,90 @@
+@startuml analyseCleaner
+title Diagramme de Séquence – Analyse de l'impact d’un purificateur sur la qualité de l’air
+
+actor "Fournisseur" as user
+
+participant "CLI" as cli
+
+participant "Authservice" as auth
+participant "AuthDataAccess" as authdata
+
+participant "Statistics" as service
+
+participant "DataLoader" as dl
+
+== Authentification d'un utilisateur ==
+user -> cli : 1. Authentification
+activate cli
+cli -> auth : 2. login(login, mdp)
+
+    activate auth
+        auth -> authdata : 3. findCredential(login)
+
+        activate authdata
+            authdata -> auth : 4. Credentials
+        deactivate authdata
+
+        create "s :  Session(USER)" as s
+        auth -> s : 5. <<create>>
+        auth --> cli : 6. s
+        cli --> user : 7. Authentification réussie
+
+== Chargement des données ==
+    cli -> dl  : 8. loadData(s.userType)
+    activate dl
+    alt s.userType == USER
+        dl -> dl : charge tous les jeux de données  (capteurs, mesures, cleaners, exclusions, points)
+    else s.userType == ADMIN
+        dl -> dl : charge capteurs fiables, mesures et cleaners
+    else s.userType == PARTICULIER
+        dl -> dl : charge capteurs appartenant au particulier, capteurs fiables, mesures, cleaners et points
+    else s.userType == FOURNISSEUR
+        dl -> dl : charge cleaners appartenant au fournisseur
+    end
+    create "c1 : Cleaner" as c1
+    dl -> c1 : <<create>>
+    dl --> cli  : 9. cleaners appartenant au fournisseur chargés
+    deactivate dl
+
+== Requête d’analyse ==
+user -> cli : 10. analyzeCleaner(cleanerID, radius)
+
+cli -> service : 11. analyzeCleaner(cleanerID, radius)
+activate service
+    service -> auth : 12. checkRequiredRole(FOURNISSEUR)
+    auth --> service : 13. FOURNISSEUR
+    == Récupération du purificateur ==
+    service -> dl : 14. getCleaner(cleanerID)
+    activate dl
+        dl --> service : 15. c1 : Cleaner
+    deactivate dl
+
+    == Recherche des capteurs proches ==
+    service -> c1 : 16. getNeighbouringSensors(radius)
+    activate c1
+        create "list[i] : list<Sensor>" as list
+        c1 --> list : 17. <<create>>
+        c1 --> service : 18. list
+    deactivate c1
+
+    == Récupération des mesures ==
+    loop Pour chaque capteur
+        service -> list : 19. getClosestMeasurements(activation_start, -1)
+        activate list
+            list --> service : 20. list<Measurement> (avant)
+        deactivate list
+        service -> list : 21. getClosestMeasurements(activation_end, 1)
+        activate list
+            list --> service : 22. list<Measurement> (après)
+        deactivate list
+    end
+
+    == Calcul de l'amélioration ==
+    service -> service : 23. Moyenne des mesures avant/après
+    service -> service : 24. Calcul du pourcentage d’amélioration
+
+    service --> cli : 25. Résultat (pourcentage par polluant)
+deactivate service
+deactivate cli
+
+@enduml
