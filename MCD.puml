@@ -21,7 +21,7 @@ package "Données" {
     + isWithin(period_start : DateTime, period_end : DateTime) : bool
   }
 
-  class Cleaners {
+  class Cleaner {
     - id : string
     - lat : double
     - lon : double
@@ -29,12 +29,19 @@ package "Données" {
     - stop  : DateTime
     + getNeighbouringSensors(radius : int) : list<Sensor>
   }
+
+    class Credentials {
+    - login : string
+    - password : string
+    - userType : UserType
+  }
 }
+
 
 package "Services" {
   class Statistics {
     + analyzeSensor(sensorID: string) : int
-    + analyzeCleaner(cleanerID: string) : list<int>
+    + analyzeCleaner(cleanerID: string, radius : int) : list<long>
     + computeZone(lat : double, lng : double, period_start : DateTime, period_end : DateTime, radius : int) : list<Measurement>
     + compareSensors(sensorID: string, period_start : DateTime, period_end : DateTime) : list<Sensor>
     + extrapolateAQI(lat : double, lng : double, period_start : DateTime, period_end : DateTime) : list<Measurement>
@@ -50,38 +57,75 @@ package "Services" {
   }
 }
 
+
 package "Accès aux données" {
   class DataLoader {
     - sensors : list<Sensor*>
-    - cleaners : list<Cleaner*>
-    + loadData()
+    - Cleaner : list<Cleaner*>
+    + loadData(userType : UserType)
     + getSensor(sensorId : string) : Sensor*
     + getSensors() : list<Sensor*>
     + getCleaner(cleanerId : string) : Cleaner*
   }
 
-  class userDataAcces {
+  class UserDataAccess {
     + loadUserPoints(userID : string) : int
     + updateUserPoints(userID : string)
     + loadExcludedUsers() : list<string>
     + addExcludedUser(userID : string)
   }
-}
 
-/'
-package "Interface utilisateur" {
-  class Console {
-    ???
+  class AuthDataAccess {
+    + loadCredentials() : list<Credentials>
+    + findCredential(login : string) : Credentials
   }
 }
+
 
 package "Authentification" {
-  class Authentification {
-    ???
+    enum UserType {
+    - Admin
+    - User
+    - Particulier
+    - Fournisseur
+  }
+
+  class Session {
+    - userId : string
+    - userType : UserType
+    + getUserId() : string
+    + getUserType() : UserType
+  }
+
+  class AuthService {
+    + login(login : string, password : string) : Session
+    + checkRequiredRole(session : Session, role : UserType) : bool
   }
 }
-'/
 
-Sensor "1  " --> "n  " Measurement
 
+package "Interface utilisateur" {
+  class CLI {
+    + run()
+  }
+}
+
+
+
+Sensor  "1" --> "n" Measurement
+DataLoader --> Sensor
+DataLoader --> Cleaner
+AuthDataAccess --> Credentials
+
+CLI --> AuthService
+
+Statistics     ..> AuthService : checkRequiredRole
+PointsManager  ..> AuthService : checkRequiredRole
+AdminServices  ..> AuthService : checkRequiredRole
+
+Statistics     ..> DataLoader
+Statistics     ..> UserDataAccess
+PointsManager  ..> UserDataAccess
+AdminServices  ..> DataLoader
+AdminServices  ..> UserDataAccess
 @enduml
