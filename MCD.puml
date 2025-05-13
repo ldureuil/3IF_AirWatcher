@@ -111,12 +111,20 @@ package "Interface utilisateur" {
 }
 
 
-Sensor "1  " --> "n  " Measurement
+Sensor  "1" --> "n" Measurement
+DataLoader --> Sensor
+DataLoader --> Cleaner
+AuthDataAccess --> Credentials
 
-CLI --> AuthService : authentifie()
-AuthService --> AuthDataAccess : cherche()
-AuthService --> Session : crée
-AdminServices ..> AuthService : « checkRequiredRole(ADMIN) »
-Statistics     ..> AuthService : « checkRequiredRole(USER) »
-PointsManager  ..> AuthService : « checkRequiredRole(Particulier) »
+CLI --> AuthService
+
+Statistics     ..> AuthService            : checkRequiredRole()
+PointsManager  ..> AuthService            : checkRequiredRole()
+AdminServices  ..> AuthService            : checkRequiredRole()
+
+Statistics     ..> DataLoader
+Statistics     ..> UserDataAccess
+PointsManager  ..> UserDataAccess
+AdminServices  ..> DataLoader
+AdminServices  ..> UserDataAccess
 @enduml

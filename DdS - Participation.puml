@@ -1,0 +1,64 @@
+@startuml Partici
+title Participation des utilisateurs à l'attribution de points aux particuliers
+
+actor "Utilisateur" as user
+
+participant "CLI" as cli
+
+participant "AuthService" as auth
+participant "AuthDataAccess" as authdata
+
+participant "Statistics" as service
+
+participant "PointsManager" as points
+participant "DataLoader" as dl
+participant "UserDataAccess" as uda
+
+== Authentification d'un utilisateur ==
+user -> cli : 1. Authentification
+activate cli
+cli -> auth : 2. login(login, mdp)
+
+    activate auth
+        auth -> authdata : 3. findCredential(login)
+
+        activate authdata
+            authdata -> auth : 4. Credentials
+        deactivate authdata
+
+        create "s :  Session(USER)" as s
+        auth -> s : 5. <<create>>
+        auth --> cli : 6. s
+        cli --> user : 7. Authentification réussie
+
+== Requête d’un utilisateur utilisant un capteur s1 ==
+        user -> cli : 8. computeZone(lat, lng, period_start, period_end, radius)
+        cli -> service : 9. computeZone(lat, lng, period_start, period_end, radius)
+        
+        activate service
+            service -> auth : 10. checkRequiredRole(USER)
+            auth --> service : 11. USER
+
+            service -> dl : 12. getSensor(s1.id)
+            activate dl
+                dl --> service : 13. s1 : Sensor
+            deactivate dl
+
+            service -> s1 : 14. getMeasurements()
+            activate s1
+                s1 --> service : 15. list<Measurement>
+            deactivate s1
+
+            service -> service : 16. calcule moyenne AQI
+
+            service -> points : 17. award(s1)
+            activate points
+                points -> uda : 18. updateUserPoints(s1.userId)
+                points --> service : 19. Points ajoutés
+            deactivate points
+
+            service --> cli : 20. AQI
+        deactivate service
+    deactivate auth
+deactivate cli
+@enduml
