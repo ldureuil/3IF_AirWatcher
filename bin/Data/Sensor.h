@@ -88,7 +88,7 @@ public:
     // Contrat :
     //
 
-    vector<Sensor> getSensorNeighbours(vector<Sensor> sensors);
+    vector<Sensor> getSensorNeighbours(vector<Sensor> * sensors);
     // Mode d'emploi :
     //
     // Contrat :
@@ -99,6 +99,8 @@ public:
     //
     // Contrat :
     //
+
+    vector<Measurement> getAllMeasurement();
 
     vector<Measurement> getClosestMeasurements(time_t instant, int before_after);
     // Mode d'emploi :
@@ -139,7 +141,7 @@ private:
     string id;
     double lat;
     double lng;
-    vector<Measurement *> measurements;
+    vector<Measurement> measurements;
     string userId;
 
 protected:

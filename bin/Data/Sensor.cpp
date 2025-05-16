@@ -71,19 +71,47 @@ string Sensor::getUserId()
 } //----- Fin de distanceTo
 
 
-vector<Sensor> Sensor::getSensorNeighbours(vector<Sensor> sensors)
+vector<Measurement> Sensor::getAllMeasurement()
+{
+    
+
+    return measurements;
+}
+
+
+void Sensor::setId(string Id)
+{
+    id = Id;
+}
+
+void Sensor::setLat(double Lat)
+{
+    lat = Lat;
+}
+
+void Sensor::setLng(double Lng)
+{
+    lng = Lng;
+}
+
+void Sensor::setUserId(string userid)
+{
+    userId = userid;
+}
+
+vector<Sensor> Sensor::getSensorNeighbours(vector<Sensor> * sensors)
 {
     vector<Sensor> nearby_sensors;   
     int i;
-    int n = sensors.size();
+    int n = sensors->size();
     int distance = 0;
     int radius = 120;
-    for ( i = 0; i < n; i++)
+    for ( auto& s : *sensors)
     {
-        distance = distanceTo(sensors[i].getLat(), sensors[i].getLng());
+        distance = distanceTo(s.getLat(), s.getLng());
         if (distance <= radius)
         {
-            nearby_sensors.push_back(sensors[i]); 
+            nearby_sensors.push_back(s); 
         }
     }
     return nearby_sensors;
@@ -96,13 +124,14 @@ vector<Sensor> Sensor::getSensorNeighbours(vector<Sensor> sensors)
 
 vector<Measurement> Sensor::getMeasurements(time_t period_start, time_t period_end)
 {
-
+    
     vector<Measurement> result;
-    for (const auto& m : measurements)
+    for (auto& m : measurements)
     {
-        if (m->getTs()>= period_start && m->getTs() <= period_end)
+        
+        if (m.getTs()>= period_start && m.getTs() <= period_end)
         {
-            result.push_back(*m);
+            result.push_back(m);
         }
     }
 
@@ -118,21 +147,19 @@ vector<Measurement> Sensor::getClosestMeasurements(time_t instant, int before_af
     vector<Measurement> filtered;
 
     // Parcourt toutes les mesures
-    for (Measurement* m : measurements)
+    for (Measurement m : measurements)
     {
-        if (m == nullptr) continue;
-
-        time_t ts = m->getTs();
+        time_t ts = m.getTs();
 
         // Avant l'instant
         if (before_after < 0 && ts < instant)
         {
-            filtered.push_back(*m);
+            filtered.push_back(m);
         }
         // Après l'instant
         else if (before_after > 0 && ts > instant)
         {
-            filtered.push_back(*m);
+            filtered.push_back(m);
         }
     }
 
@@ -185,6 +212,7 @@ Sensor::Sensor ( )
 #ifdef MAP
     cout << "Appel au constructeur de <Sensor>" << endl;
 #endif
+
 
  
 } //----- Fin de Sensor
