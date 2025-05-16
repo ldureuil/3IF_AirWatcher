@@ -34,6 +34,54 @@ public:
     // Contrat :
     //
 
+    void setTs(time_t time);
+    // Mode d'emploi :
+    //
+    // Contrat :
+    //
+
+    void setAttr_desc(string desc);
+    // Mode d'emploi :
+    //
+    // Contrat :
+    //
+
+    void setAttr_unit(string unit);
+    // Mode d'emploi :
+    //
+    // Contrat :
+    //
+
+    void setValue(double val);
+    // Mode d'emploi :
+    //
+    // Contrat :
+    //
+
+
+    time_t getTs();
+    // Mode d'emploi :
+    //
+    // Contrat :
+    //
+    
+    string getAttr_desc();
+    // Mode d'emploi :
+    //
+    // Contrat :
+    //
+    
+    string getAttr_unit();
+    // Mode d'emploi :
+    //
+    // Contrat :
+    //
+
+    double getValue();
+    // Mode d'emploi :
+    //
+    // Contrat :
+    //
 
     //------------------------------------------------- Surcharge d'opérateurs
     Measurement& operator = ( const Measurement& unMeasurement );
@@ -50,7 +98,7 @@ public:
     // Contrat :
     //
 
-    Measurement ( );
+    Measurement (time_t time, string unit, string desc, double val );
     // Mode d'emploi :
     //
     // Contrat :
@@ -69,8 +117,15 @@ private:
     string attr_desc;
     double value;
 
+    
+
+
 protected:
     //----------------------------------------------------- Méthodes protégées
+
+    
+    
+
 
     //----------------------------------------------------- Attributs protégés
 };
