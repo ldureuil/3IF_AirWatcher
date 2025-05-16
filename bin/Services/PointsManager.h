@@ -39,20 +39,8 @@ public:
 
 
     //------------------------------------------------- Surcharge d'opérateurs
-    PointsManager& operator = ( const PointsManager& unPointsManager );
-    // Mode d'emploi :
-    //
-    // Contrat :
-    //
-
 
     //-------------------------------------------- Constructeurs - destructeur
-    PointsManager ( const PointsManager& unPointsManager );
-    // Mode d'emploi (constructeur de copie) :
-    //
-    // Contrat :
-    //
-
     PointsManager ( );
     // Mode d'emploi :
     //

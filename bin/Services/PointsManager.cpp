@@ -83,6 +83,49 @@ bool PointsManager::award(list<string> sensorsUsed)
 
 int PointsManager::getPoints(string userId)
 {
+    ifstream infile("particulierData.csv");
+    vector<string> lines;
+    string line;
+    int value = 0;
+
+    bool found = false;
+
+    
+    // Read all lines
+    while (getline(infile, line)) {
+        stringstream ss(line);
+        string id, lat, lng, points;
+        getline(ss, id, ',');
+        getline(ss, lat, ',');
+        getline(ss, lng, ',');
+        getline(ss, points, ',');
+
+
+        if (id == userId) {
+            value = stoi(points);
+            found = true;
+            break;
+        } 
+
+    }
+
+    infile.close();
+
+    if (!found) {
+        cerr << "User ID not found in ParticulierData : " << userId << endl;
+        return -1;
+    }
+
+    // Write all lines back to file
+    std::ofstream outfile("particulierData.csv");
+    for (const auto& l : lines) {
+        outfile << l << "\n";
+    }
+
+    outfile.close();
+    
+    return value;
+
 }
 // Algorithme :
 //
@@ -91,23 +134,9 @@ int PointsManager::getPoints(string userId)
 
 
 //------------------------------------------------- Surcharge d'opérateurs
-PointsManager& PointsManager::operator = ( const PointsManager& unPointsManager )
-// Algorithme :
-//
-{
-} //----- Fin de operator =
 
 
 //-------------------------------------------- Constructeurs - destructeur
-PointsManager::PointsManager ( const PointsManager & unPointsManager )
-// Algorithme :
-//
-{
-#ifdef MAP
-    cout << "Appel au constructeur de copie de <PointsManager>" << endl;
-#endif
-} //----- Fin de PointsManager (constructeur de copie)
-
 
 PointsManager::PointsManager ( )
 // Algorithme :
@@ -116,6 +145,7 @@ PointsManager::PointsManager ( )
 #ifdef MAP
     cout << "Appel au constructeur de <PointsManager>" << endl;
 #endif
+
 } //----- Fin de PointsManager
 
 
