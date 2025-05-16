@@ -4,10 +4,10 @@ package "Données" {
   class Sensor {
     - id : string
     - lat : double
-    - lon : double
+    - lng : double
     - measurements : list<Measurement>
     - userId : string
-    + distanceTo(lat,lon) : double
+    + distanceTo(lat,lng) : double
     + getSensorNeighbours() : list<Sensor>
     + getMeasurements(period_start : DateTime, period_end : DateTime) : list<list<Measurement>>
     + getClosestMeasurements(instant : DateTime, before_after : int) : list<Measurement>
@@ -24,7 +24,7 @@ package "Données" {
   class Cleaner {
     - id : string
     - lat : double
-    - lon : double
+    - lng : double
     - start : DateTime
     - stop  : DateTime
     + getNeighbouringSensors(radius : int) : list<Sensor>
@@ -77,7 +77,7 @@ package "Accès aux données" {
 
   class AuthDataAccess {
     + loadCredentials() : list<Credentials>
-    + findCredential(login : string) : Credentials
+    + findCredentials(login : string) : Credentials
   }
 }
 
