@@ -22,6 +22,7 @@ using namespace std;
 //----------------------------------------------------- Méthodes publiques
 bool Measurement::isWithin(time_t period_start, time_t period_end)
 {
+    return ts >= period_start && ts <= period_end;
 }
 // Algorithme :
 //
@@ -30,45 +31,6 @@ bool Measurement::isWithin(time_t period_start, time_t period_end)
 
 
 
-
-void Measurement::setTs(time_t time)
-{
-    ts = time;
-    
-}
-// Algorithme :
-//
-//{
-//} //----- Fin de isWithin
-
-void Measurement::setAttr_desc(string desc)
-{
-    attr_desc = desc;
-}   
-// Algorithme :
-//
-//{
-//} //----- Fin de isWithin
-
-void Measurement::setAttr_unit(string unit)
-{
-    attr_unit = unit;
-}
-   
-// Algorithme :
-//
-//{
-//} //----- Fin de isWithin
-
-void Measurement::setValue(double val)
-{
-    value = val;
-}
-  
-// Algorithme :
-//
-//{
-//} //----- Fin de isWithin
 
 time_t Measurement::getTs()
 {
@@ -110,21 +72,22 @@ double Measurement::getValue()
 //} //----- Fin de isWithin
 
 
-
-
-
-
 //------------------------------------------------- Surcharge d'opérateurs
 Measurement& Measurement::operator = ( const Measurement& unMeasurement )
 // Algorithme :
 //
 {
 
-    Measurement mesurement  = Measurement(unMeasurement);
-    return mesurement;
+    if (this != &unMeasurement)
+    {
+        ts = unMeasurement.ts;
+        attr_desc = unMeasurement.attr_desc;
+        attr_unit = unMeasurement.attr_unit;
+        value = unMeasurement.value;
+    }
+    return *this;
 
 } //----- Fin de operator =
-
 
 //-------------------------------------------- Constructeurs - destructeur
 Measurement::Measurement ( const Measurement & unMeasurement )
