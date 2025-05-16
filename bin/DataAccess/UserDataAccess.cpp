@@ -26,6 +26,10 @@ using namespace std;
 
 
 int UserDataAccess::loadUserPoints(string userId)
+// Algorithme : 
+// Vérifier si l'ID utilisateur correspond à celui recherché en parcourant le fichier ParticulierData.csv
+// Si trouvé, retourner les points de l'utilisateur
+// Retourner -1 si l'utilisateur n'est pas trouvé
 {
     ifstream file("ParticulierData.csv");
     if (!file.is_open())
@@ -55,13 +59,17 @@ int UserDataAccess::loadUserPoints(string userId)
     file.close();
     return -1;  // Usuario no encontrado
     
-}
-// Algorithme :
-//
-//{
-//} //----- Fin de loadUserPoints
+} //----- Fin de loadUserPoints
 
-int UserDataAccess::updateUserPoints(string userId) {
+
+
+int UserDataAccess::updateUserPoints(string userId) 
+// Algorithme :
+// Vérifier si l'ID utilisateur correspond à celui recherché en parcourant le fichier ParticulierData.csv
+// Si trouvé, incrémenter les points de 10
+// Si l'utilisateur n'est pas trouvé et/ou fichier n'est pas créé, l'ajouter avec 10 points
+// Retourner les nouveaux points de l'utilisateur
+{
     // Ouverture du fichier
     ifstream inFile("ParticulierData.csv");
     if (!inFile.is_open()) {
@@ -122,25 +130,31 @@ int UserDataAccess::updateUserPoints(string userId) {
     outFile.close();
 
     return newPoints; // Retourne les nouveaux points de l'utilisateur
-}
-// Algorithme :
-//
-//{
-//} //----- Fin de updateUserPoints
+}//----- Fin de updateUserPoints
 
 vector<string> UserDataAccess::loadExcludedUsers()
+//Algorithme : 
+// Retourne les utilisateurs exclus (vecteur) en parcourant le fichier ParticulierData.csv
+// Retourne un vecteur vide si le fichier est vide, ou s'il n'y a pas des utilisateurs exclus ou en cas d'erreur
 {
-    // Ouverture du fichier
     ifstream inFile("ParticulierData.csv");
     if (!inFile.is_open()) {
         cerr << "Erreur d'ouverture du fichier ParticulierData.csv" << endl;
-        return vector<string>(); // Retourne un vecteur vide en cas d'erreur
+        return vector<string>(); // Retourner un vecteur vide en cas d'erreur
     }
+
+    // Vérifier si le fichier est vide
+    inFile.seekg(0, ios::end);
+    if (inFile.tellg() == 0) {
+        cerr << "Le fichier ParticulierData.csv est vide." << endl;
+        return vector<string>(); // Retourner un vecteur vide si fichier vide
+    }
+    inFile.seekg(0, ios::beg); // Revenir au début
 
     vector<string> excludedUsers;
     string line;
 
-    // Leecture de chaque ligne du fichier
+    // Lire chaque ligne du fichier
     while (getline(inFile, line)) {
         vector<string> row;
         stringstream ss(line);
@@ -149,43 +163,41 @@ vector<string> UserDataAccess::loadExcludedUsers()
         while (getline(ss, cell, ';')) {
             row.push_back(cell);
         }
-
+        // Trouver les utilisateurs exclus
         if (row.size() >= 3 && row[2] == "true") {
             excludedUsers.push_back(row[0]);
         }
     }
 
-    if (inFile.tellg() == 0) {
-        cerr << "Le fichier ParticulierData.csv est vide." << endl;
-        return vector<string>(); // Retourne un vecteur vide si le fichier est vide
-    }
-
     inFile.close();
     return excludedUsers;
-}
-// Algorithme :
-//
-//{
-//} //----- Fin de loadExcludedUsers
+}//----- Fin de loadExcludedUsers
 
 int UserDataAccess::addExcludedUser(string userId)
+// Algorithme :
+// Vérifier si l'ID utilisateur correspond à celui recherché en parcourant le fichier ParticulierData.csv
+// Si trouvé, vérifier le statut exclu
+// Si trouvé, marquer comme exclu
+// Si l'utilisateur n'est pas trouvé, l'ajouter avec le statut exclu
+// Retourner 0 si déjà exclu, 1 si succès, -1 en cas d'erreur
 {
-    // Ouverture du fichier
-    ifstream inFile("ParticulierData.csv");
+    const string filename = "ParticulierData.csv";
+    ifstream inFile(filename);
     if (!inFile.is_open()) {
-        cerr << "Erreur d'ouverture du fichier ParticulierData.csv" << endl;
+        cerr << "Erreur d'ouverture du fichier " << filename << endl;
         return -1;
     }
 
     vector<string> lines;
     string line;
+    bool userFound = false;
+    bool userExcluded = false;
 
-    // Leecture de chaque ligne du fichier
+    // Lecture du fichier
     while (getline(inFile, line)) {
         vector<string> row;
         stringstream ss(line);
         string cell;
-
         while (getline(ss, cell, ';')) {
             row.push_back(cell);
         }
@@ -193,42 +205,40 @@ int UserDataAccess::addExcludedUser(string userId)
         if (row.size() >= 3 && row[0] == userId) {
             if (row[2] == "true") {
                 inFile.close();
-                return 0; // User is excluded
+                return 0; // Déjà exclu
             }
-            line = userId + ";" + row[1] + ";" + "true";
+            // Marquer comme exclu
+            row[2] = "true";
+            line = row[0] + ";" + row[1] + ";" + row[2];
+            userFound = true;
         }
         lines.push_back(line);
     }
     inFile.close();
 
-
-    // Ouverture du fichier en écriture
-    ofstream outFile("ParticulierData.csv");
-    if (!outFile.is_open()) {
-        cerr << "Erreur d'écriture du fichier ParticulierData.csv" << endl;
-        return -1;
-    }
-
-    // Ecrire l'en-tête si le fichier est vide
-    if (lines.empty()) {
-        outFile << "userId;points;excluded\n";
-        line = userId + ";" + "0" + ";" + "true";
+    // Si l'utilisateur n'existe pas, l'ajouter
+    if (!userFound) {
+        line = userId + ";0;true";
         lines.push_back(line);
     }
 
-    // Ecriture de chaque ligne dans le fichier
+    // Écriture dans le fichier
+    ofstream outFile(filename);
+    if (!outFile.is_open()) {
+        cerr << "Erreur d'écriture du fichier " << filename << endl;
+        return -1;
+    }
+
+    // Écriture de l'en-tête
+    outFile << "userId;points;excluded" << endl;
+
     for (const auto& l : lines) {
         outFile << l << endl;
     }
+
     outFile.close();
-
-    return 1; 
-
-}
-// Algorithme :
-//
-//{
-//} //----- Fin de addExcludedUser
+    return 1; // Succès
+} //----- Fin de addExcludedUser
 
 
 //------------------------------------------------- Surcharge d'opérateurs
