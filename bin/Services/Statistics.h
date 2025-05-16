@@ -10,12 +10,13 @@ Statistics  -  todo
 
 //--------------------------------------------------- Interfaces utilisées
 #include "../Data/Sensor.h"
+#include "../Data/Cleaner.h"
 #include "../Data/Measurement.h"
 
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
-#include <list>
+#include <vector>
 #include <ctime>
 
 //------------------------------------------------------------------------
@@ -28,42 +29,47 @@ class Statistics {
     //----------------------------------------------------------------- PUBLIC
 public:
     //----------------------------------------------------- Méthodes publiques
-    int analyzeSensor(string sensorId);
+    int analyzeSensor(string sensorID);
     // Mode d'emploi :
     //
     // Contrat :
     //
 
-    list<int> analyzeCleaner(string cleanerId);
+    vector<int> analyzeCleaner(string cleanerID);
     // Mode d'emploi :
     //
     // Contrat :
     //
 
-    list<int> analyzeStatistics(string StatisticsId);
+    vector<Measurement> computeZone(double lat, double lng, time_t period_start, time_t period_end, int radius);
     // Mode d'emploi :
     //
     // Contrat :
     //
 
-    list<Measurement> computeZone(double lat, double lng, time_t period_start, time_t period_end, int radius);
+    vector<Sensor> compareSensors(string sensorId, time_t period_start, time_t period_end);
     // Mode d'emploi :
     //
     // Contrat :
     //
 
-    list<Sensor> compareSensors(string sensorId, time_t period_start, time_t period_end);
+    vector<Measurement> extrapolateAQI(double lat, double lng, time_t period_start, time_t period_end);
     // Mode d'emploi :
     //
     // Contrat :
     //
 
-    list<Measurement> extrapolateAQI(double lat, double lng, time_t period_start, time_t period_end);
+    Sensor getSensorByID ( string id );
     // Mode d'emploi :
     //
     // Contrat :
     //
 
+    Cleaner getCleanerByID ( string id );
+    // Mode d'emploi :
+    //
+    // Contrat :
+    //
 
     //------------------------------------------------- Surcharge d'opérateurs
     Statistics& operator = ( const Statistics& unStatistics );
@@ -80,7 +86,7 @@ public:
     // Contrat :
     //
 
-    Statistics ( );
+    Statistics ( vector<Sensor> *p_sensors, vector<Cleaner> *p_cleaners );
     // Mode d'emploi :
     //
     // Contrat :
@@ -98,6 +104,8 @@ protected:
     //----------------------------------------------------- Méthodes protégées
 
     //----------------------------------------------------- Attributs protégés
+    vector<Sensor> *sensors;
+    vector<Cleaner> *cleaners;
 };
 
 
