@@ -13,7 +13,7 @@ UserDataAccess  -  todo
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
-#include <list>
+#include <vector>
 
 //------------------------------------------------------------------------
 // Rôle de la classe <UserDataAccess>
@@ -26,6 +26,7 @@ class UserDataAccess
     //----------------------------------------------------------------- PUBLIC
 public:
     //----------------------------------------------------- Méthodes publiques
+    
     int loadUserPoints(string userId);
     // Mode d'emploi :
     //
@@ -38,7 +39,7 @@ public:
     // Contrat :
     //
 
-    list<string> loadExcludedUsers();
+    vector<string> loadExcludedUsers();
     // Mode d'emploi :
     //
     // Contrat :
