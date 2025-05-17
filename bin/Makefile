@@ -1,12 +1,13 @@
 # Variables de compilation
 CXX := g++
-CXXFLAGS = -ansi -pedantic -Wall -std=c++11
+CXXFLAGS = -ansi -pedantic -Wall -std=c++17
 CXXFLAGS_DEBUG := -ansi -pedantic -Wall -std=c++11 -g -DMAP
 TARGET := AirWatcher
-SOURCES = IHM/CLI.cpp Data/Cleaner.cpp Data/Credentials.cpp Data/Measurement.cpp \
-		  Data/Sensor.cpp Authentification/AuthService.cpp Authentification/Session.cpp \
-		  Services/AdminServices.cpp Services/PointsManager.cpp Services/Statistics.cpp \
-		  DataAccess/DataLoader.cpp DataAccess/AuthDataAccess.cpp DataAccess/UserDataAccess.cpp
+SOURCES = IHM/CLI.cpp \
+		  DataAccess/DataLoader.cpp DataAccess/AuthDataAccess.cpp DataAccess/UserDataAccess.cpp \
+		  Data/Cleaner.cpp Data/Credentials.cpp Data/Measurement.cpp Data/Sensor.cpp \
+		  Authentification/AuthService.cpp Authentification/Session.cpp \
+		  Services/AdminServices.cpp Services/PointsManager.cpp Services/Statistics.cpp
 OBJECTS = $(SOURCES:.cpp=.o)
 
 all: $(TARGET)
