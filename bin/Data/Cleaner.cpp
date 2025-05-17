@@ -20,20 +20,60 @@ using namespace std;
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Méthodes publiques
-list<Sensor> Cleaner::getNeighbouringSensors(int radius)
-{
-}
+vector<Sensor> Cleaner::getNeighbouringSensors( int radius, vector<Sensor> *sensors )
 // Algorithme :
 //
-//{
-//} //----- Fin de getNeighbouringSensors
+{
+    vector<Sensor> neighbours;
+    for ( vector<Sensor>::iterator sensor_it = sensors->begin() ; sensor_it != sensors->end() ; ++sensor_it )
+    {
+        if (sensor_it->distanceTo ( this->lat, this->lng ) < radius)
+        {
+            neighbours.push_back(*sensor_it);
+        }
+    }
+    return neighbours;
+} //----- Fin de getNeighbouringSensors
 
+string Cleaner::getId ( )
+{
+    return this->id;
+}
+
+double Cleaner::getLat ( )
+{
+    return this->lat;
+}
+
+double Cleaner::getLng ( )
+{
+    return this->lng;
+}
+
+time_t Cleaner::getStart ( )
+{
+    return this->start;
+}
+
+time_t Cleaner::getEnd ( )
+{
+    return this->end;
+}
 
 //------------------------------------------------- Surcharge d'opérateurs
 Cleaner& Cleaner::operator = ( const Cleaner& unCleaner )
 // Algorithme :
 //
 {
+    if (this != &unCleaner)
+    {
+        this->id = unCleaner.id;
+        this->lat = unCleaner.lat;
+        this->lng = unCleaner.lng;
+        this->start = unCleaner.start;
+        this->end = unCleaner.end;
+    }
+    return *this;
 } //----- Fin de operator =
 
 
@@ -45,10 +85,16 @@ Cleaner::Cleaner ( const Cleaner & unCleaner )
 #ifdef MAP
     cout << "Appel au constructeur de copie de <Cleaner>" << endl;
 #endif
+    this->id = unCleaner.id;
+    this->lat = unCleaner.lat;
+    this->lng = unCleaner.lng;
+    this->start = unCleaner.start;
+    this->end = unCleaner.end;
 } //----- Fin de Cleaner (constructeur de copie)
 
 
-Cleaner::Cleaner ( )
+Cleaner::Cleaner ( string p_id, double p_lat, double p_lng, time_t p_start, time_t p_end ) 
+    : id(p_id), lat(p_lat), lng(p_lng), start(p_start), end(p_end)
 // Algorithme :
 //
 {

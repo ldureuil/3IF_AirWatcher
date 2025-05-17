@@ -14,7 +14,8 @@ Sensor  -  todo
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
-#include <list>
+
+#include <vector>
 #include <ctime>
 
 //------------------------------------------------------------------------
@@ -35,19 +36,73 @@ public:
     // Contrat :
     //
 
-    list<Sensor> getSensorNeighbours();
+
+    string getId();
+    // Mode d'emploi :
+    //
+    // Contrat :
+    //
+    
+    double getLat();
+    // Mode d'emploi :
+    //
+    // Contrat :
+    //
+    
+    double getLng();
     // Mode d'emploi :
     //
     // Contrat :
     //
 
-    list<list<Measurement>> getMeasurements(time_t period_start, time_t period_end);
+    string getUserId();
     // Mode d'emploi :
     //
     // Contrat :
     //
 
-    list<Measurement> getClosestMeasurements(time_t instant, int before_after);
+    
+    void setId(string);
+    // Mode d'emploi :
+    //
+    // Contrat :
+    //
+    
+    void setLat(double);
+    // Mode d'emploi :
+    //
+    // Contrat :
+    //
+    
+    void setLng(double);
+    // Mode d'emploi :
+    //
+    // Contrat :
+    //
+
+    
+
+    void setUserId(string userid);
+    // Mode d'emploi :
+    //
+    // Contrat :
+    //
+
+    vector<Sensor> getSensorNeighbours(vector<Sensor> * sensors);
+    // Mode d'emploi :
+    //
+    // Contrat :
+    //
+
+    vector<Measurement> getMeasurements(time_t period_start, time_t period_end);
+    // Mode d'emploi :
+    //
+    // Contrat :
+    //
+
+    vector<Measurement> getAllMeasurement();
+
+    vector<Measurement> getClosestMeasurements(time_t instant, int before_after);
     // Mode d'emploi :
     //
     // Contrat :
@@ -86,7 +141,7 @@ private:
     string id;
     double lat;
     double lng;
-    list<Measurement> measurements;
+    vector<Measurement> measurements;
     string userId;
 
 protected:

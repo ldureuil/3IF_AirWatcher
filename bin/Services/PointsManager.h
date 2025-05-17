@@ -13,7 +13,7 @@ PointsManager  -  todo
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
-#include <list>
+#include <vector>
 
 //------------------------------------------------------------------------
 // Rôle de la classe <PointsManager>
@@ -25,7 +25,7 @@ class PointsManager {
     //----------------------------------------------------------------- PUBLIC
 public:
     //----------------------------------------------------- Méthodes publiques
-    bool award(list<string> sensorsUsed);
+    bool award(vector<string> sensorsUsed);
     // Mode d'emploi :
     //
     // Contrat :
@@ -39,21 +39,9 @@ public:
 
 
     //------------------------------------------------- Surcharge d'opérateurs
-    PointsManager& operator = ( const PointsManager& unPointsManager );
-    // Mode d'emploi :
-    //
-    // Contrat :
-    //
-
 
     //-------------------------------------------- Constructeurs - destructeur
-    PointsManager ( const PointsManager& unPointsManager );
-    // Mode d'emploi (constructeur de copie) :
-    //
-    // Contrat :
-    //
-
-    PointsManager ( );
+    PointsManager ( UserDataAccess Uda , DataLoader dataloader);
     // Mode d'emploi :
     //
     // Contrat :
@@ -69,7 +57,9 @@ public:
 
 protected:
     //----------------------------------------------------- Méthodes protégées
-
+     
+    UserDataAccess uda;
+    DataLoader dl;
     //----------------------------------------------------- Attributs protégés
 };
 

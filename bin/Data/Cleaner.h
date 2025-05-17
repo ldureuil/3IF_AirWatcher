@@ -15,7 +15,7 @@ et la période d'activité allant de start à stop todo
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
-#include <list>
+#include <vector>
 #include <ctime>
 
 //------------------------------------------------------------------------
@@ -29,7 +29,7 @@ class Cleaner
     //----------------------------------------------------------------- PUBLIC
 public:
     //----------------------------------------------------- Méthodes publiques
-    list<Sensor> getNeighbouringSensors(int radius);
+    vector<Sensor> getNeighbouringSensors( int radius, vector<Sensor> *sensors );
     // Mode d'emploi :
     //
     // Contrat :
@@ -51,7 +51,7 @@ public:
     // Contrat :
     //
 
-    Cleaner ( );
+    Cleaner ( string p_id, double p_lat, double p_lng, time_t p_start, time_t p_end );
     // Mode d'emploi :
     //
     // Contrat :
@@ -62,6 +62,16 @@ public:
     //
     // Contrat :
     //
+
+    string getId ( );
+
+    double getLat ( );
+
+    double getLng ( );
+
+    time_t getStart ( );
+    
+    time_t getEnd ( );
 
     //------------------------------------------------------------------ PRIVE
 private:
