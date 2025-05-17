@@ -62,7 +62,7 @@ public:
 
 protected:
     //----------------------------------------------------- Méthodes protégées
-
+    UserDataAccess uda;
     //----------------------------------------------------- Attributs protégés
 };
 

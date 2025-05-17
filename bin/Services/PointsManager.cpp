@@ -11,12 +11,13 @@ PointsManager  -  todo
 //-------------------------------------------------------- Include système
 using namespace std;
 #include <iostream>
-#include <fstream>
-#include <sstream>
+#include <unordered_set>
 #include <vector>
 
 //------------------------------------------------------ Include personnel
 #include "PointsManager.h"
+#include "../DataAccess/UserDataAccess.h"
+#include "../DataAccess/DataLoader.h"
 
 
 //------------------------------------------------------------- Constantes
@@ -24,58 +25,28 @@ using namespace std;
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Méthodes publiques
-bool PointsManager::award(list<string> sensorsUsed)
+bool PointsManager::award(vector<string> sensorsUsed)
 {
-    std::ifstream infile("particulierData.csv");
-    vector<string> lines;
-    string line;
+    
+    
+    bool updated = 0; 
+    
+    for (auto& sensorId : sensorsUsed) {
+        Sensor * sensor = dl.getSensor(sensorId);
+        string userId = sensor->getUserId();
 
-    bool updated = false;
-
-    for (auto& s :sensorsUsed)
-    {
-        // Read all lines
-        while (getline(infile, line)) {
-            stringstream ss(line);
-            string id, lat, lng, points;
-            getline(ss, id, ',');
-            getline(ss, lat, ',');
-            getline(ss, lng, ',');
-            getline(ss, points, ',');
-
-
-
-            int award = stoi(points);
-            if (id == s) {
-                stringstream updatedLine;
-                updatedLine << id << "," << lat << "," << lng << "," << award + 1;
-                lines.push_back(updatedLine.str());
-                updated = true;
-            } else {
-                lines.push_back(line);
-            }
+        if (&userId != nullptr)
+        {
+            uda.updateUserPoints(userId);
+            updated = 1;
         }
-
-        infile.close();
-
-        if (!updated) {
-            std::cerr << "Sensor ID not found in ParticulierData : " << s << std::endl;
-            return;
-        }
-
-        // Write all lines back to file
-        std::ofstream outfile("particulierData.csv");
-        for (const auto& l : lines) {
-            outfile << l << "\n";
-        }
-
-        outfile.close();
         
-
     }
-    
-    
+
+    return updated; // Retourne vrai s'il y a eu au moins une mise à jour
 }
+    
+    
 // Algorithme :
 //
 //{
@@ -83,48 +54,8 @@ bool PointsManager::award(list<string> sensorsUsed)
 
 int PointsManager::getPoints(string userId)
 {
-    ifstream infile("particulierData.csv");
-    vector<string> lines;
-    string line;
-    int value = 0;
-
-    bool found = false;
-
     
-    // Read all lines
-    while (getline(infile, line)) {
-        stringstream ss(line);
-        string id, lat, lng, points;
-        getline(ss, id, ',');
-        getline(ss, lat, ',');
-        getline(ss, lng, ',');
-        getline(ss, points, ',');
-
-
-        if (id == userId) {
-            value = stoi(points);
-            found = true;
-            break;
-        } 
-
-    }
-
-    infile.close();
-
-    if (!found) {
-        cerr << "User ID not found in ParticulierData : " << userId << endl;
-        return -1;
-    }
-
-    // Write all lines back to file
-    std::ofstream outfile("particulierData.csv");
-    for (const auto& l : lines) {
-        outfile << l << "\n";
-    }
-
-    outfile.close();
-    
-    return value;
+    int points = uda.loadUserPoints(userId);
 
 }
 // Algorithme :
@@ -138,7 +69,7 @@ int PointsManager::getPoints(string userId)
 
 //-------------------------------------------- Constructeurs - destructeur
 
-PointsManager::PointsManager ( )
+PointsManager::PointsManager (  UserDataAccess Uda , DataLoader dataloader)
 // Algorithme :
 //
 {
@@ -146,6 +77,8 @@ PointsManager::PointsManager ( )
     cout << "Appel au constructeur de <PointsManager>" << endl;
 #endif
 
+    UserDataAccess uda =Uda;
+    DataLoader dl = dataloader;
 } //----- Fin de PointsManager
 
 
@@ -160,5 +93,6 @@ PointsManager::~PointsManager ( )
 
 
 //------------------------------------------------------------------ PRIVE
+
 
 //----------------------------------------------------- Méthodes protégées

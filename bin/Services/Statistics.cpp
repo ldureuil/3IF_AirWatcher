@@ -11,6 +11,7 @@ Statistics  -  todo
 //-------------------------------------------------------- Include système
 using namespace std;
 #include <iostream>
+#include <algorithm>
 
 //------------------------------------------------------ Include personnel
 #include "Statistics.h"
@@ -142,6 +143,60 @@ vector<Sensor> Statistics::compareSensors(string sensorId, time_t period_start, 
 // Algorithme :
 //
 {
+
+    vector<Sensor> result;
+
+    if (sensors == nullptr) {
+        cerr << "Liste des capteurs non initialisée." << endl;
+        return result;
+    }
+
+    Sensor* sensorRef = nullptr;
+
+
+    *sensorRef = getSensorByID(sensorId);
+
+    
+
+    if (sensorRef == nullptr) {
+        cerr << "Capteur " << sensorId << " non trouvé." << endl;
+        return result;
+    }
+
+    vector<Measurement> refMeasurements = sensorRef->getMeasurements(period_start, period_end);
+    if (refMeasurements.empty()) return result;
+
+    // Stockage temporaire des scores
+    vector<pair<Sensor, double>> scoredSensors;
+
+    for (Sensor& s : *sensors) {
+        if (s.getId() == sensorId) continue;
+
+        vector<Measurement> otherMeasurements = s.getMeasurements(period_start, period_end);
+        if (otherMeasurements.size() != refMeasurements.size()) continue;
+
+        double totalDiff = 0.0;
+        for (size_t i = 0; i < refMeasurements.size(); ++i) {
+            totalDiff += abs(refMeasurements[i].getValue() - otherMeasurements[i].getValue());
+        }
+
+        double avgDiff = totalDiff / refMeasurements.size();
+        scoredSensors.push_back(make_pair(s, avgDiff));
+    }
+
+    // Tri des capteurs par similarité croissante
+    sort(scoredSensors.begin(), scoredSensors.end(),
+        [](const pair<Sensor, double>& a, const pair<Sensor, double>& b) {
+            return a.second < b.second;
+        });
+
+    for (const auto& entry : scoredSensors) {
+        result.push_back(entry.first);
+    }
+
+    return result;
+
+  
 
 } //----- Fin de compareSensors
 

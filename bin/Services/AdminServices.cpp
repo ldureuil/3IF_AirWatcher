@@ -14,6 +14,7 @@ using namespace std;
 
 //------------------------------------------------------ Include personnel
 #include "AdminServices.h"
+#include "../DataAccess/UserDataAccess.h"
 
 //------------------------------------------------------------- Constantes
 
@@ -22,6 +23,9 @@ using namespace std;
 //----------------------------------------------------- Méthodes publiques
 int AdminServices::excludeSensor(string sensorId)
 {
+
+    uda.addExcludedUser(sensorId);
+
 }
 // Algorithme :
 //
@@ -30,12 +34,16 @@ int AdminServices::excludeSensor(string sensorId)
 
 
 //------------------------------------------------- Surcharge d'opérateurs
-AdminServices& AdminServices::operator = ( const AdminServices& unAdminServices )
-// Algorithme :
-//
+AdminServices& AdminServices::operator=(const AdminServices& unAdminServices)
 {
-} //----- Fin de operator =
+    if (this != &unAdminServices) 
+    {
+        uda = unAdminServices.uda;
+        
+    }
 
+    return *this; 
+}
 
 //-------------------------------------------- Constructeurs - destructeur
 AdminServices::AdminServices ( const AdminServices & unAdminServices )
@@ -45,6 +53,8 @@ AdminServices::AdminServices ( const AdminServices & unAdminServices )
 #ifdef MAP
     cout << "Appel au constructeur de copie de <AdminServices>" << endl;
 #endif
+
+    uda = unAdminServices.uda;
 } //----- Fin de AdminServices (constructeur de copie)
 
 
