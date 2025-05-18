@@ -37,7 +37,7 @@ package "Données" {
     - userType : UserType
   }
 
-  class Particulierdata {
+  class ParticulierData {
     - id : string
     - points : int
     - excluded : bool
@@ -58,7 +58,8 @@ package "Services" {
 
   class PointsManager {
     - vector<Sensor>* sensors
-    + award(sensorsUsed : vector<string>)
+    - vector<ParticulierData>* particulierData
+    + award(sensorsUsed : vector<string>) : bool
     + getPoints(userId : string) : int
   }
 
@@ -101,8 +102,9 @@ package "Accès aux données" {
   }
 
   class UserDataAccess {
-    + loadParticulierData() : vector<int>
-    + updateParticulierData(userID : string)
+    + loadParticulierData() : vector<ParticulierData>*
+    + updateUserPoints(userID : string)
+    + addExcludedUser(userID : string)
   }
 
   class AuthDataAccess {
