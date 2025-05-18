@@ -11,145 +11,125 @@ PointsManager  -  todo
 //-------------------------------------------------------- Include système
 using namespace std;
 #include <iostream>
-#include <fstream>
-#include <sstream>
-#include <vector>
 
 //------------------------------------------------------ Include personnel
 #include "PointsManager.h"
-
+#include <unordered_set>
 
 //------------------------------------------------------------- Constantes
 
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Méthodes publiques
-bool PointsManager::award(list<string> sensorsUsed)
+bool PointsManager::award( vector<string> sensorsUsed )
+// Algorithme :
+//
 {
-    std::ifstream infile("particulierData.csv");
-    vector<string> lines;
-    string line;
+    bool updated = 0; 
 
-    bool updated = false;
+    for (auto& sensorId : sensorsUsed)
+	{
+	    for (auto& sensor : *sensors)
+	    {
+            if (sensor->getId() == sensorId)
+			{
+                // On a trouvé le capteur correspondant
+                // On peut mettre à jour les points de l'utilisateur
+                string userId = sensor->getUserId();
 
-    for (auto& s :sensorsUsed)
-    {
-        // Read all lines
-        while (getline(infile, line)) {
-            stringstream ss(line);
-            string id, lat, lng, points;
-            getline(ss, id, ',');
-            getline(ss, lat, ',');
-            getline(ss, lng, ',');
-            getline(ss, points, ',');
-
-
-
-            int award = stoi(points);
-            if (id == s) {
-                stringstream updatedLine;
-                updatedLine << id << "," << lat << "," << lng << "," << award + 1;
-                lines.push_back(updatedLine.str());
-                updated = true;
-            } else {
-                lines.push_back(line);
+                // On vérifie si l'utilisateur existe
+        		if (&userId != "")
+        		{
+            		uda.updateUserPoints(userId);
+            		updated = 1;
+        		}
+				break; // On sort de la boucle une fois qu'on a trouvé le capteur
             }
         }
-
-        infile.close();
-
-        if (!updated) {
-            std::cerr << "Sensor ID not found in ParticulierData : " << s << std::endl;
-            return;
-        }
-
-        // Write all lines back to file
-        std::ofstream outfile("particulierData.csv");
-        for (const auto& l : lines) {
-            outfile << l << "\n";
-        }
-
-        outfile.close();
-        
-
     }
-    
-    
-}
+
+    return updated; // Retourne vrai s'il y a eu au moins une mise à jour
+} //----- Fin de award
+
+int PointsManager::getPoints( string userId )
 // Algorithme :
 //
-//{
-//} //----- Fin de award
-
-int PointsManager::getPoints(string userId)
 {
-    ifstream infile("particulierData.csv");
-    vector<string> lines;
-    string line;
-    int value = 0;
-
-    bool found = false;
-
-    
-    // Read all lines
-    while (getline(infile, line)) {
-        stringstream ss(line);
-        string id, lat, lng, points;
-        getline(ss, id, ',');
-        getline(ss, lat, ',');
-        getline(ss, lng, ',');
-        getline(ss, points, ',');
-
-
-        if (id == userId) {
-            value = stoi(points);
-            found = true;
-            break;
-        } 
-
+    if (userId == "")
+    {
+        cerr << "Erreur : l'utilisateur n'est pas spécifié." << endl;
+        return -1; // Si l'utilisateur n'est pas spécifié, erreur
     }
 
-    infile.close();
+    // On vérifie si l'utilisateur existe
+    for (auto& sensor : *sensors)
+	{
+        if (sensor->getUserId() == userId)
+		{
+            // On vérifie si l'utilisateur existe
+        	if (&userId != "")
+        	{
+                for (auto& particulier : particulierData)
+                {
+                    if (particulier.getId() == userId)
+                    {
+                        // On a trouvé l'utilisateur
+                        int points = particulier.getPoints();
 
-    if (!found) {
-        cerr << "User ID not found in ParticulierData : " << userId << endl;
-        return -1;
+                        return points;
+                    }
+                }
+        	}
+        }
     }
 
-    // Write all lines back to file
-    std::ofstream outfile("particulierData.csv");
-    for (const auto& l : lines) {
-        outfile << l << "\n";
-    }
+    cerr << "Erreur : l'utilisateur n'existe pas." << endl;
+    return -1;
 
-    outfile.close();
-    
-    return value;
-
-}
-// Algorithme :
-//
-//{
-//} //----- Fin de getPoints
+} //----- Fin de getPoints
 
 
 //------------------------------------------------- Surcharge d'opérateurs
+PointsManager& PointsManager::operator = ( const PointsManager& unPointsManager )
+// Algorithme :
+//
+{
+    if (this != &unPointsManager)
+    {
+        uda = unPointsManager.uda;
+        particulierData = unPointsManager.particulierData; // copie simplement le pointeur
+        sensors = unPointsManager.sensors;
+    }
+
+    return *this;
+} //----- Fin de operator =
 
 
 //-------------------------------------------- Constructeurs - destructeur
-
-PointsManager::PointsManager ( )
+PointsManager::PointsManager( const PointsManager& unPointsManager )
 // Algorithme :
 //
 {
 #ifdef MAP
+    cout << "Appel au constructeur de copie de <PointsManager>" << endl;
+#endif
+    uda = unPointsManager.uda;
+    particulierData = unPointsManager.particulierData; // copie simplement le pointeur
+    sensors = unPointsManager.sensors;
+} //----- Fin de PointsManager (constructeur de copie)
+
+PointsManager::PointsManager( UserDataAccess p_uda, vector<ParticulierData> p_particulierData, vector<Sensor>* p_sensors )
+// Algorithme :
+//
+: uda(p_uda), particulierData(p_particulierData), sensors(p_sensors)
+{
+#ifdef MAP
     cout << "Appel au constructeur de <PointsManager>" << endl;
 #endif
-
 } //----- Fin de PointsManager
 
 
-PointsManager::~PointsManager ( )
+PointsManager::~PointsManager( )
 // Algorithme :
 //
 {
@@ -160,5 +140,6 @@ PointsManager::~PointsManager ( )
 
 
 //------------------------------------------------------------------ PRIVE
+
 
 //----------------------------------------------------- Méthodes protégées
