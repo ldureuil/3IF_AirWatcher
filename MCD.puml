@@ -7,14 +7,15 @@ package "Données" {
     - lng : double
     - measurements : vector<Measurement>
     - userId : string
-    + distanceTo(lat, lng) : double
-    + getSensorNeighbours() : vector<Sensor>
+    + distanceTo(lat : double, lng : double) : double
+    + getSensorNeighbours(sensors : vector<Sensor>*, radius : int) : vector<Sensor>
     + getMeasurements(period_start : DateTime, period_end : DateTime) : vector<vector<Measurement>>
     + getClosestMeasurements(instant : DateTime, before_after : int) : vector<Measurement>
   }
 
   class Measurement {
     - ts : DateTime
+    - attr_id : string
     - attr_unit : string
     - attr_desc : string
     - value : double
@@ -26,7 +27,7 @@ package "Données" {
     - lat : double
     - lng : double
     - start : DateTime
-    - stop  : DateTime
+    - end  : DateTime
     + getNeighbouringSensors(radius : int, sensors : vector<Sensor>*) : vector<Sensor>
   }
 
@@ -93,8 +94,10 @@ package "Services" {
 
 package "Accès aux données" {
   class DataLoader {
-    + loadSensor(userType : UserType) : vector<Sensor>*
-    + loadCleaner(userType : UserType) : vector<Cleaner>*
+    - sensors : vector<Sensor>
+    - cleaners : vector<Cleaner>
+    + loadSensor(databasePath : string, userType : UserType) : vector<Sensor>*
+    + loadCleaner(databasePath : string, userType : UserType) : vector<Cleaner>*
   }
 
   class UserDataAccess {

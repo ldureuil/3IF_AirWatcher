@@ -1,5 +1,5 @@
 /*************************************************************************
-DataLoader  -  todo
+DataLoader  -  Charge les données de la base de données
                              -------------------
     début                : 16/05/2025
 *************************************************************************/
@@ -11,41 +11,31 @@ DataLoader  -  todo
 //--------------------------------------------------- Interfaces utilisées
 #include "../Data/Sensor.h"
 #include "../Data/Cleaner.h"
+#include "../Authentification/UserType.h"
 
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
-#include <list>
+#include <vector>
 
 //------------------------------------------------------------------------
 // Rôle de la classe <DataLoader>
-// todo
-//
+// Charge les données de la base de données dans des vecteurs d'objets
+// Sensor et Cleaner attributs de la classe pour utiliser le pointeur
+// vers cette liste dans les services de l'application
 //------------------------------------------------------------------------
 
 class DataLoader {
     //----------------------------------------------------------------- PUBLIC
 public:
     //----------------------------------------------------- Méthodes publiques
-    void loadData();
+    vector<Sensor>* loadSensor( string databasePath, UserType userType );
     // Mode d'emploi :
     //
     // Contrat :
     //
 
-    Sensor* getSensor(string sensorId);
-    // Mode d'emploi :
-    //
-    // Contrat :
-    //
-
-    list<Sensor*> getSensors();
-    // Mode d'emploi :
-    //
-    // Contrat :
-    //
-
-    Cleaner* getCleaner(string cleanerId);
+    vector<Cleaner>* loadCleaner( string databasePath, UserType userType );
     // Mode d'emploi :
     //
     // Contrat :
@@ -61,19 +51,19 @@ public:
 
 
     //-------------------------------------------- Constructeurs - destructeur
-    DataLoader ( const DataLoader& unDataLoader );
+    DataLoader( const DataLoader& unDataLoader );
     // Mode d'emploi (constructeur de copie) :
     //
     // Contrat :
     //
 
-    DataLoader ( );
+    DataLoader( );
     // Mode d'emploi :
     //
     // Contrat :
     //
 
-    virtual ~DataLoader ( );
+    virtual ~DataLoader( );
     // Mode d'emploi :
     //
     // Contrat :
@@ -81,8 +71,8 @@ public:
 
     //------------------------------------------------------------------ PRIVE
 private:
-    list<Sensor*> sensors;
-    list<Cleaner*> cleaners;
+    vector<Sensor> sensors;
+    vector<Cleaner> cleaners;
 
 protected:
     //----------------------------------------------------- Méthodes protégées

@@ -1,5 +1,5 @@
 /*************************************************************************
-Cleaner  -  todo
+Cleaner  -  Objet métier stockant les informations des Cleaners
                              -------------------
     début                : 15/05/2025
 *************************************************************************/
@@ -20,14 +20,14 @@ using namespace std;
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Méthodes publiques
-vector<Sensor> Cleaner::getNeighbouringSensors( int radius, vector<Sensor> *sensors )
+vector<Sensor> Cleaner::getNeighbouringSensors( int radius, vector<Sensor>* sensors )
 // Algorithme :
 //
 {
     vector<Sensor> neighbours;
-    for ( vector<Sensor>::iterator sensor_it = sensors->begin() ; sensor_it != sensors->end() ; ++sensor_it )
+    for (vector<Sensor>::iterator sensor_it = sensors->begin(); sensor_it != sensors->end(); sensor_it++)
     {
-        if (sensor_it->distanceTo ( this->lat, this->lng ) < radius)
+        if (sensor_it->distanceTo(lat, lng) < radius)
         {
             neighbours.push_back(*sensor_it);
         }
@@ -35,30 +35,43 @@ vector<Sensor> Cleaner::getNeighbouringSensors( int radius, vector<Sensor> *sens
     return neighbours;
 } //----- Fin de getNeighbouringSensors
 
-string Cleaner::getId ( )
-{
-    return this->id;
-}
 
-double Cleaner::getLat ( )
+// ---------------------------------------------------- Getters / Setters
+string Cleaner::getId( )
+// Algorithme :
+//
 {
-    return this->lat;
-}
+    return id;
+} //----- Fin de getId
 
-double Cleaner::getLng ( )
+double Cleaner::getLat( )
+// Algorithme :
+//
 {
-    return this->lng;
-}
+    return lat;
+} //----- Fin de getLat
 
-time_t Cleaner::getStart ( )
+double Cleaner::getLng( )
+// Algorithme :
+//
 {
-    return this->start;
-}
+    return lng;
+} //----- Fin de getLng
 
-time_t Cleaner::getEnd ( )
+time_t Cleaner::getStart( )
+// Algorithme :
+//
 {
-    return this->end;
-}
+    return start;
+} //----- Fin de getStart
+
+time_t Cleaner::getEnd( )
+// Algorithme :
+//
+{
+    return end;
+} //----- Fin de getEnd
+
 
 //------------------------------------------------- Surcharge d'opérateurs
 Cleaner& Cleaner::operator = ( const Cleaner& unCleaner )
@@ -67,44 +80,43 @@ Cleaner& Cleaner::operator = ( const Cleaner& unCleaner )
 {
     if (this != &unCleaner)
     {
-        this->id = unCleaner.id;
-        this->lat = unCleaner.lat;
-        this->lng = unCleaner.lng;
-        this->start = unCleaner.start;
-        this->end = unCleaner.end;
+        id = unCleaner.id;
+        lat = unCleaner.lat;
+        lng = unCleaner.lng;
+        start = unCleaner.start;
+        end = unCleaner.end;
     }
+
     return *this;
 } //----- Fin de operator =
 
 
 //-------------------------------------------- Constructeurs - destructeur
-Cleaner::Cleaner ( const Cleaner & unCleaner )
+Cleaner::Cleaner( const Cleaner & unCleaner )
 // Algorithme :
 //
 {
 #ifdef MAP
     cout << "Appel au constructeur de copie de <Cleaner>" << endl;
 #endif
-    this->id = unCleaner.id;
-    this->lat = unCleaner.lat;
-    this->lng = unCleaner.lng;
-    this->start = unCleaner.start;
-    this->end = unCleaner.end;
+    id = unCleaner.id;
+    lat = unCleaner.lat;
+    lng = unCleaner.lng;
+    start = unCleaner.start;
+    end = unCleaner.end;
 } //----- Fin de Cleaner (constructeur de copie)
 
-
-Cleaner::Cleaner ( string p_id, double p_lat, double p_lng, time_t p_start, time_t p_end ) 
-    : id(p_id), lat(p_lat), lng(p_lng), start(p_start), end(p_end)
+Cleaner::Cleaner( string p_id, double p_lat, double p_lng, time_t p_start, time_t p_end )
 // Algorithme :
 //
+: id(p_id), lat(p_lat), lng(p_lng), start(p_start), end(p_end)
 {
 #ifdef MAP
     cout << "Appel au constructeur de <Cleaner>" << endl;
 #endif
 } //----- Fin de Cleaner
 
-
-Cleaner::~Cleaner ( )
+Cleaner::~Cleaner( )
 // Algorithme :
 //
 {

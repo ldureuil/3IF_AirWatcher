@@ -1,5 +1,5 @@
 /*************************************************************************
-Sensor  -  todo
+Sensor  -  Objet métier stockant les informations d'un capteur
                              -------------------
     début                : 15/05/2025
 *************************************************************************/
@@ -19,116 +19,47 @@ using namespace std;
 #include <map>
 #include <algorithm>
 
-
 //------------------------------------------------------------- Constantes
 
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Méthodes publiques
-double Sensor::distanceTo(double lat2, double lng2)
+double Sensor::distanceTo( double lat2, double lng2 )
+// Algorithme :
+//
 {
-    // Distance euclidienne simple (ou utilise la formule de Haversine si besoin)
+    // Distance euclidienne simple
     double dLat = lat - lat2;
     double dLng = lng - lng2;
-    return std::sqrt(dLat * dLat + dLng * dLng);
-}
 
-// Algorithme :
-//
-//{
-//} //----- Fin de distanceTo
-
-
-string Sensor::getId()
-// Algorithme :
-//
-{
-    return id;
+    return sqrt(dLat * dLat + dLng * dLng);
 } //----- Fin de distanceTo
 
-
-double Sensor::getLat()
+vector<Sensor> Sensor::getSensorNeighbours( vector<Sensor>* sensors, int radius )
 // Algorithme :
 //
 {
-    return lat;
-} //----- Fin de distanceTo
-
-
-double Sensor::getLng()
-// Algorithme :
-//
-{
-    return lng;
-} //----- Fin de distanceTo
-
-
-string Sensor::getUserId()
-// Algorithme :
-//
-{
-    return userId;
-} //----- Fin de distanceTo
-
-
-vector<Measurement> Sensor::getAllMeasurement()
-{
-    
-
-    return measurements;
-}
-
-
-void Sensor::setId(string Id)
-{
-    id = Id;
-}
-
-void Sensor::setLat(double Lat)
-{
-    lat = Lat;
-}
-
-void Sensor::setLng(double Lng)
-{
-    lng = Lng;
-}
-
-void Sensor::setUserId(string userid)
-{
-    userId = userid;
-}
-
-vector<Sensor> Sensor::getSensorNeighbours(vector<Sensor> * sensors)
-{
-    vector<Sensor> nearby_sensors;   
-    int i;
-    int n = sensors->size();
+    vector<Sensor> nearby_sensors;
     int distance = 0;
-    int radius = 120;
-    for ( auto& s : *sensors)
+    for (auto& s : *sensors)
     {
         distance = distanceTo(s.getLat(), s.getLng());
         if (distance <= radius)
         {
-            nearby_sensors.push_back(s); 
+            nearby_sensors.push_back(s);
         }
     }
     return nearby_sensors;
-    
 } //----- Fin de getSensorNeighbours
+
+vector<Measurement> Sensor::getMeasurements( time_t period_start, time_t period_end )
 // Algorithme :
 //
-//{
-//} //----- Fin de getMeasurements
-
-vector<Measurement> Sensor::getMeasurements(time_t period_start, time_t period_end)
 {
-    
     vector<Measurement> result;
     for (auto& m : measurements)
     {
-        
+
         if (m.getTs()>= period_start && m.getTs() <= period_end)
         {
             result.push_back(m);
@@ -136,39 +67,110 @@ vector<Measurement> Sensor::getMeasurements(time_t period_start, time_t period_e
     }
 
     return result;
-}
+} //----- Fin de getMeasurements
+
+vector<Measurement> Sensor::getClosestMeasurements( time_t instant, int before_after )
 // Algorithme :
 //
-//{
-//} //----- Fin de getMeasurements
-
-vector<Measurement> Sensor::getClosestMeasurements(time_t instant, int before_after)
 {
     vector<Measurement> filtered;
 
-    // Parcourt toutes les mesures
     for (Measurement m : measurements)
     {
         time_t ts = m.getTs();
 
-        // Avant l'instant
-        if (before_after < 0 && ts < instant)
+        // Avant l'instant (-1)
+        if (before_after == -1 && ts < instant)
         {
             filtered.push_back(m);
         }
-        // Après l'instant
-        else if (before_after > 0 && ts > instant)
+        // Après l'instant (+1)
+        else if (before_after == 1 && ts > instant)
         {
             filtered.push_back(m);
         }
     }
 
     return filtered;
-}
+} //----- Fin de getClosestMeasurements
+
+
+// ---------------------------------------------------- Getters / Setters
+string Sensor::getId( )
 // Algorithme :
 //
-//{
-//} //----- Fin de getClosestMeasurements
+{
+    return id;
+} //----- Fin de getId
+
+double Sensor::getLat( )
+// Algorithme :
+//
+{
+    return lat;
+} //----- Fin de getLat
+
+double Sensor::getLng( )
+// Algorithme :
+//
+{
+    return lng;
+} //----- Fin de getLng
+
+string Sensor::getUserId( )
+// Algorithme :
+//
+{
+    return userId;
+} //----- Fin de getUserId
+
+vector<Measurement> Sensor::getAllMeasurements( )
+// Algorithme :
+//
+{
+    return measurements;
+} //----- Fin de getAllMeasurements
+
+bool Sensor::setId( string p_id )
+// Algorithme :
+//
+{
+    id = p_id;
+    return true;
+} //----- Fin de setId
+
+bool Sensor::setLat( double p_lat )
+// Algorithme :
+//
+{
+    lat = p_lat;
+    return true;
+} //----- Fin de setLat
+
+bool Sensor::setLng( double p_lng )
+// Algorithme :
+//
+{
+    lng = p_lng;
+    return true;
+} //----- Fin de setLng
+
+bool Sensor::setMeasurements( vector<Measurement> p_measurements )
+// Algorithme :
+//
+{
+    measurements = p_measurements;
+    return true;
+} //----- Fin de setMeasurements
+
+bool Sensor::setUserId( string p_userId )
+// Algorithme :
+//
+{
+    userId = p_userId;
+    return true;
+} //----- Fin de setUserId
+
 
 //------------------------------------------------- Surcharge d'opérateurs
 Sensor& Sensor::operator = ( const Sensor& unSensor )
@@ -183,40 +185,49 @@ Sensor& Sensor::operator = ( const Sensor& unSensor )
         measurements = unSensor.measurements;
         userId = unSensor.userId;
     }
+
     return *this;
 } //----- Fin de operator =
 
 
 //-------------------------------------------- Constructeurs - destructeur
-Sensor::Sensor ( const Sensor & unSensor )
+Sensor::Sensor( const Sensor & unSensor )
 // Algorithme :
 //
 {
 #ifdef MAP
     cout << "Appel au constructeur de copie de <Sensor>" << endl;
 #endif
-
     id = unSensor.id;
     lat = unSensor.lat;
     lng = unSensor.lng;
     measurements = unSensor.measurements;
     userId = unSensor.userId;
-
 } //----- Fin de Sensor (constructeur de copie)
 
-
-Sensor::Sensor ( )
+Sensor::Sensor( )
 // Algorithme :
 //
 {
 #ifdef MAP
     cout << "Appel au constructeur de <Sensor>" << endl;
 #endif
-
-
- 
+    id = "";
+    lat = 0;
+    lng = 0;
+    userId = "";
+    measurements = vector<Measurement>();
 } //----- Fin de Sensor
 
+Sensor::Sensor( string p_id, double p_lat, double p_lng, vector<Measurement> p_measurements, string p_userId )
+// Algorithme :
+//
+: id(p_id), lat(p_lat), lng(p_lng), measurements(p_measurements), userId(p_userId)
+{
+#ifdef MAP
+    cout << "Appel au constructeur de <Sensor>" << endl;
+#endif
+} //----- Fin de Sensor
 
 Sensor::~Sensor ( )
 // Algorithme :
