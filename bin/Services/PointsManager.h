@@ -27,17 +27,24 @@ class PointsManager {
 public:
     //----------------------------------------------------- Méthodes publiques
     bool award(const vector<string>& sensorsUsed);
-    // Mode d'emploi :
-    //
-    // Contrat :
+    // Mode d'emploi : on attribue des points à un ou plusieurs utilisateurs 
+    // en fonction des capteurs utilisés.
+    // Contrat : 
     //
 
     int getPoints(string userId);
-    // Mode d'emploi :
-    //
-    // Contrat :
-    //
+    // Mode d'emploi : permet de récupérer le nombre de points d'un utilisateur.
+    // 
+    // Contrat : L'utilisateur doit exister dans le fichier ParticulierData.csv
 
+    void setSensors(vector<Sensor>* sensors);
+    // Mode d'emploi :
+    // Permet de définir le vecteur de capteurs à utiliser pour la gestion des points.
+    // Contrat :
+
+    vector<Sensor>* getSensors();
+    // Mode d'emploi :
+    // Permet de récupérer le vecteur de capteurs.
 
     //------------------------------------------------- Surcharge d'opérateurs
     PointsManager& operator = ( const PointsManager& unPointsManager );
@@ -54,9 +61,9 @@ public:
     // Contrat :
     //
 
-    PointsManager ( );
-    // Mode d'emploi :
-    //
+    PointsManager (vector<Sensor>* sensors = nullptr);
+    // Mode d'emploi (constructeur par défaut) : il prend en paramètre un vecteur de capteurs initialisé gràce à la méthode loadSensor 
+    // de la classe DataLoader.
     // Contrat :
     //
 
