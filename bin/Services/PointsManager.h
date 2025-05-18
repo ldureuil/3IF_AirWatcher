@@ -9,6 +9,7 @@ PointsManager  -  todo
 #define POINTSMANAGER_H
 
 //--------------------------------------------------- Interfaces utilisées
+#include "../DataAccess/UserDataAccess.h"
 
 //------------------------------------------------------------- Constantes
 
@@ -25,13 +26,13 @@ class PointsManager {
     //----------------------------------------------------------------- PUBLIC
 public:
     //----------------------------------------------------- Méthodes publiques
-    bool award(vector<string> sensorsUsed);
+    bool award( vector<string> sensorsUsed );
     // Mode d'emploi :
     //
     // Contrat :
     //
 
-    int getPoints(string userId);
+    int getPoints( string userId );
     // Mode d'emploi :
     //
     // Contrat :
@@ -39,27 +40,41 @@ public:
 
 
     //------------------------------------------------- Surcharge d'opérateurs
-
-    //-------------------------------------------- Constructeurs - destructeur
-    PointsManager ( UserDataAccess Uda , DataLoader dataloader);
+    PointsManager& operator = ( const PointsManager& unPointsManager );
     // Mode d'emploi :
     //
     // Contrat :
     //
 
-    virtual ~PointsManager ( );
+
+    //-------------------------------------------- Constructeurs - destructeur
+    PointsManager( const PointsManager& unPointsManager );
+    // Mode d'emploi :
+    //
+    // Contrat :
+    //
+
+    PointsManager( UserDataAccess p_uda, vector<ParticulierData>* p_particulierData, vector<Sensor>* p_sensors );
+    // Mode d'emploi : Passe un pointeur vers un vecteur de capteurs pour
+    // éviter une copie inutile
+    // Contrat :
+    //
+
+    virtual ~PointsManager( );
     // Mode d'emploi :
     //
     // Contrat :
     //
 
     //------------------------------------------------------------------ PRIVE
+private:
+    UserDataAccess uda;
+    vector<ParticulierData>* particulierData;
+    vector<Sensor>* sensors;
 
 protected:
     //----------------------------------------------------- Méthodes protégées
-     
-    UserDataAccess uda;
-    DataLoader dl;
+
     //----------------------------------------------------- Attributs protégés
 };
 
