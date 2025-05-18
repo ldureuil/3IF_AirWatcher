@@ -10,6 +10,7 @@ PointsManager  -  todo
 
 //--------------------------------------------------- Interfaces utilisées
 #include "../DataAccess/UserDataAccess.h"
+#include "../Data/ParticulierData.h"
 
 //------------------------------------------------------------- Constantes
 

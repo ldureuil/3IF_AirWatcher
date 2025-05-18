@@ -10,7 +10,7 @@ AdminServices  -  todo
 
 //--------------------------------------------------- Interfaces utilisées
 #include "../DataAccess/UserDataAccess.h"
-#include "../DataAccess/Sensor.h"
+#include "../Data/Sensor.h"
 
 //------------------------------------------------------------- Constantes
 
