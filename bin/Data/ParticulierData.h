@@ -26,6 +26,45 @@ class ParticulierData
 public:
     //----------------------------------------------------- Méthodes publiques
 
+
+    // ---------------------------------------------------- Getters / Setters
+    string getId() const;
+    // Mode d'emploi :
+    // Renvoie l'identifiant du particulier
+    // Contrat :
+    //
+
+    int getPoints() const;
+    // Mode d'emploi :
+    // Renvoie le nombre de points du particulier
+    // Contrat :
+    //
+
+    bool getIsExcluded() const;
+    // Mode d'emploi :
+    // Renvoie si le particulier est exclu
+    // Contrat :
+    //
+
+    bool setId(string p_id);
+    // Mode d'emploi :
+    // Modifie l'identifiant du particulier
+    // Contrat :
+    //
+
+    bool setPoints(int p_points);
+    // Mode d'emploi :
+    // Modifie le nombre de points du particulier
+    // Contrat :
+    //
+
+    bool setIsExcluded(bool p_isExcluded);
+    // Mode d'emploi :
+    // Modifie si le particulier est exclu
+    // Contrat :
+    //
+
+
     //------------------------------------------------- Surcharge d'opérateurs
     ParticulierData& operator = ( const ParticulierData& unParticulierData );
     // Mode d'emploi :
@@ -42,6 +81,12 @@ public:
     //
 
     ParticulierData( );
+    // Mode d'emploi :
+    //
+    // Contrat :
+    //
+
+    ParticulierData( string p_id, int p_points, bool p_isExcluded );
     // Mode d'emploi :
     //
     // Contrat :
