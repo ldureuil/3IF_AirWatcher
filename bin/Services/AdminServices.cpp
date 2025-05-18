@@ -14,59 +14,74 @@ using namespace std;
 
 //------------------------------------------------------ Include personnel
 #include "AdminServices.h"
-#include "../DataAccess/UserDataAccess.h"
 
 //------------------------------------------------------------- Constantes
 
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Méthodes publiques
-int AdminServices::excludeSensor(string sensorId)
+bool AdminServices::excludeSensor( string sensorId )
+// Algorithme :
+//
 {
+    bool exist = false;
+    for ( auto sensor : *sensors )
+    {
+        if ( sensor.getId() == sensorId )
+        {
+            exist = true;
+            break;
+        }
+    }
+
+    if ( !exist )
+    {
+        cerr << "Erreur : Le capteur " << sensorId << " n'existe pas." << endl;
+        return false;
+    }
 
     uda.addExcludedUser(sensorId);
 
-}
-// Algorithme :
-//
-//{
-//} //----- Fin de excludeSensor
+    return true;
+} //----- Fin de excludeSensor
 
 
 //------------------------------------------------- Surcharge d'opérateurs
-AdminServices& AdminServices::operator=(const AdminServices& unAdminServices)
+AdminServices& AdminServices::operator = (const AdminServices& unAdminServices)
+// Algorithme :
+//
 {
     if (this != &unAdminServices) 
     {
         uda = unAdminServices.uda;
-        
+        sensors = unAdminServices.sensors;
     }
 
     return *this; 
-}
+} //----- Fin de operator =
+
 
 //-------------------------------------------- Constructeurs - destructeur
-AdminServices::AdminServices ( const AdminServices & unAdminServices )
+AdminServices::AdminServices( const AdminServices & unAdminServices )
 // Algorithme :
 //
 {
 #ifdef MAP
     cout << "Appel au constructeur de copie de <AdminServices>" << endl;
 #endif
-
     uda = unAdminServices.uda;
+    sensors = unAdminServices.sensors;
 } //----- Fin de AdminServices (constructeur de copie)
 
-
-AdminServices::AdminServices ( )
+AdminServices::AdminServices ( UserDataAccess p_uda, vector<Sensor>* p_sensors )
 // Algorithme :
 //
+: uda(p_uda), sensors(p_sensors)
 {
 #ifdef MAP
     cout << "Appel au constructeur de <AdminServices>" << endl;
 #endif
 } //----- Fin de AdminServices
-
 
 AdminServices::~AdminServices ( )
 // Algorithme :

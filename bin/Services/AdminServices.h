@@ -9,6 +9,8 @@ AdminServices  -  todo
 #define ADMINSERVICES_H
 
 //--------------------------------------------------- Interfaces utilisées
+#include "../DataAccess/UserDataAccess.h"
+#include "../DataAccess/Sensor.h"
 
 //------------------------------------------------------------- Constantes
 
@@ -24,7 +26,7 @@ class AdminServices {
     //----------------------------------------------------------------- PUBLIC
 public:
     //----------------------------------------------------- Méthodes publiques
-    int excludeSensor(string sensorId);
+    bool excludeSensor( string sensorId );
     // Mode d'emploi :
     //
     // Contrat :
@@ -40,29 +42,32 @@ public:
 
 
     //-------------------------------------------- Constructeurs - destructeur
-    AdminServices ( const AdminServices& unAdminServices );
+    AdminServices( const AdminServices& unAdminServices );
     // Mode d'emploi (constructeur de copie) :
     //
     // Contrat :
     //
 
-    AdminServices ( );
+    AdminServices( UserDataAccess p_uda, vector<Sensor>* p_sensors );
     // Mode d'emploi :
     //
     // Contrat :
     //
 
-    virtual ~AdminServices ( );
+    virtual ~AdminServices( );
     // Mode d'emploi :
     //
     // Contrat :
     //
 
     //------------------------------------------------------------------ PRIVE
+private:
+    UserDataAccess uda;
+    vector<Sensor>* sensors;
 
 protected:
     //----------------------------------------------------- Méthodes protégées
-    UserDataAccess uda;
+
     //----------------------------------------------------- Attributs protégés
 };
 
