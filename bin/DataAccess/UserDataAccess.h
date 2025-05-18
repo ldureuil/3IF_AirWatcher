@@ -14,6 +14,7 @@ UserDataAccess  -  todo
 
 //------------------------------------------------------------------ Types
 #include <vector>
+#include <string>
 
 //------------------------------------------------------------------------
 // Rôle de la classe <UserDataAccess>
@@ -21,11 +22,16 @@ UserDataAccess  -  todo
 //
 //------------------------------------------------------------------------
 
+using namespace std;
 class UserDataAccess
 {
     //----------------------------------------------------------------- PUBLIC
 public:
     //----------------------------------------------------- Méthodes publiques
+
+    bool initializeCSVFile(string filename);
+    // Mode d'emploi : Permet de créer un fichier CSV avec les en-têtes userId, points et excluded.
+    // Si le fichier existe déjà, il ne sera pas créé à nouveau.
     
     int loadUserPoints(string userId);
     // Mode d'emploi : Permet de charger les points d'un utilisateur à partir du fichier ParticulierData.csv.
@@ -89,7 +95,5 @@ protected:
 
     //----------------------------------------------------- Attributs protégés
 };
-
-
 
 #endif //USERDATAACCESS_H

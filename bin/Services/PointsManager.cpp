@@ -14,27 +14,43 @@ using namespace std;
 
 //------------------------------------------------------ Include personnel
 #include "PointsManager.h"
+#include <algorithm>
 
 //------------------------------------------------------------- Constantes
 
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Méthodes publiques
-bool PointsManager::award(list<string> sensorsUsed)
+bool PointsManager::award(const vector<string>& sensorsUsed)
+//Algotithme :
 {
-}
-// Algorithme :
-//
-//{
-//} //----- Fin de award
+    UserDataAccess userDataAccess;
+    // Iteración con iterador explícito
+    for (vector<string>::const_iterator sensorIt = sensorsUsed.begin(); 
+         sensorIt != sensorsUsed.end(); 
+         ++sensorIt) {
+        
+        // Buscar el sensor en la colección
+        vector<Sensor>::iterator sensorFound = find_if( sensors->begin(), sensors->end(),
+            [&](const Sensor& s) { return s.getId() == *sensorIt; });
+        
+        if (sensorFound != sensors->end()) {
+            const string& userSensorId = sensorFound->getUserId();
+            userDataAccess.updateUserPoints(userSensorId);
+        }
+    }
+    
+    return true; // O algún valor que indique éxito/fracaso
+
+} //----- Fin de award
 
 int PointsManager::getPoints(string userId)
-{
-}
 // Algorithme :
-//
-//{
-//} //----- Fin de getPoints
+{
+    UserDataAccess userDataAccess;
+    int points = userDataAccess.loadUserPoints(userId);
+    return points;
+}//----- Fin de getPoints
 
 
 //------------------------------------------------- Surcharge d'opérateurs

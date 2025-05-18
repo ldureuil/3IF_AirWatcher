@@ -9,11 +9,12 @@ PointsManager  -  todo
 #define POINTSMANAGER_H
 
 //--------------------------------------------------- Interfaces utilisées
-
+#include "Sensor.h"
+#include "UserDataAccess.h"
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
-#include <list>
+#include <vector>
 
 //------------------------------------------------------------------------
 // Rôle de la classe <PointsManager>
@@ -25,7 +26,7 @@ class PointsManager {
     //----------------------------------------------------------------- PUBLIC
 public:
     //----------------------------------------------------- Méthodes publiques
-    bool award(list<string> sensorsUsed);
+    bool award(const vector<string>& sensorsUsed);
     // Mode d'emploi :
     //
     // Contrat :
@@ -71,6 +72,7 @@ protected:
     //----------------------------------------------------- Méthodes protégées
 
     //----------------------------------------------------- Attributs protégés
+    vector<Sensor>* sensors;
 };
 
 

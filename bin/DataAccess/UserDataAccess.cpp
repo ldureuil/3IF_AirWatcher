@@ -11,12 +11,13 @@ UserDataAccess  -  todo
 //-------------------------------------------------------- Include système
 using namespace std;
 #include <iostream>
-#include <string>
 #include <fstream>
 #include <sstream>
-
+#include <vector>
+#include <string>
 //------------------------------------------------------ Include personnel
 #include "UserDataAccess.h"
+using namespace std;
 
 //------------------------------------------------------------- Constantes
 
@@ -24,6 +25,23 @@ using namespace std;
 
 //----------------------------------------------------- Méthodes publiques
 
+ bool UserDataAccess::initializeCSVFile(string filename){
+    std::ifstream testFile(filename);
+    if (testFile.good()) {
+        testFile.close();
+        return true;  // El archivo ya existe
+    }
+    
+    std::ofstream newFile(filename);
+    if (!newFile) {
+        return false;  // Error al crear el archivo
+    }
+    
+    // Escribir cabeceras (opcional)
+    newFile << "userId;points;excluded\n";
+    newFile.close();
+    return true;
+}
 
 int UserDataAccess::loadUserPoints(string userId)
 // Algorithme : 
@@ -31,12 +49,14 @@ int UserDataAccess::loadUserPoints(string userId)
 // Si trouvé, retourner les points de l'utilisateur
 // Retourner -1 si l'utilisateur n'est pas trouvé
 {
-    ifstream file("ParticulierData.csv");
+    string filename = "ParticulierData.csv";
+    ifstream file(filename);
     if (!file.is_open())
     {
         cerr << "Erreur d'ouverture du fichier userPoints.csv" << endl;
         return -1; // Erreur d'ouverture du fichier
     }
+
     string line;
     while(getline(file,line)){
         vector<string> row;
@@ -71,7 +91,9 @@ int UserDataAccess::updateUserPoints(string userId)
 // Retourner les nouveaux points de l'utilisateur
 {
     // Ouverture du fichier
-    ifstream inFile("ParticulierData.csv");
+    string filename = "ParticulierData.csv";
+    initializeCSVFile(filename);
+    ifstream inFile(filename);
     if (!inFile.is_open()) {
         cerr << "Erreur d'ouverture du fichier ParticulierData.csv" << endl;
         return -1;
@@ -118,11 +140,6 @@ int UserDataAccess::updateUserPoints(string userId)
         return -1;
     }
 
-    // Ecrire l'en-tête si le fichier est vide
-    if (lines.empty()) {
-        outFile << "userId;points;excluded\n";
-    }
-
     // Ecriture de chaque ligne dans le fichier
     for (const auto& l : lines) {
         outFile << l << endl;
@@ -137,7 +154,9 @@ vector<string> UserDataAccess::loadExcludedUsers()
 // Retourne les utilisateurs exclus (vecteur) en parcourant le fichier ParticulierData.csv
 // Retourne un vecteur vide si le fichier est vide, ou s'il n'y a pas des utilisateurs exclus ou en cas d'erreur
 {
-    ifstream inFile("ParticulierData.csv");
+    string filename = "ParticulierData.csv";
+    ifstream inFile(filename);
+
     if (!inFile.is_open()) {
         cerr << "Erreur d'ouverture du fichier ParticulierData.csv" << endl;
         return vector<string>(); // Retourner un vecteur vide en cas d'erreur
@@ -181,8 +200,10 @@ int UserDataAccess::addExcludedUser(string userId)
 // Si l'utilisateur n'est pas trouvé, l'ajouter avec le statut exclu
 // Retourner 0 si déjà exclu, 1 si succès, -1 en cas d'erreur
 {
-    const string filename = "ParticulierData.csv";
+    string filename = "ParticulierData.csv";
+    initializeCSVFile(filename);
     ifstream inFile(filename);
+
     if (!inFile.is_open()) {
         cerr << "Erreur d'ouverture du fichier " << filename << endl;
         return -1;
@@ -191,7 +212,6 @@ int UserDataAccess::addExcludedUser(string userId)
     vector<string> lines;
     string line;
     bool userFound = false;
-    bool userExcluded = false;
 
     // Lecture du fichier
     while (getline(inFile, line)) {
@@ -228,9 +248,6 @@ int UserDataAccess::addExcludedUser(string userId)
         cerr << "Erreur d'écriture du fichier " << filename << endl;
         return -1;
     }
-
-    // Écriture de l'en-tête
-    outFile << "userId;points;excluded" << endl;
 
     for (const auto& l : lines) {
         outFile << l << endl;
