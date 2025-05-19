@@ -3,18 +3,22 @@ TP de Génie Logiciel
 Lien du document Word des rendus : 
 https://insalyonfrance-my.sharepoint.com/:w:/g/personal/edosanjos_insa-lyon_fr/EVSNzSARSPZKgMgsQqCgS6YBehI4z2Srng06fMhz2f5D9A
 
-## TO-DO LIST:
-### Rendu 1 : Initialization Document
-- (ENZO) Diagramme des cas d'utilisation : on a inversé le sens des includes + modifier les interactions avec le serveur central pour tenir compte du fait que les données sont toutes chargées en mémoire
-- (OPTIONNEL) Opter pour la mise en forme des exigences fonctionnelles telle que décrite slide 94 de Requirements Engineering.
+## TO-DO LIST: RENDU APP V1
+- Implémenter le service d'authentification ➕
+- Implémenter la fonction Administrateur d'évaluation des différents algorithmes ➕
+- Remettre en ordre les histoires de UserDataAccess -> PointsManager 😖
+- analyzeCleaner() provoque une erreur de segmentation et son retour est vraiment pas pratique ✨
+- excludeSensor() n'a pas l'air de fonctionner 🥲
+- analyzeSensor() semble trouver que chaque capteur est suspect 😧
+- computeZone() n'attribue pas encore les points aux utilisateurs 💸
 
-### Rendu 2 : Design Document
-- Architecture de l'application
-- Diagramme de classes
-- Diagrammes de séquence
-- Algorithmes
-- Tests unitaires
+- Supprimer les branches obsolètes ☠️
+- Clean le code 🧹
 
-## Questions :
-- À quoi ressemblera le Service d'authentification et comment sécuriser un minimum l'accès au rôle Responsable/Admin ? (Ça impacte les diagrammes de séquence)
-- Où stocker les données ? Ce serait contraire à la religion que d'avoir des 
+## Ajustements au niveau du rendu PDF
+- À terme, il faudra reprendre le diagramme de classes, car on a fait quelques changements
+- Trouver un moyen d'agrandir le diagramme de classe, pour qu'il puisse être lu en version imprimée (au moins format paysage)
+- La relation entre un capteur et une mesure est une composition, changer le style de la flèche
+
+## Question
+- On check les autorisations associées à la session dans l'interface ou dans les services ?
