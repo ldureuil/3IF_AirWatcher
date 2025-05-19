@@ -5,16 +5,17 @@ package "Données" {
     - id : string
     - lat : double
     - lng : double
-    - measurements : list<Measurement>
+    - measurements : vector<Measurement>
     - userId : string
-    + distanceTo(lat,lng) : double
-    + getSensorNeighbours() : list<Sensor>
-    + getMeasurements(period_start : DateTime, period_end : DateTime) : list<list<Measurement>>
-    + getClosestMeasurements(instant : DateTime, before_after : int) : list<Measurement>
+    + distanceTo(lat : double, lng : double) : double
+    + getSensorNeighbours(sensors : vector<Sensor>*, radius : int) : vector<Sensor>
+    + getMeasurements(period_start : DateTime, period_end : DateTime) : vector<vector<Measurement>>
+    + getClosestMeasurements(instant : DateTime, before_after : int) : vector<Measurement>
   }
 
   class Measurement {
     - ts : DateTime
+    - attr_id : string
     - attr_unit : string
     - attr_desc : string
     - value : double
@@ -26,8 +27,8 @@ package "Données" {
     - lat : double
     - lng : double
     - start : DateTime
-    - stop  : DateTime
-    + getNeighbouringSensors(radius : int) : list<Sensor>
+    - end  : DateTime
+    + getNeighbouringSensors(radius : int, sensors : vector<Sensor>*) : vector<Sensor>
   }
 
     class Credentials {
@@ -35,54 +36,39 @@ package "Données" {
     - password : string
     - userType : UserType
   }
+
+  class ParticulierData {
+    - id : string
+    - points : int
+    - excluded : bool
+  }
 }
 
 
 package "Services" {
   class Statistics {
+    - vector<Sensor>* sensors
+    - vector<Cleaner>* cleaners
     + analyzeSensor(sensorID: string) : int
-    + analyzeCleaner(cleanerID: string, radius : int) : list<long>
-    + computeZone(lat : double, lng : double, period_start : DateTime, period_end : DateTime, radius : int) : list<Measurement>
-    + compareSensors(sensorID: string, period_start : DateTime, period_end : DateTime) : list<Sensor>
-    + extrapolateAQI(lat : double, lng : double, period_start : DateTime, period_end : DateTime) : list<Measurement>
+    + analyzeCleaner(cleanerID: string, radius : int) : vector<long>
+    + computeZone(lat : double, lng : double, period_start : DateTime, period_end : DateTime, radius : int) : vector<Measurement>
+    + compareSensors(sensorID: string, period_start : DateTime, period_end : DateTime) : vector<Sensor>
+    + extrapolateAQI(lat : double, lng : double, period_start : DateTime, period_end : DateTime) : vector<Measurement>
   }
 
   class PointsManager {
-    + award(sensorsUsed : list<string>)
+    - vector<Sensor>* sensors
+    - vector<ParticulierData>* particulierData
+    + award(sensorsUsed : vector<string>) : bool
     + getPoints(userId : string) : int
   }
 
   class AdminServices {
+    - vector<Sensor>* sensors
     + excludeSensor(sensorID: string)
   }
-}
 
-
-package "Accès aux données" {
-  class DataLoader {
-    - sensors : list<Sensor*>
-    - Cleaner : list<Cleaner*>
-    + loadData(userType : UserType)
-    + getSensor(sensorId : string) : Sensor*
-    + getSensors() : list<Sensor*>
-    + getCleaner(cleanerId : string) : Cleaner*
-  }
-
-  class UserDataAccess {
-    + loadUserPoints(userID : string) : int
-    + updateUserPoints(userID : string)
-    + loadExcludedUsers() : list<string>
-    + addExcludedUser(userID : string)
-  }
-
-  class AuthDataAccess {
-    + loadCredentials() : list<Credentials>
-    + findCredentials(login : string) : Credentials
-  }
-}
-
-
-package "Authentification" {
+  package "Authentification" {
     enum UserType {
     - Admin
     - User
@@ -98,8 +84,31 @@ package "Authentification" {
   }
 
   class AuthService {
+    - usersCredentials : vector<Credentials>
     + login(login : string, password : string) : Session
     + checkRequiredRole(session : Session, role : UserType) : bool
+    + findCredentials(login : string) : Credentials
+  }
+  }
+}
+
+
+package "Accès aux données" {
+  class DataLoader {
+    - sensors : vector<Sensor>
+    - cleaners : vector<Cleaner>
+    + loadSensor(databasePath : string, userType : UserType) : vector<Sensor>*
+    + loadCleaner(databasePath : string, userType : UserType) : vector<Cleaner>*
+  }
+
+  class UserDataAccess {
+    + loadParticulierData() : vector<ParticulierData>*
+    + updateUserPoints(userID : string)
+    + addExcludedUser(userID : string)
+  }
+
+  class AuthDataAccess {
+    + loadCredentials() : vector<Credentials>
   }
 }
 
@@ -112,10 +121,7 @@ package "Interface utilisateur" {
 
 
 
-Sensor  "1" --> "n" Measurement
-DataLoader --> Sensor
-DataLoader --> Cleaner
-AuthDataAccess --> Credentials
+Sensor  o-- Measurement
 
 CLI --> AuthService
 
@@ -123,9 +129,10 @@ Statistics     ..> AuthService : checkRequiredRole
 PointsManager  ..> AuthService : checkRequiredRole
 AdminServices  ..> AuthService : checkRequiredRole
 
-Statistics     ..> DataLoader
-Statistics     ..> UserDataAccess
-PointsManager  ..> UserDataAccess
-AdminServices  ..> DataLoader
-AdminServices  ..> UserDataAccess
+Statistics     ..> Cleaner
+Statistics     ..> Sensor
+PointsManager  ..> Sensor
+AdminServices  ..> Sensor
+
+AuthService ..> Credentials
 @enduml

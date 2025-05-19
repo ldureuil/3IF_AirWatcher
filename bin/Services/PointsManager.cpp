@@ -11,18 +11,17 @@ PointsManager  -  todo
 //-------------------------------------------------------- Include système
 using namespace std;
 #include <iostream>
+#include <algorithm>
+#include <unordered_set>
 
 //------------------------------------------------------ Include personnel
 #include "PointsManager.h"
-#include <algorithm>
 
 //------------------------------------------------------------- Constantes
 
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Méthodes publiques
-#include <unordered_set>
-
 bool PointsManager::award(const vector<string>& sensorsUsed)
 //Algotithme : iter sur chaque capteur utilisé
 // et vérifier s'il est connu
@@ -74,20 +73,42 @@ bool PointsManager::award(const vector<string>& sensorsUsed)
 
 } //----- Fin de award
 
-
-int PointsManager::getPoints(string userId)
-// Algorithme : faire appel à la classe UserDataAccess
-// et à la méthode loadUserPoints
-{
-    UserDataAccess userDataAccess;
-    int points = userDataAccess.loadUserPoints(userId);
-    return points;
-}//----- Fin de getPoints
-
-void PointsManager::setSensors(vector<Sensor>* sensors)
+int PointsManager::getPoints( string userId )
 // Algorithme :
-// 
-{ this->sensors = sensors; } //----- Fin de setSensors
+//
+{
+    if (userId == "")
+    {
+        cerr << "Erreur : l'utilisateur n'est pas spécifié." << endl;
+        return -1; // Si l'utilisateur n'est pas spécifié, erreur
+    }
+
+    // On vérifie si l'utilisateur existe
+    for (auto& sensor : *sensors)
+	{
+        if (sensor->getUserId() == userId)
+		{
+            // On vérifie si l'utilisateur existe
+        	if (&userId != "")
+        	{
+                for (auto& particulier : particulierData)
+                {
+                    if (particulier.getId() == userId)
+                    {
+                        // On a trouvé l'utilisateur
+                        int points = particulier.getPoints();
+
+                        return points;
+                    }
+                }
+        	}
+        }
+    }
+
+    cerr << "Erreur : l'utilisateur n'existe pas." << endl;
+    return -1;
+
+} //----- Fin de getPoints
 
 vector<Sensor>* PointsManager::getSensors(void)
 // Algorithme :
@@ -95,29 +116,44 @@ vector<Sensor>* PointsManager::getSensors(void)
     return this->sensors;
 }
 
+void PointsManager::setSensors(vector<Sensor>* sensors)
+// Algorithme :
+// 
+{ this->sensors = sensors; } //----- Fin de setSensors
 
 //------------------------------------------------- Surcharge d'opérateurs
 PointsManager& PointsManager::operator = ( const PointsManager& unPointsManager )
 // Algorithme :
 //
 {
+    if (this != &unPointsManager)
+    {
+        uda = unPointsManager.uda;
+        particulierData = unPointsManager.particulierData; // copie simplement le pointeur
+        sensors = unPointsManager.sensors;
+    }
+
+    return *this;
 } //----- Fin de operator =
 
 
 //-------------------------------------------- Constructeurs - destructeur
-PointsManager::PointsManager ( const PointsManager & unPointsManager )
+PointsManager::PointsManager( const PointsManager& unPointsManager )
 // Algorithme :
 //
 {
 #ifdef MAP
     cout << "Appel au constructeur de copie de <PointsManager>" << endl;
 #endif
+    uda = unPointsManager.uda;
+    particulierData = unPointsManager.particulierData; // copie simplement le pointeur
+    sensors = unPointsManager.sensors;
 } //----- Fin de PointsManager (constructeur de copie)
 
-
-PointsManager::PointsManager (vector<Sensor>* sensors)
+PointsManager::PointsManager( UserDataAccess p_uda, vector<ParticulierData> p_particulierData, vector<Sensor>* p_sensors )
 // Algorithme :
 //
+: uda(p_uda), particulierData(p_particulierData), sensors(p_sensors)
 {
 #ifdef MAP
     cout << "Appel au constructeur de <PointsManager>" << endl;
@@ -126,7 +162,7 @@ PointsManager::PointsManager (vector<Sensor>* sensors)
 } //----- Fin de PointsManager
 
 
-PointsManager::~PointsManager ( )
+PointsManager::~PointsManager( )
 // Algorithme :
 //
 {
@@ -137,5 +173,6 @@ PointsManager::~PointsManager ( )
 
 
 //------------------------------------------------------------------ PRIVE
+
 
 //----------------------------------------------------- Méthodes protégées

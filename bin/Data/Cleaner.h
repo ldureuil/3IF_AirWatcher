@@ -1,6 +1,5 @@
 /*************************************************************************
-Cleaner  -  Objet cleaner stockant l'id du cleaner, sa latitude, longitude
-et la période d'activité allant de start à stop todo
+Cleaner  -  Objet métier stockant les informations des Cleaners
                              -------------------
     début                : 15/05/2025
 *************************************************************************/
@@ -15,13 +14,13 @@ et la période d'activité allant de start à stop todo
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
-#include <list>
+#include <vector>
 #include <ctime>
 
 //------------------------------------------------------------------------
 // Rôle de la classe <Cleaner>
-// todo
-//
+// Objet métier Cleaner stockant l'id du cleaner, sa latitude, longitude
+// et la période d'activité allant de start à stop
 //------------------------------------------------------------------------
 
 class Cleaner
@@ -29,7 +28,38 @@ class Cleaner
     //----------------------------------------------------------------- PUBLIC
 public:
     //----------------------------------------------------- Méthodes publiques
-    list<Sensor> getNeighbouringSensors(int radius);
+    vector<Sensor> getNeighbouringSensors( int radius, vector<Sensor>* sensors );
+    // Mode d'emploi :
+    //
+    // Contrat :
+    //
+
+    // ---------------------------------------------------- Getters / Setters
+    string getId( );
+    // Mode d'emploi :
+    //
+    // Contrat :
+    //
+
+    double getLat( );
+    // Mode d'emploi :
+    //
+    // Contrat :
+    //
+
+    double getLng( );
+    // Mode d'emploi :
+    //
+    // Contrat :
+    //
+
+    time_t getStart( );
+    // Mode d'emploi :
+    //
+    // Contrat :
+    //
+
+    time_t getEnd( );
     // Mode d'emploi :
     //
     // Contrat :
@@ -45,23 +75,24 @@ public:
 
 
     //-------------------------------------------- Constructeurs - destructeur
-    Cleaner ( const Cleaner& unCleaner );
+    Cleaner( const Cleaner& unCleaner );
     // Mode d'emploi (constructeur de copie) :
     //
     // Contrat :
     //
 
-    Cleaner ( );
+    Cleaner( string p_id, double p_lat, double p_lng, time_t p_start, time_t p_end );
     // Mode d'emploi :
     //
     // Contrat :
     //
 
-    virtual ~Cleaner ( );
+    virtual ~Cleaner( );
     // Mode d'emploi :
     //
     // Contrat :
     //
+
 
     //------------------------------------------------------------------ PRIVE
 private:

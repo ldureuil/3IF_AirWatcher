@@ -9,8 +9,10 @@ PointsManager  -  todo
 #define POINTSMANAGER_H
 
 //--------------------------------------------------- Interfaces utilisées
-#include "Sensor.h"
-#include "UserDataAccess.h"
+#include "../DataAccess/UserDataAccess.h"
+#include "../Data/ParticulierData.h"
+#include "../Data/Sensor.h"
+
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
@@ -38,9 +40,6 @@ public:
     // Contrat : L'utilisateur doit exister dans le fichier ParticulierData.csv
 
     void setSensors(vector<Sensor>* sensors);
-    // Mode d'emploi :
-    // Permet de définir le vecteur de capteurs à utiliser pour la gestion des points.
-    // Contrat :
 
     vector<Sensor>* getSensors();
     // Mode d'emploi :
@@ -55,25 +54,29 @@ public:
 
 
     //-------------------------------------------- Constructeurs - destructeur
-    PointsManager ( const PointsManager& unPointsManager );
-    // Mode d'emploi (constructeur de copie) :
+    PointsManager( const PointsManager& unPointsManager );
+    // Mode d'emploi :
     //
     // Contrat :
     //
 
-    PointsManager (vector<Sensor>* sensors = nullptr);
-    // Mode d'emploi (constructeur par défaut) : il prend en paramètre un vecteur de capteurs initialisé gràce à la méthode loadSensor 
-    // de la classe DataLoader.
+    PointsManager( UserDataAccess p_uda, vector<ParticulierData>* p_particulierData, vector<Sensor>* p_sensors );
+    // Mode d'emploi : Passe un pointeur vers un vecteur de capteurs pour
+    // éviter une copie inutile
     // Contrat :
     //
 
-    virtual ~PointsManager ( );
+    virtual ~PointsManager( );
     // Mode d'emploi :
     //
     // Contrat :
     //
 
     //------------------------------------------------------------------ PRIVE
+private:
+    UserDataAccess uda;
+    vector<ParticulierData>* particulierData;
+    vector<Sensor>* sensors;
 
 protected:
     //----------------------------------------------------- Méthodes protégées
