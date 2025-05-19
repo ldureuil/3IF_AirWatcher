@@ -23,21 +23,21 @@ using namespace std;
 
 
 // ---------------------------------------------------- Getters / Setters
-string ParticulierData::getId()
+string ParticulierData::getId() const
 // Algorithme :
 // Renvoie l'identifiant du particulier
 {
     return id;
 } //----- Fin de getId
 
-int ParticulierData::getPoints()
+int ParticulierData::getPoints() const
 // Algorithme :
 // Renvoie le nombre de points du particulier
 {
     return points;
 } //----- Fin de getPoints
 
-bool ParticulierData::getIsExcluded()
+bool ParticulierData::getIsExcluded() const
 // Algorithme :
 // Renvoie si le particulier est exclu
 {

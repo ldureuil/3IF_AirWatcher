@@ -25,7 +25,7 @@ using namespace std;
 
 //----------------------------------------------------- Méthodes publiques
 
- bool UserDataAccess::initializeCSVFile(string filename){
+bool UserDataAccess::initializeCSVFile(string filename){
     std::ifstream testFile(filename);
     if (testFile.good()) {
         testFile.close();
@@ -38,18 +38,18 @@ using namespace std;
     }
     
     // Escribir cabeceras (opcional)
-    newFile << "userId;points;excluded\n";
+    // newFile << "userId;points;excluded\n";
     newFile.close();
     return true;
 }
 
 int UserDataAccess::loadUserPoints(string userId)
-// Algorithme : 
+// Algorithme :
 // Vérifier si l'ID utilisateur correspond à celui recherché en parcourant le fichier ParticulierData.csv
 // Si trouvé, retourner les points de l'utilisateur
 // Retourner -1 si l'utilisateur n'est pas trouvé
 {
-    string filename = "ParticulierData.csv";
+    string filename = "../data/ParticulierData.csv";
     ifstream file(filename);
     if (!file.is_open())
     {
@@ -81,9 +81,54 @@ int UserDataAccess::loadUserPoints(string userId)
     
 } //----- Fin de loadUserPoints
 
+vector<ParticulierData> UserDataAccess::loadParticulierData()
+// Algorithme :
+// Vérifier si l'ID utilisateur correspond à celui recherché en parcourant le fichier ParticulierData.csv
+// Si trouvé, retourner les points de l'utilisateur
+// Retourner -1 si l'utilisateur n'est pas trouvé
+{
+    string filename = "../data/ParticulierData.csv";
+    ifstream inFile(filename);
 
+    if (!inFile.is_open()) {
+        cerr << ">w< Erreur d'ouverture du fichier ParticulierData.csv" << endl;
+        return vector<ParticulierData>(); // Retourner un vecteur vide en cas d'erreur
+    }
 
-int UserDataAccess::updateUserPoints(string userId) 
+    // Vérifier si le fichier est vide
+    inFile.seekg(0, ios::end);
+    if (inFile.tellg() == 0) {
+        cerr << "Le fichier ParticulierData.csv est vide." << endl;
+        return vector<ParticulierData>(); // Retourner un vecteur vide si fichier vide
+    }
+    inFile.seekg(0, ios::beg); // Revenir au début
+
+    vector<ParticulierData> particulierDataList;
+    ParticulierData particulierData;
+    string line;
+
+    // Lire chaque ligne du fichier
+    while (getline(inFile, line)) {
+        vector<string> row;
+        stringstream ss(line);
+        string cell;
+
+        while (getline(ss, cell, ';')) {
+            row.push_back(cell);
+        }
+        // Ajouter chaque utilisateur
+
+        if (row.size() >= 3) {
+            particulierData = ParticulierData(row[0], stoi(row[1]), row[2] == "1");
+            particulierDataList.push_back(particulierData);
+        }
+    }
+
+    inFile.close();
+    return particulierDataList;
+} //----- Fin de loadParticulierData
+
+int UserDataAccess::updateUserPoints(string userId)
 // Algorithme :
 // Vérifier si l'ID utilisateur correspond à celui recherché en parcourant le fichier ParticulierData.csv
 // Si trouvé, incrémenter les points de 10
@@ -91,7 +136,7 @@ int UserDataAccess::updateUserPoints(string userId)
 // Retourner les nouveaux points de l'utilisateur
 {
     // Ouverture du fichier
-    string filename = "ParticulierData.csv";
+    string filename = "../data/ParticulierData.csv";
     initializeCSVFile(filename);
     ifstream inFile(filename);
     if (!inFile.is_open()) {
@@ -134,7 +179,7 @@ int UserDataAccess::updateUserPoints(string userId)
     }
 
     // Ouverture du fichier en écriture
-    ofstream outFile("ParticulierData.csv");
+    ofstream outFile("../data/ParticulierData.csv");
     if (!outFile.is_open()) {
         cerr << "Erreur d'écriture du fichier ParticulierData.csv" << endl;
         return -1;
@@ -154,7 +199,7 @@ vector<string> UserDataAccess::loadExcludedUsers()
 // Retourne les utilisateurs exclus (vecteur) en parcourant le fichier ParticulierData.csv
 // Retourne un vecteur vide si le fichier est vide, ou s'il n'y a pas des utilisateurs exclus ou en cas d'erreur
 {
-    string filename = "ParticulierData.csv";
+    string filename = "../data/ParticulierData.csv";
     ifstream inFile(filename);
 
     if (!inFile.is_open()) {
@@ -200,7 +245,7 @@ int UserDataAccess::addExcludedUser(string userId)
 // Si l'utilisateur n'est pas trouvé, l'ajouter avec le statut exclu
 // Retourner 0 si déjà exclu, 1 si succès, -1 en cas d'erreur
 {
-    string filename = "ParticulierData.csv";
+    string filename = "../data/ParticulierData.csv";
     initializeCSVFile(filename);
     ifstream inFile(filename);
 
@@ -263,6 +308,7 @@ UserDataAccess& UserDataAccess::operator = ( const UserDataAccess& unUserDataAcc
 // Algorithme :
 //
 {
+    return *this;
 } //----- Fin de operator =
 
 
