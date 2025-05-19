@@ -28,9 +28,9 @@ int Statistics::analyzeSensor( string sensorID )
 // Algorithme :
 //
 {
-    Sensor sensor = getSensorByID(sensorID);
-    vector<Sensor> neighbours = sensor.getSensorNeighbours(sensors);
-    vector<Measurement> sensorMeasurements = sensor.getAllMeasurements();
+    Sensor *sensor = getSensorByID(sensorID);
+    vector<Sensor> neighbours = sensor->getSensorNeighbours(sensors);
+    vector<Measurement> sensorMeasurements = sensor->getAllMeasurements();
 
     if (sensorMeasurements.empty())
     {
@@ -77,16 +77,16 @@ vector<int> Statistics::analyzeCleaner( string cleanerID, int radius )
     vector<int> result;
     
     // Obtenir la position et la période d'activation du Cleaner
-    Cleaner cleaner = getCleanerByID(cleanerID);
-    if (*cleaner == nullptr)
+    Cleaner *cleaner = getCleanerByID(cleanerID);
+    if (cleaner == nullptr)
     {
         cerr << "Erreur : Cleaner " << cleanerID << " non trouvé." << endl;
         return result;
     }
 
-    time_t activationStart = cleaner.getStart();
-    time_t activationEnd = cleaner.getEnd();
-    vector<Sensor> nearbySensors = cleaner.getNeighbouringSensors(radius, sensors);
+    time_t activationStart = cleaner->getStart();
+    time_t activationEnd = cleaner->getEnd();
+    vector<Sensor> nearbySensors = cleaner->getNeighbouringSensors(radius, sensors);
 
     if (nearbySensors.empty())
     {
@@ -229,7 +229,7 @@ vector<Measurement> Statistics::computeZone( double lat, double lng, time_t peri
     for (auto& entry : aggregated)
     {
         double avg = entry.second.first / entry.second.second;
-        Measurement m(period_start, entry.first, entry.second.first, entry.second.second, avg);
+        Measurement m(period_start, entry.first, typeInfo[entry.first].first, typeInfo[entry.first].second, avg);
 
         result.push_back(m);
     }
@@ -243,7 +243,7 @@ vector<Sensor> Statistics::compareSensors( string sensorId, time_t period_start,
 {
     vector<Sensor> result;
 
-    *sensorRef = getSensorByID(sensorId);
+    Sensor *sensorRef = getSensorByID(sensorId);
     if (sensorRef == nullptr)
     {
         cerr << "Erreur : Capteur " << sensorId << " non trouvé." << endl;
@@ -403,20 +403,30 @@ vector<Measurement> Statistics::extrapolateAQI(double lat, double lng, time_t pe
     return result;
 } //----- Fin de extrapolateAQI
 
-Sensor Statistics::getSensorByID( string id )
+Sensor * Statistics::getSensorByID( string id )
 {
     vector<Sensor>::iterator sensor_it;
+    Sensor * res = nullptr;
     for (sensor_it = sensors->begin(); sensor_it != sensors->end() && sensor_it->getId() != id ; sensor_it++);
+    if (sensor_it != sensors->end())
+    {
+        res = &(*sensor_it);
+    }
 
-    return *sensor_it;
+    return res;
 } //----- Fin de getSensorByID
 
-Cleaner Statistics::getCleanerByID( string id )
+Cleaner * Statistics::getCleanerByID( string id )
 {
     vector<Cleaner>::iterator cleaner_it;
+    Cleaner * res = nullptr;
     for (cleaner_it = cleaners->begin(); cleaner_it != cleaners->end() && cleaner_it->getId() != id ; cleaner_it++);
-
-    return *cleaner_it;
+    if (cleaner_it != cleaners->end())
+    {
+        res = &(*cleaner_it);
+    }
+    
+    return res;
 } //----- Fin de getCleanerByID
 
 

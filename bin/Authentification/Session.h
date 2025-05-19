@@ -25,7 +25,8 @@ class Session {
     //----------------------------------------------------------------- PUBLIC
 public:
     //----------------------------------------------------- Méthodes publiques
-
+    UserType getUserType ( );
+    string getUserID ( );
 
     //------------------------------------------------- Surcharge d'opérateurs
     Session& operator = ( const Session& unSession );

@@ -20,13 +20,22 @@ using namespace std;
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Méthodes publiques
+UserType Session::getUserType ( )
+{
+    return this->userType;
+}
 
+string Session::getUserID ( )
+{
+    return this->userId;
+}
 
 //------------------------------------------------- Surcharge d'opérateurs
 Session& Session::operator = ( const Session& unSession )
 // Algorithme :
 //
 {
+    return *this;
 } //----- Fin de operator =
 
 

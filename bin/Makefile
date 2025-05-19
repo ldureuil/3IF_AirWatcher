@@ -5,7 +5,7 @@ CXXFLAGS_DEBUG := -ansi -pedantic -Wall -std=c++11 -g -DMAP
 TARGET := AirWatcher
 SOURCES = IHM/CLI.cpp \
 		  DataAccess/DataLoader.cpp DataAccess/AuthDataAccess.cpp DataAccess/UserDataAccess.cpp \
-		  Data/Cleaner.cpp Data/Credentials.cpp Data/Measurement.cpp Data/Sensor.cpp \
+		  Data/Cleaner.cpp Data/Credentials.cpp Data/Measurement.cpp Data/Sensor.cpp Data/ParticulierData.cpp \
 		  Authentification/AuthService.cpp Authentification/Session.cpp \
 		  Services/AdminServices.cpp Services/PointsManager.cpp Services/Statistics.cpp
 OBJECTS = $(SOURCES:.cpp=.o)
@@ -27,4 +27,7 @@ $(TARGET): $(OBJECTS)
 
 # Nettoyage du projet
 clean:
-	rm -rf $(OBJDIR) $(TARGET)
+	rm -rf $(OBJECTS) $(TARGET)
+
+cleano:
+	rm -rf $(OBJECTS)

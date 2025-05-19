@@ -59,13 +59,13 @@ public:
     // Contrat :
     //
 
-    Sensor getSensorByID( string id );
+    Sensor *getSensorByID( string id );
     // Mode d'emploi :
     //
     // Contrat :
     //
 
-    Cleaner getCleanerByID( string id );
+    Cleaner *getCleanerByID( string id );
     // Mode d'emploi :
     //
     // Contrat :

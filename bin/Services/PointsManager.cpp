@@ -86,12 +86,12 @@ int PointsManager::getPoints( string userId )
     // On vérifie si l'utilisateur existe
     for (auto& sensor : *sensors)
 	{
-        if (sensor->getUserId() == userId)
+        if (sensor.getUserId() == userId)
 		{
             // On vérifie si l'utilisateur existe
-        	if (&userId != "")
+        	if (userId != "")
         	{
-                for (auto& particulier : particulierData)
+                for (ParticulierData& particulier : *(this->particulierData))
                 {
                     if (particulier.getId() == userId)
                     {
@@ -150,7 +150,7 @@ PointsManager::PointsManager( const PointsManager& unPointsManager )
     sensors = unPointsManager.sensors;
 } //----- Fin de PointsManager (constructeur de copie)
 
-PointsManager::PointsManager( UserDataAccess p_uda, vector<ParticulierData> p_particulierData, vector<Sensor>* p_sensors )
+PointsManager::PointsManager( UserDataAccess p_uda, vector<ParticulierData>* p_particulierData, vector<Sensor>* p_sensors )
 // Algorithme :
 //
 : uda(p_uda), particulierData(p_particulierData), sensors(p_sensors)
