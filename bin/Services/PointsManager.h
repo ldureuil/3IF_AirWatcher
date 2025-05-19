@@ -11,6 +11,7 @@ PointsManager  -  todo
 //--------------------------------------------------- Interfaces utilisées
 #include "../DataAccess/UserDataAccess.h"
 #include "../Data/ParticulierData.h"
+#include "../Data/Sensor.h"
 
 //------------------------------------------------------------- Constantes
 
@@ -27,18 +28,22 @@ class PointsManager {
     //----------------------------------------------------------------- PUBLIC
 public:
     //----------------------------------------------------- Méthodes publiques
-    bool award( vector<string> sensorsUsed );
-    // Mode d'emploi :
-    //
-    // Contrat :
-    //
-
-    int getPoints( string userId );
-    // Mode d'emploi :
-    //
-    // Contrat :
+    bool award(const vector<string>& sensorsUsed);
+    // Mode d'emploi : on attribue des points à un ou plusieurs utilisateurs 
+    // en fonction des capteurs utilisés.
+    // Contrat : 
     //
 
+    int getPoints(string userId);
+    // Mode d'emploi : permet de récupérer le nombre de points d'un utilisateur.
+    // 
+    // Contrat : L'utilisateur doit exister dans le fichier ParticulierData.csv
+
+    void setSensors(vector<Sensor>* sensors);
+
+    vector<Sensor>* getSensors();
+    // Mode d'emploi :
+    // Permet de récupérer le vecteur de capteurs.
 
     //------------------------------------------------- Surcharge d'opérateurs
     PointsManager& operator = ( const PointsManager& unPointsManager );
@@ -77,6 +82,7 @@ protected:
     //----------------------------------------------------- Méthodes protégées
 
     //----------------------------------------------------- Attributs protégés
+    vector<Sensor>* sensors;
 };
 
 

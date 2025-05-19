@@ -11,44 +11,66 @@ PointsManager  -  todo
 //-------------------------------------------------------- Include système
 using namespace std;
 #include <iostream>
+#include <algorithm>
+#include <unordered_set>
 
 //------------------------------------------------------ Include personnel
 #include "PointsManager.h"
-#include <unordered_set>
 
 //------------------------------------------------------------- Constantes
 
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Méthodes publiques
-bool PointsManager::award( vector<string> sensorsUsed )
-// Algorithme :
-//
+bool PointsManager::award(const vector<string>& sensorsUsed)
+//Algotithme : iter sur chaque capteur utilisé
+// et vérifier s'il est connu
+// Si le capteur est trouvé, on met à jour les points de l'utilisateur
+// Sinon, on le signale
+// On vérifie si l'utilisateur est exclu
+// On vérifie si l'utilisateur a déjà été traité
+// On ajoute l'utilisateur à la liste des utilisateurs traités
+// On retourne un booléen indiquant si tous les capteurs sont connus
 {
-    bool updated = 0; 
+    bool capteursConnus=true;
+    UserDataAccess userDataAccess;
+    unordered_set<string> users;
+    vector<string> excludedUsers = userDataAccess.loadExcludedUsers();
+    unordered_set<string> excludedUsersSet(excludedUsers.begin(),
+                                           excludedUsers.end());
 
-    for (auto& sensorId : sensorsUsed)
-	{
-	    for (auto& sensor : *sensors)
-	    {
-            if (sensor->getId() == sensorId)
-			{
-                // On a trouvé le capteur correspondant
-                // On peut mettre à jour les points de l'utilisateur
-                string userId = sensor->getUserId();
-
-                // On vérifie si l'utilisateur existe
-        		if (&userId != "")
-        		{
-            		uda.updateUserPoints(userId);
-            		updated = 1;
-        		}
-				break; // On sort de la boucle une fois qu'on a trouvé le capteur
-            }
+    // On itere sur chaque capteur utilisé
+    for (vector<string>::const_iterator sensorIt = sensorsUsed.begin(); 
+         sensorIt != sensorsUsed.end(); 
+         ++sensorIt) {
+        // On cherche le capteur dans la collection de capteurs
+        vector<Sensor>::iterator sensorFound = find_if( sensors->begin(), sensors->end(),
+            [&](Sensor& s) { return s.getId() == *sensorIt; });
+        
+        // Si le capteur n'est pas trouvé, on le signale
+        if (sensorFound == sensors->end()) {
+            capteursConnus = false;
+            continue; // Salta al siguiente sensor
         }
-    }
 
-    return updated; // Retourne vrai s'il y a eu au moins une mise à jour
+        // Si le capteur est trouvé, on met à jour les points de l'utilisateur
+        const string& userSensorId = sensorFound->getUserId();
+        // On vérifie si l'utilisateur est exclu
+        if(excludedUsersSet.find(userSensorId) != excludedUsersSet.end()) {
+            capteursConnus = false;
+            continue; // Salta al siguiente sensor
+        }
+        // On vérifie si l'utilisateur a déjà été traité
+        if(users.find(userSensorId) == users.end()) {
+            userDataAccess.updateUserPoints(userSensorId);
+        }
+        // On ajoute l'utilisateur à la liste des utilisateurs traités
+        users.insert(userSensorId);
+    }
+    
+    return capteursConnus;
+
+
 } //----- Fin de award
 
 int PointsManager::getPoints( string userId )
@@ -88,6 +110,16 @@ int PointsManager::getPoints( string userId )
 
 } //----- Fin de getPoints
 
+vector<Sensor>* PointsManager::getSensors(void)
+// Algorithme :
+{
+    return this->sensors;
+}
+
+void PointsManager::setSensors(vector<Sensor>* sensors)
+// Algorithme :
+// 
+{ this->sensors = sensors; } //----- Fin de setSensors
 
 //------------------------------------------------- Surcharge d'opérateurs
 PointsManager& PointsManager::operator = ( const PointsManager& unPointsManager )
@@ -126,6 +158,7 @@ PointsManager::PointsManager( UserDataAccess p_uda, vector<ParticulierData> p_pa
 #ifdef MAP
     cout << "Appel au constructeur de <PointsManager>" << endl;
 #endif
+    this->sensors = sensors;
 } //----- Fin de PointsManager
 
 
