@@ -18,6 +18,7 @@ Statistics  -  todo
 //------------------------------------------------------------------ Types
 #include <vector>
 #include <ctime>
+#include "PointsManager.h"
 
 //------------------------------------------------------------------------
 // Rôle de la classe <Statistics>
@@ -86,7 +87,7 @@ public:
     // Contrat :
     //
 
-    Statistics( vector<Sensor>* p_sensors, vector<Cleaner>* p_cleaners );
+    Statistics( vector<Sensor>* p_sensors, vector<Cleaner>* p_cleaners, PointsManager*  p_pointsManager );
     // Mode d'emploi :
     //
     // Contrat :
@@ -106,6 +107,7 @@ protected:
     //----------------------------------------------------- Attributs protégés
     vector<Sensor>* sensors;
     vector<Cleaner>* cleaners;
+    PointsManager* pointsManager;
 };
 
 

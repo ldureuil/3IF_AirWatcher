@@ -164,8 +164,9 @@ void run()
     userDataAccess.initializeCSVFile("../../data/ParticulierData.csv");
     vector<ParticulierData> particulierData = userDataAccess.loadParticulierData();
 
-    Statistics statistics = Statistics(sensors, cleaners);
+    
     PointsManager pointsManager = PointsManager(userDataAccess, &particulierData, sensors);
+    Statistics statistics = Statistics(sensors, cleaners, &pointsManager);
     AdminServices adminServices = AdminServices(userDataAccess, sensors);
 
     while (!fin)

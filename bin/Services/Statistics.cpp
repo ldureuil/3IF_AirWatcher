@@ -156,12 +156,14 @@ vector<Measurement> Statistics::computeZone( double lat, double lng, time_t peri
 
     // Sinon, recherche des capteurs se trouvant dans le rayon
     vector<Sensor> matchingSensors;
+    vector<string> matchingSensorIds;
     for (auto& sensor : *sensors)
     {
         double d = sensor.distanceTo(lat, lng);
         if (d <= radius)
         {
             matchingSensors.push_back(sensor);
+            
         }
     }
 
@@ -178,11 +180,13 @@ vector<Measurement> Statistics::computeZone( double lat, double lng, time_t peri
     {
         for (auto& sensor : matchingSensors)
         {
+
             for (auto& m : sensor.getAllMeasurements())
             {
                 if (m.getTs() == period_start)
                 {
                     relevantMeasurements.push_back(m);
+                    matchingSensorIds.push_back(sensor.getId());
                 }
             }
         }
@@ -195,6 +199,7 @@ vector<Measurement> Statistics::computeZone( double lat, double lng, time_t peri
             if (!sensorMeasurements.empty())
             {
                 relevantMeasurements.insert(relevantMeasurements.end(), sensorMeasurements.begin(), sensorMeasurements.end());
+                matchingSensorIds.push_back(sensor.getId());
             }
         }
     }
@@ -233,6 +238,8 @@ vector<Measurement> Statistics::computeZone( double lat, double lng, time_t peri
 
         result.push_back(m);
     }
+
+    pointsManager->award(matchingSensorIds);
 
     return result;
 } //----- Fin de computeZone
@@ -454,13 +461,14 @@ Statistics::Statistics( const Statistics & unStatistics )
 #endif
     this->sensors = unStatistics.sensors;
     this->cleaners = unStatistics.cleaners;
+    this->pointsManager = unStatistics.pointsManager;
 } //----- Fin de Statistics (constructeur de copie)
 
 
-Statistics::Statistics( vector<Sensor>* p_sensors, vector<Cleaner>* p_cleaners )
+Statistics::Statistics( vector<Sensor>* p_sensors, vector<Cleaner>* p_cleaners, PointsManager*  p_pointsManager )
 // Algorithme :
 //
-: sensors(p_sensors), cleaners(p_cleaners)
+: sensors(p_sensors), cleaners(p_cleaners), pointsManager(p_pointsManager)
 {
 #ifdef MAP
     cout << "Appel au constructeur de <Statistics>" << endl;
@@ -475,6 +483,7 @@ Statistics::~Statistics( )
 #ifdef MAP
     cout << "Appel au destructeur de <Statistics>" << endl;
 #endif
+    
 } //----- Fin de ~Statistics
 
 
