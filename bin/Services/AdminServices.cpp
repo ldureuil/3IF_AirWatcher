@@ -25,11 +25,13 @@ bool AdminServices::excludeSensor( string sensorId )
 //
 {
     bool exist = false;
+    Sensor* sensorExclu; 
     for ( auto sensor : *sensors )
     {
         if ( sensor.getId() == sensorId )
         {
             exist = true;
+            sensorExclu = &sensor;
             break;
         }
     }
@@ -40,7 +42,13 @@ bool AdminServices::excludeSensor( string sensorId )
         return false;
     }
 
-    uda.addExcludedUser(sensorId);
+    string userId = sensorExclu->getUserId();
+    if ( userId == "" )
+    {
+        cerr << "Erreur : Le capteur " << sensorId << " n'est pas associé à un utilisateur." << endl;
+        return false;
+    }
+    uda.addExcludedUser(userId);
 
     return true;
 } //----- Fin de excludeSensor
