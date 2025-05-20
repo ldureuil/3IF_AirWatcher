@@ -8,7 +8,6 @@ https://insalyonfrance-my.sharepoint.com/:w:/g/personal/edosanjos_insa-lyon_fr/E
 - Implémenter la fonction Administrateur d'évaluation des différents algorithmes ➕
 - Remettre en ordre les histoires de UserDataAccess -> PointsManager 😖
 - analyzeCleaner() provoque une erreur de segmentation et son retour est vraiment pas pratique ✨
-- excludeSensor() n'a pas l'air de fonctionner 🥲
 - analyzeSensor() semble trouver que chaque capteur est suspect 😧
 - computeZone() n'attribue pas encore les points aux utilisateurs 💸
 
