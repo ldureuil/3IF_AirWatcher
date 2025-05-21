@@ -9,7 +9,7 @@ https://insalyonfrance-my.sharepoint.com/:w:/g/personal/edosanjos_insa-lyon_fr/E
 - Remettre en ordre les histoires de UserDataAccess -> PointsManager 😖
 - analyzeCleaner() provoque une erreur de segmentation et son retour est vraiment pas pratique ✨
 - analyzeSensor() semble trouver que chaque capteur est suspect 😧
-- computeZone() n'attribue pas encore les points aux utilisateurs 💸
+- computeZone() attribue les points aux utilisateurs, mais il semble avoir un erreur 💸
 
 - Supprimer les branches obsolètes ☠️
 - Clean le code 🧹
