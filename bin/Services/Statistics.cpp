@@ -24,51 +24,154 @@ using namespace std;
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Méthodes publiques
-int Statistics::analyzeSensor( string sensorID )
-// Algorithme :
-//
+int Statistics::analyzeSensor(string sensorID)
 {
-    Sensor *sensor = getSensorByID(sensorID);
-    vector<Sensor> neighbours = sensor->getSensorNeighbours(sensors);
-    vector<Measurement> sensorMeasurements = sensor->getAllMeasurements();
+    //cout << "[DEBUG] Analyse du capteur : " << sensorID << endl;
 
-    if (sensorMeasurements.empty())
+    Sensor* sensor = getSensorByID(sensorID);
+    if (sensor == nullptr)
     {
+        //cout << "[ERROR] Capteur introuvable : " << sensorID << endl;
         return -1;
     }
 
+    vector<Sensor> neighbours = sensor->getSensorNeighbours(sensors, 60000);
+    //cout << "[DEBUG] Capteurs voisins trouvés (" << neighbours.size() << ") : ";
+    // for (auto& neighbour : neighbours)
+    // {
+    //     cout << neighbour.getId() << " ";
+    // }
+    // cout << endl;
+
+    vector<Measurement> sensorMeasurements = sensor->getAllMeasurements();
+    if (sensorMeasurements.empty())
+    {
+        //cout << "[WARNING] Aucune mesure trouvée pour ce capteur." << endl;
+        return -1;
+    }
+
+    int totalComparisons = 0;
+    int abnormalCount = 0;
+    double anomalyThreshold = 0.2; // 20%
+
+
     for (auto& measurement : sensorMeasurements)
     {
-        time_t ts = measurement.getTs( );
-        struct tm *tm_info = localtime(&ts);
-        tm_info->tm_hour = 0;
-        tm_info->tm_min  = 0;
-        tm_info->tm_sec  = 0;
-        time_t start = mktime(tm_info);
+        string attr_id = measurement.getAttr_id();
+        double val = measurement.getValue();
+        time_t ts = measurement.getTs();
 
-        tm_info->tm_hour = 23;
-        tm_info->tm_min  = 59;
-        tm_info->tm_sec  = 59;
+        struct tm* tm_info = localtime(&ts);
+        tm_info->tm_hour = 0; tm_info->tm_min = 0; tm_info->tm_sec = 0;
+        time_t start = mktime(tm_info);
+        tm_info->tm_hour = 23; tm_info->tm_min = 59; tm_info->tm_sec = 59;
         time_t end = mktime(tm_info);
+
+        //cout << "[DEBUG] Mesure : " << attr_id << " = " << val << " à " << ctime(&ts);
+
+        vector<double> neighbourValues;
 
         for (auto& neighbour : neighbours)
         {
             vector<Measurement> neighbour_measures = neighbour.getMeasurements(start, end);
             for (auto& neighbour_measure : neighbour_measures)
             {
-                double diff = measurement.getValue() - neighbour_measure.getValue();
-                diff = (diff < 0) ? (-diff) : diff;
-
-                if (diff > 0.2 * measurement.getValue())
+                if (neighbour_measure.getAttr_id() == attr_id)
                 {
-                    return 0;
+                    neighbourValues.push_back(neighbour_measure.getValue());
                 }
             }
         }
+
+        if (neighbourValues.empty())
+        {
+            //cout << "[INFO] Aucun voisin n'a de mesure pour " << attr_id << " ce jour-là." << endl;
+            continue;
+        }
+
+        double sum = 0;
+        for (double v : neighbourValues) sum += v;
+        double mean = sum / neighbourValues.size();
+
+        
+
+        double diff = fabs(val - mean);
+        if (mean > 0) // évite division par zéro
+        {
+            
+            double relativeDiff = diff / mean; 
+
+            if (relativeDiff > anomalyThreshold)
+            {
+                abnormalCount++;
+            }
+            totalComparisons++;
+        }
+
     }
 
+    double anomalyRate = (double)abnormalCount / totalComparisons;
+
+    //cout << "[RESULT] Anomaly rate: " << anomalyRate * 100 << "% over " << totalComparisons << " comparisons." << endl;
+
+    if (anomalyRate > 0.3)  // 30% des comparaisons anormales
+    {
+        //cout << "[ALERTE] Capteur " << sensorID << " suspect : trop d'écarts détectés." << endl;
+        return 0;
+    }
+    
+
+
+    //cout << "[DEBUG] Aucune anomalie détectée." << endl;
     return 1;
-} //----- Fin de analyzeSensor
+}//----- Fin de analyzeSensor
+
+
+// int Statistics::analyzeSensor( string sensorID )
+// // Algorithme :
+// //
+// {
+//     Sensor *sensor = getSensorByID(sensorID);
+//     vector<Sensor> neighbours = sensor->getSensorNeighbours(sensors);
+//     vector<Measurement> sensorMeasurements = sensor->getAllMeasurements();
+
+//     if (sensorMeasurements.empty())
+//     {
+//         return -1;
+//     }
+
+//     for (auto& measurement : sensorMeasurements)
+//     {
+//         time_t ts = measurement.getTs( );
+//         struct tm *tm_info = localtime(&ts);
+//         tm_info->tm_hour = 0;
+//         tm_info->tm_min  = 0;
+//         tm_info->tm_sec  = 0;
+//         time_t start = mktime(tm_info);
+
+//         tm_info->tm_hour = 23;
+//         tm_info->tm_min  = 59;
+//         tm_info->tm_sec  = 59;
+//         time_t end = mktime(tm_info);
+
+//         for (auto& neighbour : neighbours)
+//         {
+//             vector<Measurement> neighbour_measures = neighbour.getMeasurements(start, end);
+//             for (auto& neighbour_measure : neighbour_measures)
+//             {
+//                 double diff = measurement.getValue() - neighbour_measure.getValue();
+//                 diff = (diff < 0) ? (-diff) : diff;
+
+//                 if (diff > 0.2 * measurement.getValue())
+//                 {
+//                     return 0;
+//                 }
+//             }
+//         }
+//     }
+
+//     return 1;
+// } //----- Fin de analyzeSensor
 
 vector<Measurement> Statistics::analyzeCleaner( string cleanerID, int radius )
 // Algorithme :
@@ -141,14 +244,23 @@ vector<Measurement> Statistics::analyzeCleaner( string cleanerID, int radius )
     return result;
 } //----- Fin de analyzeCleaner
 
-vector<Measurement> Statistics::computeZone( double lat, double lng, time_t period_start, time_t period_end, int radius )
+vector<Measurement> Statistics::computeZone( double lat, double lng, time_t period_start, time_t period_end, int radius, int radiusExtrapolation )
 // Algorithme :
 //
 {
+    // vérifie si le calcul doit être fait sur un jour et change les bornes en conséquence
+    if (period_start  == period_end)
+    {
+        struct tm tm_info = *localtime(&period_start);
+        tm_info.tm_hour = 0; tm_info.tm_min = 0; tm_info.tm_sec = 0;
+        period_start = mktime(&tm_info);
+        period_end = period_start + 24 * 60 * 60 - 1; // fin de la journée
+    }
+
     // Si radius == 0 : on utilise la fonction extrapolateAQI
     if (radius == 0)
     {
-        return extrapolateAQI(lat, lng, period_start, period_end);
+        return extrapolateAQI(lat, lng, period_start, period_end, radiusExtrapolation);
     }
 
     // Sinon, recherche des capteurs se trouvant dans le rayon
@@ -160,7 +272,6 @@ vector<Measurement> Statistics::computeZone( double lat, double lng, time_t peri
         if (d <= radius)
         {
             matchingSensors.push_back(sensor);
-            
         }
     }
 
@@ -171,33 +282,14 @@ vector<Measurement> Statistics::computeZone( double lat, double lng, time_t peri
     }
 
     // Récupération des mesures pertinentes
-    // Si period_end n'est pas renseignée (period_end == 0) on prend les mesures à l'instant period_start
     vector<Measurement> relevantMeasurements;
-    if (period_end == 0)
+    for (auto& sensor : matchingSensors)
     {
-        for (auto& sensor : matchingSensors)
+        vector<Measurement> sensorMeasurements = sensor.getMeasurements(period_start, period_end);
+        if (!sensorMeasurements.empty())
         {
-
-            for (auto& m : sensor.getAllMeasurements())
-            {
-                if (m.getTs() == period_start)
-                {
-                    relevantMeasurements.push_back(m);
-                    matchingSensorIds.push_back(sensor.getId());
-                }
-            }
-        }
-    }
-    else
-    {
-        for (auto& sensor : matchingSensors)
-        {
-            vector<Measurement> sensorMeasurements = sensor.getMeasurements(period_start, period_end);
-            if (!sensorMeasurements.empty())
-            {
-                relevantMeasurements.insert(relevantMeasurements.end(), sensorMeasurements.begin(), sensorMeasurements.end());
-                matchingSensorIds.push_back(sensor.getId());
-            }
+            relevantMeasurements.insert(relevantMeasurements.end(), sensorMeasurements.begin(), sensorMeasurements.end());
+            matchingSensorIds.push_back(sensor.getId());
         }
     }
 
@@ -300,7 +392,7 @@ vector<Sensor> Statistics::compareSensors( string sensorId, time_t period_start,
     return result;
 } //----- Fin de compareSensors
 
-vector<Measurement> Statistics::extrapolateAQI(double lat, double lng, time_t period_start, time_t period_end)
+vector<Measurement> Statistics::extrapolateAQI(double lat, double lng, time_t period_start, time_t period_end, int radiusExtrapolation)
 // Algorithme :
 //
 {
@@ -326,7 +418,7 @@ vector<Measurement> Statistics::extrapolateAQI(double lat, double lng, time_t pe
 
         }
         // sinon, on prend les mesures des capteurs les plus proches
-        else if (sensor.distanceTo(lat, lng) <= 100)
+        else if (sensor.distanceTo(lat, lng) <= radiusExtrapolation)
         {
             vector<Measurement> measurements = sensor.getMeasurements(period_start, period_end);
             weightedMeasures.push_back(measurements);
