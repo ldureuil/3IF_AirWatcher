@@ -144,14 +144,23 @@ vector<int> Statistics::analyzeCleaner( string cleanerID, int radius )
     return improvePercent;
 } //----- Fin de analyzeCleaner
 
-vector<Measurement> Statistics::computeZone( double lat, double lng, time_t period_start, time_t period_end, int radius )
+vector<Measurement> Statistics::computeZone( double lat, double lng, time_t period_start, time_t period_end, int radius, int radiusExtrapolation )
 // Algorithme :
 //
 {
+    // vérifie si le calcul doit être fait sur un jour et change les bornes en conséquence
+    if (period_start  == period_end)
+    {
+        struct tm tm_info = *localtime(&period_start);
+        tm_info.tm_hour = 0; tm_info.tm_min = 0; tm_info.tm_sec = 0;
+        period_start = mktime(&tm_info);
+        period_end = period_start + 24 * 60 * 60 - 1; // fin de la journée
+    }
+
     // Si radius == 0 : on utilise la fonction extrapolateAQI
     if (radius == 0)
     {
-        return extrapolateAQI(lat, lng, period_start, period_end);
+        return extrapolateAQI(lat, lng, period_start, period_end, radiusExtrapolation);
     }
 
     // Sinon, recherche des capteurs se trouvant dans le rayon
@@ -163,7 +172,6 @@ vector<Measurement> Statistics::computeZone( double lat, double lng, time_t peri
         if (d <= radius)
         {
             matchingSensors.push_back(sensor);
-            
         }
     }
 
@@ -174,33 +182,14 @@ vector<Measurement> Statistics::computeZone( double lat, double lng, time_t peri
     }
 
     // Récupération des mesures pertinentes
-    // Si period_end n'est pas renseignée (period_end == 0) on prend les mesures à l'instant period_start
     vector<Measurement> relevantMeasurements;
-    if (period_end == 0)
+    for (auto& sensor : matchingSensors)
     {
-        for (auto& sensor : matchingSensors)
+        vector<Measurement> sensorMeasurements = sensor.getMeasurements(period_start, period_end);
+        if (!sensorMeasurements.empty())
         {
-
-            for (auto& m : sensor.getAllMeasurements())
-            {
-                if (m.getTs() == period_start)
-                {
-                    relevantMeasurements.push_back(m);
-                    matchingSensorIds.push_back(sensor.getId());
-                }
-            }
-        }
-    }
-    else
-    {
-        for (auto& sensor : matchingSensors)
-        {
-            vector<Measurement> sensorMeasurements = sensor.getMeasurements(period_start, period_end);
-            if (!sensorMeasurements.empty())
-            {
-                relevantMeasurements.insert(relevantMeasurements.end(), sensorMeasurements.begin(), sensorMeasurements.end());
-                matchingSensorIds.push_back(sensor.getId());
-            }
+            relevantMeasurements.insert(relevantMeasurements.end(), sensorMeasurements.begin(), sensorMeasurements.end());
+            matchingSensorIds.push_back(sensor.getId());
         }
     }
 
@@ -303,7 +292,7 @@ vector<Sensor> Statistics::compareSensors( string sensorId, time_t period_start,
     return result;
 } //----- Fin de compareSensors
 
-vector<Measurement> Statistics::extrapolateAQI(double lat, double lng, time_t period_start, time_t period_end)
+vector<Measurement> Statistics::extrapolateAQI(double lat, double lng, time_t period_start, time_t period_end, int radiusExtrapolation)
 // Algorithme :
 //
 {
@@ -329,7 +318,7 @@ vector<Measurement> Statistics::extrapolateAQI(double lat, double lng, time_t pe
 
         }
         // sinon, on prend les mesures des capteurs les plus proches
-        else if (sensor.distanceTo(lat, lng) <= 100)
+        else if (sensor.distanceTo(lat, lng) <= radiusExtrapolation)
         {
             vector<Measurement> measurements = sensor.getMeasurements(period_start, period_end);
             weightedMeasures.push_back(measurements);

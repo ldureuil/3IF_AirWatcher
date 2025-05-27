@@ -166,7 +166,7 @@ vector<Sensor>* DataLoader::loadSensor( string databasePath, UserType userType )
 
                     // Extraire la valeur
                     getline(ss, token, ';');
-                    int value = stoi(token);
+                    double value = stod(token);
 
                     // ajoute les mesures à la map
                     measurementsMap[sensorId].emplace_back(ts, attributeId, attributeUnit, attributeDesc, value);
