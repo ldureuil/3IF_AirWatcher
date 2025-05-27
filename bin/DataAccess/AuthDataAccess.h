@@ -1,5 +1,6 @@
 /*************************************************************************
-AuthDataAccess  -  todo
+AuthDataAccess  -  Lit les credentials dans la base de données pour
+trouver un utilisateur
                              -------------------
     début                : 16/05/2025
 *************************************************************************/
@@ -18,8 +19,8 @@ AuthDataAccess  -  todo
 
 //------------------------------------------------------------------------
 // Rôle de la classe <AuthDataAccess>
-// todo
-//
+// Lit les credentials de la base de données pour retourner un objet Credentials
+// permettant de vérifier les identifiants d'un utilisateur.
 //------------------------------------------------------------------------
 
 class AuthDataAccess
@@ -27,18 +28,11 @@ class AuthDataAccess
     //----------------------------------------------------------------- PUBLIC
 public:
     //----------------------------------------------------- Méthodes publiques
-    list<Credentials> loadCredentials();
+    Credentials findCredentials( string databasePath, string p_login, string p_password );
     // Mode d'emploi :
     //
     // Contrat :
     //
-
-    Credentials findCredentials();
-    // Mode d'emploi :
-    //
-    // Contrat :
-    //
-
 
 
     //------------------------------------------------- Surcharge d'opérateurs

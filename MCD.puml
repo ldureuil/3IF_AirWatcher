@@ -84,10 +84,9 @@ package "Services" {
   }
 
   class AuthService {
-    - usersCredentials : vector<Credentials>
+    - currentSession : Session
     + login(login : string, password : string) : Session
     + checkRequiredRole(session : Session, role : UserType) : bool
-    + findCredentials(login : string) : Credentials
   }
   }
 }
@@ -108,7 +107,7 @@ package "Accès aux données" {
   }
 
   class AuthDataAccess {
-    + loadCredentials() : vector<Credentials>
+    + findCredentials(login : string, password : string) : Credentials
   }
 }
 
