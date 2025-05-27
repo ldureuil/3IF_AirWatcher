@@ -20,7 +20,7 @@ using namespace std;
 using namespace std;
 
 //------------------------------------------------------------- Constantes
-
+const int POINT_ATTRIBUTION = 1;
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Méthodes publiques
@@ -131,8 +131,8 @@ vector<ParticulierData> UserDataAccess::loadParticulierData()
 int UserDataAccess::updateUserPoints(string userId)
 // Algorithme :
 // Vérifier si l'ID utilisateur correspond à celui recherché en parcourant le fichier ParticulierData.csv
-// Si trouvé, incrémenter les points de 10
-// Si l'utilisateur n'est pas trouvé et/ou fichier n'est pas créé, l'ajouter avec 10 points
+// Si trouvé, incrémenter les points de 1
+// Si l'utilisateur n'est pas trouvé et/ou fichier n'est pas créé, l'ajouter avec 1 points
 // Retourner les nouveaux points de l'utilisateur
 {
     // Ouverture du fichier
@@ -164,7 +164,7 @@ int UserDataAccess::updateUserPoints(string userId)
                 inFile.close();
                 return -1; // User is excluded
             }
-            newPoints = stoi(row[1]) + 10;
+            newPoints = stoi(row[1]) + POINT_ATTRIBUTION ;
             line = userId + ";" + to_string(newPoints) + ";" + row[2];
             userFound = true;
         }
@@ -172,10 +172,10 @@ int UserDataAccess::updateUserPoints(string userId)
     }
     inFile.close();
 
-   //Utilisateur non trouvé, on l'ajoute avec 10 points
+   //Utilisateur non trouvé, on l'ajoute avec 1 points
     if (!userFound) {
-        lines.push_back(userId + ";10;false");
-        newPoints = 10;
+        lines.push_back(userId + ";"+ to_string(POINT_ATTRIBUTION) +";false");
+        newPoints = POINT_ATTRIBUTION;
     }
 
     // Ouverture du fichier en écriture
