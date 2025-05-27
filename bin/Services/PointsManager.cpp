@@ -50,7 +50,7 @@ bool PointsManager::award(const vector<string>& sensorsUsed)
         // Si le capteur n'est pas trouvé, on le signale
         if (sensorFound == sensors->end()) {
             capteursConnus = false;  
-            continue; // Salta al siguiente sensor
+            continue; // Passe au capteur suivant
         }
 
         // Si le capteur est trouvé, on met à jour les points de l'utilisateur
@@ -58,13 +58,12 @@ bool PointsManager::award(const vector<string>& sensorsUsed)
         
         if (userSensorId.empty()) {
             //cerr << "Erreur : le capteur " << *sensorIt << " n'a pas d'utilisateur associé." << endl;
-            capteursConnus = false; //penser à gérer les capteurs sans utilisateur
-            continue; // Salta al siguiente sensor
+            continue; // Passe au capteur suivant
         }
         // On vérifie si l'utilisateur est exclu
         if(excludedUsersSet.find(userSensorId) != excludedUsersSet.end()) {
             capteursConnus = false;
-            continue; // Salta al siguiente sensor
+            continue; // Passe au capteur suivant
         }
         // On vérifie si l'utilisateur a déjà été traité
         if(users.find(userSensorId) == users.end()) {
