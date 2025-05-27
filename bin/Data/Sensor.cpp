@@ -20,6 +20,7 @@ using namespace std;
 #include <algorithm>
 
 //------------------------------------------------------------- Constantes
+const double R = 6371e3; // Rayon de la Terre en mètres
 
 //----------------------------------------------------------------- PUBLIC
 
@@ -28,11 +29,19 @@ double Sensor::distanceTo( double lat2, double lng2 )
 // Algorithme :
 //
 {
-    // Distance euclidienne simple
-    double dLat = lat - lat2;
-    double dLng = lng - lng2;
+    double phi1 = lat * M_PI / 180.0;
+    double phi2 = lat2 * M_PI / 180.0;
+    double deltaPhi = (lat2 - this->lat) * M_PI / 180.0;
+    double deltaLambda = (lng2 - this->lng) * M_PI / 180.0;
 
-    return sqrt(dLat * dLat + dLng * dLng);
+    double a = sin(deltaPhi/2) * sin(deltaPhi/2) +
+               cos(phi1) * cos(phi2) *
+               sin(deltaLambda/2) * sin(deltaLambda/2);
+
+    double c = 2 * atan2(sqrt(a), sqrt(1-a));
+    double d = R * c; // en mètres
+
+    return d;
 } //----- Fin de distanceTo
 
 vector<Sensor> Sensor::getSensorNeighbours( vector<Sensor>* sensors, int radius )
