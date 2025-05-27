@@ -101,19 +101,18 @@ void run()
 // Algorithme :
 //
 {
-        /*
+    cout << "Bienvenue dans l'application AirWatcher !" << endl;
     AuthDataAccess authDataAccess = AuthDataAccess();
-    vector<Credentials> authData = authDataAccess.loadCredentials();
     AuthService authService = AuthService();
 
     string login;
     string password;
-    */
+    string credentialsFilePath = "../data/credentials.csv";
 
     Session session = Session();
     bool fin = false;
-    /*
     bool connecte = false;
+
     while (!fin && !connecte)
     {
 
@@ -135,9 +134,10 @@ void run()
                 cout << "Entrez votre mot de passe : ";
                 cin >> password;
 
-                session = authService.login(login, password);
+                session = authService.login(credentialsFilePath, login, password);
 
-                if (session.getLogin() != login)
+                if (session.getUserType() == UserType::UNDEFINED)
+                    // Identifiants invalides
                 {
                     cout << "Identifiants incorrects, veuillez réessayer." << endl;
                 }
@@ -152,9 +152,8 @@ void run()
                 break;
         }
     }
-    */
 
-    UserType userType = FOURNISSEUR; //PROVISOIRE !!!!!!! -> session.getUserType()
+    UserType userType = session.getUserType(); //PROVISOIRE !!!!!!! -> session.getUserType()
 
     DataLoader dataLoader = DataLoader();
     vector<Sensor> *sensors = dataLoader.loadSensor("../data", userType);;
@@ -218,6 +217,11 @@ void run()
                 fin = true;
                 break;
             case 1: // Testé, mais n'attribue pas les points aux utilisateurs
+                if (userType == FOURNISSEUR)
+                {
+                    cout << "Merci de choisir une fonctionnalité disponible" << endl;
+                    break;
+                }
                 cout << "Entrez la latitude du centre de la zone à analyser : " << endl;
                 cin >> lat;
                 cout << "Entrez la longitude du centre de la zone à analyser : " << endl;
@@ -247,6 +251,11 @@ void run()
                 }
                 break;
             case 2: // Testé
+                if (userType == FOURNISSEUR)
+                {
+                    cout << "Merci de choisir une fonctionnalité disponible" << endl;
+                    break;
+                }
                 cout << "Entrez l'ID du capteur à comparer avec les autres : " << endl;
                 cin >> sensorID;
                 cout << "Entrez la date du début de la période de comparaison (format YYYY-MM-DD) : " << endl;
@@ -272,6 +281,11 @@ void run()
                 }
                 break;
             case 3: // Testé
+                if (userType != PARTICULIER)
+                {
+                    cout << "Merci de choisir une fonctionnalité disponible" << endl;
+                    break;
+                }
                 points = pointsManager.getPoints("User1"); // À remplacer par session.getUserID() quand on aura un système d'auth
                 if (points == -1)
                 {
@@ -283,6 +297,11 @@ void run()
                 }
                 break;
             case 4: // Testé, tlm est sus askip
+                if (userType != ADMIN)
+                {
+                    cout << "Merci de choisir une fonctionnalité disponible" << endl;
+                    break;
+                }
                 cout << "Entrez l'ID du capteur à analyser : " << endl;
                 cin >> sensorID;
 
@@ -303,6 +322,11 @@ void run()
 
                 break;
             case 5: // Doesn't work yet
+                if (userType != ADMIN)
+                {
+                    cout << "Merci de choisir une fonctionnalité disponible" << endl;
+                    break;
+                }
                 cout << "Entrez l'ID du capteur dont le propriétaire doit être exclus : " << endl;
                 cin >> sensorID;
 
@@ -322,9 +346,19 @@ void run()
 
                 break;
             case 6: // PAS IMPLÉMENTÉ
+                if (userType != ADMIN)
+                {
+                    cout << "Merci de choisir une fonctionnalité disponible" << endl;
+                    break;
+                }
                 cout << "Cette fonction n'a pas encore été implémentée, et nous en sommes désolés !" << endl;
                 break;
             case 7: // Core dumped yay
+                if (userType != FOURNISSEUR)
+                {
+                    cout << "Merci de choisir une fonctionnalité disponible" << endl;
+                    break;
+                }
                 cout << "Entrez l'ID du cleaner à analyser : " << endl;
                 cin >> cleanerID;
                 cout << "Entrez le rayon souhaité : " << endl;

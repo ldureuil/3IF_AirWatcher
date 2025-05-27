@@ -28,7 +28,8 @@ enum UserType
     ADMIN = 0,
     USER = 1,
     PARTICULIER = 2,
-    FOURNISSEUR = 3
+    FOURNISSEUR = 3,
+    UNDEFINED = 4
 };
 
 #endif //USERTYPE_H

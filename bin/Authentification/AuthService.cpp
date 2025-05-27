@@ -26,15 +26,15 @@ Session AuthService::login( string credentialsFilePath, string login, string pas
 // pour vérifier les identifiants
 {
     AuthDataAccess authDataAccess;
-    Credentials credentials = authDataAccess.findCredentials(login, password);
+    Credentials credentials = authDataAccess.findCredentials(credentialsFilePath, login, password);
 
     if (credentials.getLogin().empty() || credentials.getPassword().empty()) {
         // Identifiants invalides
         return Session();
     } else {
         // Identifiants valides, créer une session
-        Session session(login, password, credentials.getUserType());
-        return session;
+        currentSession = Session(credentials.getUserType());
+        return currentSession;
     }
 } //----- Fin de login
 

@@ -60,6 +60,7 @@ Session::Session ( )
 #ifdef MAP
     cout << "Appel au constructeur de <Session>" << endl;
 #endif
+    this->userType = UNDEFINED; // Initialisation par défaut
 } //----- Fin de Session
 
 Session::Session ( UserType p_userType )

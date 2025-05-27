@@ -35,7 +35,7 @@ public:
     // Contrat :
     //
 
-    bool checkRequiredRole( Session session, UserType role );
+    bool checkRequiredRole( UserType role );
     // Mode d'emploi :
     //
     // Contrat :
