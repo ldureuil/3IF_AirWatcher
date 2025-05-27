@@ -70,11 +70,11 @@ int Statistics::analyzeSensor( string sensorID )
     return 1;
 } //----- Fin de analyzeSensor
 
-vector<int> Statistics::analyzeCleaner( string cleanerID, int radius )
+vector<Measurement> Statistics::analyzeCleaner( string cleanerID, int radius )
 // Algorithme :
 //
 {
-    vector<int> result;
+    vector<Measurement> result;
     
     // Obtenir la position et la période d'activation du Cleaner
     Cleaner *cleaner = getCleanerByID(cleanerID);
@@ -95,8 +95,8 @@ vector<int> Statistics::analyzeCleaner( string cleanerID, int radius )
     }
 
     // Obtenir les mesures les plus proches
-    vector<double> airQualityBefore;
-    vector<double> airQualityAfter;
+    vector<double> airQualityBefore = {0.0, 0.0, 0.0, 0.0};
+    vector<double> airQualityAfter = {0.0, 0.0, 0.0, 0.0};
     int validCount = 0;
 
     for (auto& sensor : nearbySensors)
@@ -110,38 +110,35 @@ vector<int> Statistics::analyzeCleaner( string cleanerID, int radius )
             {
                 airQualityBefore[i] += before[i].getValue();
                 airQualityAfter[i] += after[i].getValue();
-                validCount++;
-
-                if (validCount == 0)
-                {
-                    cerr << "Erreur : Aucune mesure valide trouvée." << endl;
-                    return result;
-                }
-            
             }
+            validCount++;
         }
     }
 
-    // Calcul la moyenne et le pourcentage d'amélioration
-    double avgBefore[4];
-    double avgAfter[4];
-    vector<int> improvePercent;
+    if (validCount == 0)
+    {
+        cerr << "Erreur : Aucune mesure valide trouvée." << endl;
+        return result;
+    }
+
+    // Calcule la moyenne et le pourcentage d'amélioration
+    vector<double> avgBefore;
+    vector<double> avgAfter;
+    vector<Measurement> reference = nearbySensors[0].getClosestMeasurements(activationEnd, 1);
+
     for (int i = 0; i < 4; i++)
     {
-        avgBefore[i] = airQualityBefore[i] / validCount;
-        avgAfter[i] = airQualityAfter[i] / validCount;
+        avgBefore.push_back(airQualityBefore[i] / validCount);
+        avgAfter.push_back(airQualityAfter[i] / validCount);
 
         if (avgBefore[i] != 0)
         {
-            improvePercent[i] = (avgBefore[i] - avgAfter[i]) / avgBefore[i] * 100;
-        }
-        else
-        {
-            improvePercent[i] = 0;
+            Measurement measurement = Measurement(0, reference[i].getAttr_id(), reference[i].getAttr_unit(), reference[i].getAttr_desc(), (avgBefore[i] - avgAfter[i]) / avgBefore[i] * 100);
+            result.push_back(measurement);
         }
     }
-        
-    return improvePercent;
+
+    return result;
 } //----- Fin de analyzeCleaner
 
 vector<Measurement> Statistics::computeZone( double lat, double lng, time_t period_start, time_t period_end, int radius )

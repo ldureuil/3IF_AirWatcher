@@ -36,7 +36,7 @@ public:
     // Contrat :
     //
 
-    vector<int> analyzeCleaner( string cleanerID, int radius = 100 );
+    vector<Measurement> analyzeCleaner( string cleanerID, int radius = 100 );
     // Mode d'emploi :
     //
     // Contrat :

@@ -29,7 +29,7 @@ double Sensor::distanceTo( double lat2, double lng2 )
 // Algorithme :
 //
 {
-    double phi1 = lat * M_PI / 180.0;
+    double phi1 = this->lat * M_PI / 180.0;
     double phi2 = lat2 * M_PI / 180.0;
     double deltaPhi = (lat2 - this->lat) * M_PI / 180.0;
     double deltaLambda = (lng2 - this->lng) * M_PI / 180.0;
