@@ -31,12 +31,12 @@ public:
     bool award(const vector<string>& sensorsUsed);
     // Mode d'emploi : on attribue des points à un ou plusieurs utilisateurs 
     // en fonction des capteurs utilisés.
-    // Contrat : 
+    // Contrat :
     //
 
     int getPoints(string userId);
     // Mode d'emploi : permet de récupérer le nombre de points d'un utilisateur.
-    // 
+    //
     // Contrat : L'utilisateur doit exister dans le fichier ParticulierData.csv
 
     void setSensors(vector<Sensor>* sensors);

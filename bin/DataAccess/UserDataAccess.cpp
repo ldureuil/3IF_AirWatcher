@@ -1,5 +1,5 @@
 /*************************************************************************
-UserDataAccess  -  todo
+UserDataAccess  -  Permet de charger et modifier les informations des particuliers
                              -------------------
     début                : 16/05/2025
 *************************************************************************/
@@ -25,63 +25,26 @@ const int POINT_ATTRIBUTION = 1;
 
 //----------------------------------------------------- Méthodes publiques
 
-bool UserDataAccess::initializeCSVFile(string filename){
+bool UserDataAccess::initializeCSVFile( string filename )
+{
     std::ifstream testFile(filename);
-    if (testFile.good()) {
+    if (testFile.good())
+    {
         testFile.close();
-        return true;  // El archivo ya existe
+        return true;  // Le fichier existe déjà
     }
     
     std::ofstream newFile(filename);
-    if (!newFile) {
-        return false;  // Error al crear el archivo
+    if (!newFile)
+    {
+        return false;  // Erreur lors de la création du fichier
     }
     
-    // Escribir cabeceras (opcional)
-    // newFile << "userId;points;excluded\n";
     newFile.close();
     return true;
 }
 
-int UserDataAccess::loadUserPoints(string userId)
-// Algorithme :
-// Vérifier si l'ID utilisateur correspond à celui recherché en parcourant le fichier ParticulierData.csv
-// Si trouvé, retourner les points de l'utilisateur
-// Retourner -1 si l'utilisateur n'est pas trouvé
-{
-    string filename = "../data/ParticulierData.csv";
-    ifstream file(filename);
-    if (!file.is_open())
-    {
-        cerr << "Erreur d'ouverture du fichier userPoints.csv" << endl;
-        return -1; // Erreur d'ouverture du fichier
-    }
-
-    string line;
-    while(getline(file,line)){
-        vector<string> row;
-        stringstream ss(line);
-        string cell;
-        while(getline(ss, cell, ';')){
-            row.push_back(cell);
-        }
-
-        if (row.size() >= 3) {
-                string currentUserId = row[0];
-                if (currentUserId == userId) {
-                    int points = stoi(row[1]);
-                    file.close();
-                    return points;
-                }
-            }
-    }
-
-    file.close();
-    return -1;  // Usuario no encontrado
-    
-} //----- Fin de loadUserPoints
-
-vector<ParticulierData> UserDataAccess::loadParticulierData()
+vector<ParticulierData> UserDataAccess::loadParticulierData( )
 // Algorithme :
 // Vérifier si l'ID utilisateur correspond à celui recherché en parcourant le fichier ParticulierData.csv
 // Si trouvé, retourner les points de l'utilisateur
@@ -90,14 +53,16 @@ vector<ParticulierData> UserDataAccess::loadParticulierData()
     string filename = "../data/ParticulierData.csv";
     ifstream inFile(filename);
 
-    if (!inFile.is_open()) {
-        cerr << ">w< Erreur d'ouverture du fichier ParticulierData.csv" << endl;
+    if (!inFile.is_open())
+    {
+        cerr << "Erreur d'ouverture du fichier ParticulierData.csv" << endl;
         return vector<ParticulierData>(); // Retourner un vecteur vide en cas d'erreur
     }
 
     // Vérifier si le fichier est vide
     inFile.seekg(0, ios::end);
-    if (inFile.tellg() == 0) {
+    if (inFile.tellg() == 0)
+    {
         cerr << "Le fichier ParticulierData.csv est vide." << endl;
         return vector<ParticulierData>(); // Retourner un vecteur vide si fichier vide
     }
@@ -108,17 +73,20 @@ vector<ParticulierData> UserDataAccess::loadParticulierData()
     string line;
 
     // Lire chaque ligne du fichier
-    while (getline(inFile, line)) {
+    while (getline(inFile, line))
+    {
         vector<string> row;
         stringstream ss(line);
         string cell;
 
-        while (getline(ss, cell, ';')) {
+        while (getline(ss, cell, ';'))
+        {
             row.push_back(cell);
         }
         // Ajouter chaque utilisateur
 
-        if (row.size() >= 3) {
+        if (row.size() >= 3)
+        {
             particulierData = ParticulierData(row[0], stoi(row[1]), row[2] == "1");
             particulierDataList.push_back(particulierData);
         }
@@ -128,7 +96,7 @@ vector<ParticulierData> UserDataAccess::loadParticulierData()
     return particulierDataList;
 } //----- Fin de loadParticulierData
 
-int UserDataAccess::updateUserPoints(string userId)
+int UserDataAccess::updateUserPoints( string userId )
 // Algorithme :
 // Vérifier si l'ID utilisateur correspond à celui recherché en parcourant le fichier ParticulierData.csv
 // Si trouvé, incrémenter les points de 1
@@ -139,7 +107,8 @@ int UserDataAccess::updateUserPoints(string userId)
     string filename = "../data/ParticulierData.csv";
     initializeCSVFile(filename);
     ifstream inFile(filename);
-    if (!inFile.is_open()) {
+    if (!inFile.is_open())
+    {
         cerr << "Erreur d'ouverture du fichier ParticulierData.csv" << endl;
         return -1;
     }
@@ -150,17 +119,21 @@ int UserDataAccess::updateUserPoints(string userId)
     int newPoints = 0;
 
     // Leecture de chaque ligne du fichier
-    while (getline(inFile, line)) {
+    while (getline(inFile, line))
+    {
         vector<string> row;
         stringstream ss(line);
         string cell;
 
-        while (getline(ss, cell, ';')) {
+        while (getline(ss, cell, ';'))
+        {
             row.push_back(cell);
         }
 
-        if (row.size() >= 3 && row[0] == userId) {
-            if (row[2] == "true") {
+        if (row.size() >= 3 && row[0] == userId)
+        {
+            if (row[2] == "true")
+            {
                 inFile.close();
                 return -1; // User is excluded
             }
@@ -173,20 +146,23 @@ int UserDataAccess::updateUserPoints(string userId)
     inFile.close();
 
    //Utilisateur non trouvé, on l'ajoute avec 1 points
-    if (!userFound) {
+    if (!userFound)
+    {
         lines.push_back(userId + ";"+ to_string(POINT_ATTRIBUTION) +";false");
         newPoints = POINT_ATTRIBUTION;
     }
 
     // Ouverture du fichier en écriture
     ofstream outFile("../data/ParticulierData.csv");
-    if (!outFile.is_open()) {
+    if (!outFile.is_open())
+    {
         cerr << "Erreur d'écriture du fichier ParticulierData.csv" << endl;
         return -1;
     }
 
     // Ecriture de chaque ligne dans le fichier
-    for (const auto& l : lines) {
+    for (const auto& l : lines)
+    {
         outFile << l << endl;
     }
     outFile.close();
@@ -194,50 +170,7 @@ int UserDataAccess::updateUserPoints(string userId)
     return newPoints; // Retourne les nouveaux points de l'utilisateur
 }//----- Fin de updateUserPoints
 
-vector<string> UserDataAccess::loadExcludedUsers()
-//Algorithme : 
-// Retourne les utilisateurs exclus (vecteur) en parcourant le fichier ParticulierData.csv
-// Retourne un vecteur vide si le fichier est vide, ou s'il n'y a pas des utilisateurs exclus ou en cas d'erreur
-{
-    string filename = "../data/ParticulierData.csv";
-    ifstream inFile(filename);
-
-    if (!inFile.is_open()) {
-        cerr << "Erreur d'ouverture du fichier ParticulierData.csv" << endl;
-        return vector<string>(); // Retourner un vecteur vide en cas d'erreur
-    }
-
-    // Vérifier si le fichier est vide
-    inFile.seekg(0, ios::end);
-    if (inFile.tellg() == 0) {
-        cerr << "Le fichier ParticulierData.csv est vide." << endl;
-        return vector<string>(); // Retourner un vecteur vide si fichier vide
-    }
-    inFile.seekg(0, ios::beg); // Revenir au début
-
-    vector<string> excludedUsers;
-    string line;
-
-    // Lire chaque ligne du fichier
-    while (getline(inFile, line)) {
-        vector<string> row;
-        stringstream ss(line);
-        string cell;
-
-        while (getline(ss, cell, ';')) {
-            row.push_back(cell);
-        }
-        // Trouver les utilisateurs exclus
-        if (row.size() >= 3 && row[2] == "true") {
-            excludedUsers.push_back(row[0]);
-        }
-    }
-
-    inFile.close();
-    return excludedUsers;
-}//----- Fin de loadExcludedUsers
-
-int UserDataAccess::addExcludedUser(string userId)
+int UserDataAccess::addExcludedUser( string userId )
 // Algorithme :
 // Vérifier si l'ID utilisateur correspond à celui recherché en parcourant le fichier ParticulierData.csv
 // Si trouvé, vérifier le statut exclu
@@ -249,7 +182,8 @@ int UserDataAccess::addExcludedUser(string userId)
     initializeCSVFile(filename);
     ifstream inFile(filename);
 
-    if (!inFile.is_open()) {
+    if (!inFile.is_open())
+    {
         cerr << "Erreur d'ouverture du fichier " << filename << endl;
         return -1;
     }
@@ -259,16 +193,20 @@ int UserDataAccess::addExcludedUser(string userId)
     bool userFound = false;
 
     // Lecture du fichier
-    while (getline(inFile, line)) {
+    while (getline(inFile, line))
+    {
         vector<string> row;
         stringstream ss(line);
         string cell;
-        while (getline(ss, cell, ';')) {
+        while (getline(ss, cell, ';'))
+        {
             row.push_back(cell);
         }
 
-        if (row.size() >= 3 && row[0] == userId) {
-            if (row[2] == "true") {
+        if (row.size() >= 3 && row[0] == userId)
+        {
+            if (row[2] == "true")
+            {
                 inFile.close();
                 return 0; // Déjà exclu
             }
@@ -282,19 +220,22 @@ int UserDataAccess::addExcludedUser(string userId)
     inFile.close();
 
     // Si l'utilisateur n'existe pas, l'ajouter
-    if (!userFound) {
+    if (!userFound)
+    {
         line = userId + ";0;true";
         lines.push_back(line);
     }
 
     // Écriture dans le fichier
     ofstream outFile(filename);
-    if (!outFile.is_open()) {
+    if (!outFile.is_open())
+    {
         cerr << "Erreur d'écriture du fichier " << filename << endl;
         return -1;
     }
 
-    for (const auto& l : lines) {
+    for (const auto& l : lines)
+    {
         outFile << l << endl;
     }
 
@@ -313,7 +254,7 @@ UserDataAccess& UserDataAccess::operator = ( const UserDataAccess& unUserDataAcc
 
 
 //-------------------------------------------- Constructeurs - destructeur
-UserDataAccess::UserDataAccess ( const UserDataAccess & unUserDataAccess )
+UserDataAccess::UserDataAccess( const UserDataAccess & unUserDataAccess )
 // Algorithme :
 //
 {
@@ -323,7 +264,7 @@ UserDataAccess::UserDataAccess ( const UserDataAccess & unUserDataAccess )
 } //----- Fin de UserDataAccess (constructeur de copie)
 
 
-UserDataAccess::UserDataAccess ( )
+UserDataAccess::UserDataAccess( )
 // Algorithme :
 //
 {
@@ -333,7 +274,7 @@ UserDataAccess::UserDataAccess ( )
 } //----- Fin de UserDataAccess
 
 
-UserDataAccess::~UserDataAccess ( )
+UserDataAccess::~UserDataAccess( )
 // Algorithme :
 //
 {

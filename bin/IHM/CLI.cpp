@@ -28,7 +28,7 @@ using namespace std;
 
 ///////////////////////////////////////////////////////////////////  PRIVE
 //------------------------------------------------------------- Constantes
-
+const int RAYON = 60000;
 //------------------------------------------------------------------ Types
 
 //---------------------------------------------------- Variables statiques
@@ -154,7 +154,7 @@ void run()
     }
     */
 
-    UserType userType = FOURNISSEUR; //PROVISOIRE !!!!!!! -> session.getUserType()
+    UserType userType = USER; //PROVISOIRE !!!!!!! -> session.getUserType()
 
     DataLoader dataLoader = DataLoader();
     vector<Sensor> *sensors = dataLoader.loadSensor("../data", userType);;
@@ -174,25 +174,25 @@ void run()
         cout << "Menu principal de l'application :" << endl;
         if (userType == FOURNISSEUR)
         {
-            cout << "7: Suivre l'impact d'un cleaner" << endl;
+            cout << "C: Suivre l'impact d'un cleaner" << endl;
         }
         else
         {
-            cout << "1: Calculer la qualité de l'air" << endl;
-            cout << "2: Comparer les capteurs" << endl;
+            cout << "Q: Calculer la qualité de l'air" << endl;
+            cout << "R: Comparer les capteurs" << endl;
             
             if (userType == PARTICULIER)
             {
-                cout << "3: Consulter mon nombre de points" << endl;
+                cout << "P: Consulter mon nombre de points" << endl;
             }
             else if (userType == ADMIN)
             {
-                cout << "4: Analyser la fiabilité d'un capteur" << endl;
-                cout << "5: Exclure un capteur" << endl;
-                cout << "6: Mesurer les performances des algorithmes" << endl;
+                cout << "S: Analyser la fiabilité d'un capteur" << endl;
+                cout << "E: Exclure un capteur" << endl;
+                cout << "M: Mesurer les performances des algorithmes" << endl;
             }
-            cout << "0: Quitter l'application" << endl;
         }
+        cout << "X: Quitter l'application" << endl;
 
         string sensorID;
         string cleanerID;
@@ -207,17 +207,17 @@ void run()
         double lng;
         vector<Sensor> similarSensors;
         vector<Measurement> statisticsZone;
-        vector<int> statisticsCleaner;
+        vector<Measurement> statisticsCleaner;
 
-        int choix;
+        char choix;
         cin >> choix;
 
         switch(choix)
         {
-            case 0:
+            case 'X':
                 fin = true;
                 break;
-            case 1: // Testé, mais n'attribue pas les points aux utilisateurs
+            case 'Q':
                 cout << "Entrez la latitude du centre de la zone à analyser : " << endl;
                 cin >> lat;
                 cout << "Entrez la longitude du centre de la zone à analyser : " << endl;
@@ -228,8 +228,9 @@ void run()
                 cout << "Entrez la date de la de la période d'analyse (format YYYY-MM-DD, peut être égale à celle de début) : " << endl;
                 cin >> get_time(&tm, "%Y-%m-%d");
                 end = mktime(&tm);
-                cout << "Entrez le rayon de la zone à analyser (0 pour une estimation en un point précis) : " << endl;
+                cout << "Entrez le rayon de la zone à analyser, en km (0 pour une estimation en un point précis) : " << endl;
                 cin >> radius;
+                radius *= 1000;
 
                 statisticsZone = statistics.computeZone(lat, lng, start, end, radius);
 
@@ -246,7 +247,7 @@ void run()
                     }
                 }
                 break;
-            case 2: // Testé
+            case 'R':
                 cout << "Entrez l'ID du capteur à comparer avec les autres : " << endl;
                 cin >> sensorID;
                 cout << "Entrez la date du début de la période de comparaison (format YYYY-MM-DD) : " << endl;
@@ -271,7 +272,7 @@ void run()
                     }
                 }
                 break;
-            case 3: // Testé
+            case 'P':
                 points = pointsManager.getPoints("User1"); // À remplacer par session.getUserID() quand on aura un système d'auth
                 if (points == -1)
                 {
@@ -282,7 +283,7 @@ void run()
                     cout << "Voici votre solde de points actuel : " << points << endl;
                 }
                 break;
-            case 4: // Testé, tlm est sus askip
+            case 'S':
                 cout << "Entrez l'ID du capteur à analyser : " << endl;
                 cin >> sensorID;
 
@@ -302,7 +303,7 @@ void run()
                 }
 
                 break;
-            case 5: // Doesn't work yet
+            case 'E':
                 cout << "Entrez l'ID du capteur dont le propriétaire doit être exclus : " << endl;
                 cin >> sensorID;
 
@@ -321,22 +322,32 @@ void run()
                 }
 
                 break;
-            case 6: // PAS IMPLÉMENTÉ
+            case 'M': // PAS IMPLÉMENTÉ (analyse des performances)
                 cout << "Cette fonction n'a pas encore été implémentée, et nous en sommes désolés !" << endl;
                 break;
-            case 7: // Core dumped yay
+            case 'C':
                 cout << "Entrez l'ID du cleaner à analyser : " << endl;
                 cin >> cleanerID;
-                cout << "Entrez le rayon souhaité : " << endl;
-                cin >> radius;
 
-                statisticsCleaner = statistics.analyzeCleaner(cleanerID, radius);
+                statisticsCleaner = vector<Measurement>();
+                statisticsCleaner = statistics.analyzeCleaner(cleanerID, RAYON);
 
-                cout << "???" << endl;
+                if (statisticsCleaner.empty())
+                {
+                    cout << "Les capteurs à proximité du cleaner considéré et leurs mesures sur la période considérée ne nous ont pas permis de réaliser de statistiques." << endl;
+                }
+                else
+                {
+                    cout << "Voici les pourcentages d'amélioration de chaque indicateur de la qualité de l'air grâce au cleaner : " << endl;
+                    for (vector<Measurement>::iterator indicateur = statisticsCleaner.begin(); indicateur != statisticsCleaner.end(); indicateur++)
+                    {
+                        cout << indicateur->getAttr_id() << " : " << indicateur->getValue() << "%" << endl;
+                    }
+                }
 
                 break;
             default:
-                cout << "Choix incorrect, veuillez entrer un entier valide." << endl;
+                cout << "Choix incorrect, veuillez entrer une majuscule valide." << endl;
                 break;
         }
     }

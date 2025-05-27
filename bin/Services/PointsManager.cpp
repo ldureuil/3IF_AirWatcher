@@ -23,8 +23,7 @@ using namespace std;
 
 //----------------------------------------------------- Méthodes publiques
 bool PointsManager::award(const vector<string>& sensorsUsed)
-//Algotithme : iter sur chaque capteur utilisé
-// et vérifier s'il est connu
+//Algorithme : itère sur chaque capteur utilisé et vérifie s'il est connu.
 // Si le capteur est trouvé, on met à jour les points de l'utilisateur
 // Sinon, on le signale
 // On vérifie si l'utilisateur est exclu
@@ -32,44 +31,48 @@ bool PointsManager::award(const vector<string>& sensorsUsed)
 // On ajoute l'utilisateur à la liste des utilisateurs traités
 // On retourne un booléen indiquant si tous les capteurs sont connus
 {
-    bool capteursConnus=true;
+    bool capteursConnus = true;
     UserDataAccess userDataAccess;
     unordered_set<string> users;
-    vector<string> excludedUsers = userDataAccess.loadExcludedUsers();
-    unordered_set<string> excludedUsersSet(excludedUsers.begin(),
-                                           excludedUsers.end());
 
-    // On itere sur chaque capteur utilisé
-    for (vector<string>::const_iterator sensorIt = sensorsUsed.begin(); 
-         sensorIt != sensorsUsed.end(); 
-         ++sensorIt) {
+    // On itère sur chaque capteur utilisé
+    for (vector<string>::const_iterator sensorIt = sensorsUsed.begin();
+         sensorIt != sensorsUsed.end();
+         ++sensorIt)
+        {
         // On cherche le capteur dans la collection de capteurs
         vector<Sensor>::iterator sensorFound = find_if( sensors->begin(), sensors->end(),
             [&](Sensor& s) { return s.getId() == *sensorIt; });
         
         // Si le capteur n'est pas trouvé, on le signale
-        if (sensorFound == sensors->end()) {
-            capteursConnus = false;  
+        if (sensorFound == sensors->end())
+        {
+            capteursConnus = false;
             continue; // Passe au capteur suivant
         }
 
         // Si le capteur est trouvé, on met à jour les points de l'utilisateur
         const string& userSensorId = sensorFound->getUserId();
         
-        if (userSensorId.empty()) {
-            //cerr << "Erreur : le capteur " << *sensorIt << " n'a pas d'utilisateur associé." << endl;
+        if (userSensorId.empty())
+        {
             continue; // Passe au capteur suivant
         }
         // On vérifie si l'utilisateur est exclu
-        if(excludedUsersSet.find(userSensorId) != excludedUsersSet.end()) {
-            capteursConnus = false;
-            continue; // Passe au capteur suivant
+        for (ParticulierData& particulier : *(this->particulierData))
+        {
+            if (particulier.getId() == userSensorId)
+            {
+                continue; // Passe au capteur suivant
+            }
         }
+
         // On vérifie si l'utilisateur a déjà été traité
-        if(users.find(userSensorId) == users.end()) {
+        if(users.find(userSensorId) == users.end())
+        {
             userDataAccess.updateUserPoints(userSensorId);
         }
-        cout<<userSensorId<<endl;
+
         // On ajoute l'utilisateur à la liste des utilisateurs traités
         users.insert(userSensorId);
     }
@@ -124,8 +127,10 @@ vector<Sensor>* PointsManager::getSensors(void)
 
 void PointsManager::setSensors(vector<Sensor>* sensors)
 // Algorithme :
-// 
-{ this->sensors = sensors; } //----- Fin de setSensors
+//
+{
+    this->sensors = sensors;
+} //----- Fin de setSensors
 
 //------------------------------------------------- Surcharge d'opérateurs
 PointsManager& PointsManager::operator = ( const PointsManager& unPointsManager )

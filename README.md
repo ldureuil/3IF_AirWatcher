@@ -5,16 +5,15 @@ https://insalyonfrance-my.sharepoint.com/:w:/g/personal/edosanjos_insa-lyon_fr/E
 
 ## TO-DO LIST: RENDU APP VF
 - Implémenter la fonction Administrateur d'évaluation des différents algorithmes ➕ -> Karim
-- Remettre en ordre les histoires de UserDataAccess -> PointsManager 😖 -> Lilas
-- Implémenter le processus d'authentification dans l'interface ➕ -> Xchel
-- Remplacer les chiffres par des caractères dans la console + remplacer les saisies de rayon par des constantes + ajouter quitter l'app pour les fournisseurs -> Lilas
-- Tester les fonctions principales -> Enzo
-- Ajouter le check des permissions utilisateur dans la couche service
+- Mettre des moyennes pondérées pour CompareSensors et AnalyseCleaner
+- Tester les fonctions principales -> Tlm
+- Ajouter le check des permissions utilisateur dans la couche service -> Enzo
 
-- Supprimer les branches obsolètes ☠️
+- Supprimer les branches obsolètes ☠️ -> Tlm
+- Faire des commentaires -> Tlm sauf Enzo qui a bien travaillé
 - Clean le code 🧹
-- Faire le vrai README
-- Préparer des slides pour la soutenance
+- Faire le vrai README -> Lilas
+- Préparer des slides pour la soutenance -> Karim
 
 ## Ajustements au niveau du rendu PDF
 - À terme, il faudra reprendre le diagramme de classes, car on a fait quelques changements
@@ -23,5 +22,5 @@ https://insalyonfrance-my.sharepoint.com/:w:/g/personal/edosanjos_insa-lyon_fr/E
 
 ## Prof
 - Ne pas coder les constantes en dur
-- Renommer bin en src
+- Renommer bin en src -> Enzo
 - Regrouper nos PlantUML

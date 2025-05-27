@@ -21,8 +21,8 @@ using namespace std;
 
 //----------------------------------------------------- Méthodes publiques
 vector<Sensor> Cleaner::getNeighbouringSensors( int radius, vector<Sensor>* sensors )
-// Algorithme :
-//
+// Algorithme : Itère sur tous les capteurs et calcule leur distance au capteur
+// considéré, puis les ajoute au vecteur résultat
 {
     vector<Sensor> neighbours;
     for (vector<Sensor>::iterator sensor_it = sensors->begin(); sensor_it != sensors->end(); sensor_it++)
@@ -95,15 +95,11 @@ Cleaner& Cleaner::operator = ( const Cleaner& unCleaner )
 Cleaner::Cleaner( const Cleaner & unCleaner )
 // Algorithme :
 //
+: id(unCleaner.id), lat(unCleaner.lat), lng(unCleaner.lng), start(unCleaner.start), end(unCleaner.end)
 {
 #ifdef MAP
     cout << "Appel au constructeur de copie de <Cleaner>" << endl;
 #endif
-    id = unCleaner.id;
-    lat = unCleaner.lat;
-    lng = unCleaner.lng;
-    start = unCleaner.start;
-    end = unCleaner.end;
 } //----- Fin de Cleaner (constructeur de copie)
 
 Cleaner::Cleaner( string p_id, double p_lat, double p_lng, time_t p_start, time_t p_end )

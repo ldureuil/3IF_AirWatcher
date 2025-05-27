@@ -29,10 +29,9 @@ class Cleaner
 public:
     //----------------------------------------------------- Méthodes publiques
     vector<Sensor> getNeighbouringSensors( int radius, vector<Sensor>* sensors );
-    // Mode d'emploi :
-    //
-    // Contrat :
-    //
+    // Mode d'emploi : Renvoie un vecteur contenant tous les capteurs plus proches
+    // du capteur considéré qu'un certain seuil (radius, en mètres)
+    // Contrat : Le rayon doit être en mètres
 
     // ---------------------------------------------------- Getters / Setters
     string getId( );
