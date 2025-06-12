@@ -12,6 +12,8 @@ AdminServices  -  todo
 #include "../DataAccess/UserDataAccess.h"
 #include "../Data/Sensor.h"
 #include "../Services/Statistics.h"
+#include "../Authentification/AuthService.h"
+
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
@@ -53,7 +55,7 @@ public:
     // Contrat :
     //
 
-    AdminServices( UserDataAccess p_uda, vector<Sensor>* p_sensors );
+    AdminServices( UserDataAccess p_uda, vector<Sensor>* p_sensors, AuthService* p_authService );
     // Mode d'emploi :
     //
     // Contrat :
@@ -69,6 +71,7 @@ public:
 private:
     UserDataAccess uda;
     vector<Sensor>* sensors;
+    AuthService* authService;
 
 protected:
     //----------------------------------------------------- Méthodes protégées

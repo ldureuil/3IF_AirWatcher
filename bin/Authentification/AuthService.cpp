@@ -53,9 +53,15 @@ bool AuthService::checkRequiredRole( UserType role )
 
 //------------------------------------------------- Surcharge d'opérateurs
 AuthService& AuthService::operator = ( const AuthService& unAuthService )
-// Algorithme :
+// Algorithme : Copie la session courante si this est différent de unAuthService
 //
 {
+    if (this != &unAuthService)
+    {
+        this->currentSession = unAuthService.currentSession;
+    }
+
+    return *this;
 } //----- Fin de operator =
 
 

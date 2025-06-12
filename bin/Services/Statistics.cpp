@@ -25,7 +25,16 @@ using namespace std;
 
 //----------------------------------------------------- Méthodes publiques
 int Statistics::analyzeSensor(string sensorID)
+// Algorithme :
+//
 {
+    // vérifie si l'utilisateur a les droits administrateur
+    if (!authService->checkRequiredRole(UserType::ADMIN))
+    {
+        cerr << "Accès refusé : droits administrateur requis" << endl;
+        return -1;
+    }
+
     //cout << "[DEBUG] Analyse du capteur : " << sensorID << endl;
 
     Sensor* sensor = getSensorByID(sensorID);
@@ -119,8 +128,6 @@ int Statistics::analyzeSensor(string sensorID)
         //cout << "[ALERTE] Capteur " << sensorID << " suspect : trop d'écarts détectés." << endl;
         return 0;
     }
-    
-
 
     //cout << "[DEBUG] Aucune anomalie détectée." << endl;
     return 1;
@@ -177,6 +184,13 @@ vector<Measurement> Statistics::analyzeCleaner( string cleanerID, int radius )
 // Algorithme :
 //
 {
+    // vérifie si l'utilisateur a les droits fournisseur
+    if (!authService->checkRequiredRole(UserType::FOURNISSEUR))
+    {
+        cerr << "Accès refusé : droits fournisseur requis" << endl;
+        return {};
+    }
+
     vector<Measurement> result;
     
     // Obtenir la position et la période d'activation du Cleaner
@@ -248,6 +262,15 @@ vector<Measurement> Statistics::computeZone( double lat, double lng, time_t peri
 // Algorithme :
 //
 {
+    // vérifie si l'utilisateur a les droits user/admin/particulier
+    if (!authService->checkRequiredRole(UserType::USER) &&
+        !authService->checkRequiredRole(UserType::ADMIN) &&
+        !authService->checkRequiredRole(UserType::PARTICULIER))
+    {
+        cerr << "Accès refusé : droits utilisateurs/admin/fournisseur requis" << endl;
+        return {};
+    }
+
     // vérifie si le calcul doit être fait sur un jour et change les bornes en conséquence
     if (period_start  == period_end)
     {
@@ -337,6 +360,13 @@ vector<Sensor> Statistics::compareSensors( string sensorId, time_t period_start,
 // Algorithme :
 //
 {
+    // vérifie si l'utilisateur a les droits user
+    if (!authService->checkRequiredRole(UserType::USER))
+    {
+        cerr << "Accès refusé : droits utilisateur requis" << endl;
+        return {};
+    }
+
     vector<Sensor> result;
 
     Sensor *sensorRef = getSensorByID(sensorId);
@@ -398,7 +428,6 @@ vector<Measurement> Statistics::extrapolateAQI(double lat, double lng, time_t pe
 {
     vector<Measurement> result;
     vector<Measurement> exactMeasures;
-    bool foundExactPos = false;
     vector<vector<Measurement>> weightedMeasures;
     vector<Sensor> weightedSensors;
     map<string, pair<string, string>> allTypes;
@@ -408,7 +437,6 @@ vector<Measurement> Statistics::extrapolateAQI(double lat, double lng, time_t pe
         // s'il y a un capteur à la position exacte on vérifie la liste des mesures
         if (sensor.getLat() == lat && sensor.getLng() == lng)
         {
-            foundExactPos = true;
             exactMeasures = sensor.getMeasurements(period_start, period_end);
             if (!exactMeasures.empty() && exactMeasures[0].getTs() == period_start && exactMeasures[exactMeasures.size() - 1].getTs() == period_end)
             {
@@ -536,6 +564,7 @@ Statistics& Statistics::operator = ( const Statistics& unStatistics )
         this->sensors = unStatistics.sensors;
         this->cleaners = unStatistics.cleaners;
     }
+
     return *this;
 } //----- Fin de operator =
 
@@ -554,10 +583,10 @@ Statistics::Statistics( const Statistics & unStatistics )
 } //----- Fin de Statistics (constructeur de copie)
 
 
-Statistics::Statistics( vector<Sensor>* p_sensors, vector<Cleaner>* p_cleaners, PointsManager*  p_pointsManager )
+Statistics::Statistics( vector<Sensor> *p_sensors, vector<Cleaner> *p_cleaners, PointsManager *p_pointsManager, AuthService *p_authService )
 // Algorithme :
 //
-: sensors(p_sensors), cleaners(p_cleaners), pointsManager(p_pointsManager)
+: sensors(p_sensors), cleaners(p_cleaners), pointsManager(p_pointsManager), authService(p_authService)
 {
 #ifdef MAP
     cout << "Appel au constructeur de <Statistics>" << endl;

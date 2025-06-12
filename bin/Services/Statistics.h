@@ -12,13 +12,14 @@ Statistics  -  todo
 #include "../Data/Sensor.h"
 #include "../Data/Cleaner.h"
 #include "../Data/Measurement.h"
+#include "PointsManager.h"
+#include "../Authentification/AuthService.h"
 
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
 #include <vector>
 #include <ctime>
-#include "PointsManager.h"
 
 //------------------------------------------------------------------------
 // Rôle de la classe <Statistics>
@@ -87,7 +88,7 @@ public:
     // Contrat :
     //
 
-    Statistics( vector<Sensor>* p_sensors, vector<Cleaner>* p_cleaners, PointsManager*  p_pointsManager );
+    Statistics( vector<Sensor>* p_sensors, vector<Cleaner>* p_cleaners, PointsManager*  p_pointsManager, AuthService *p_authService );
     // Mode d'emploi :
     //
     // Contrat :
@@ -108,6 +109,7 @@ protected:
     vector<Sensor>* sensors;
     vector<Cleaner>* cleaners;
     PointsManager* pointsManager;
+    AuthService* authService;
 };
 
 

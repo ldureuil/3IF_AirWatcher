@@ -86,6 +86,13 @@ int PointsManager::getPoints( string userId )
 // Algorithme :
 //
 {
+    // vérifie si l'utilisateur a les droits particulier
+    if (!authService->checkRequiredRole(UserType::PARTICULIER))
+    {
+        cerr << "Accès refusé : droits particulier requis" << endl;
+        return -1;
+    }
+
     if (userId == "")
     {
         cerr << "Erreur : l'utilisateur n'est pas spécifié." << endl;
@@ -161,10 +168,10 @@ PointsManager::PointsManager( const PointsManager& unPointsManager )
     sensors = unPointsManager.sensors;
 } //----- Fin de PointsManager (constructeur de copie)
 
-PointsManager::PointsManager( UserDataAccess p_uda, vector<ParticulierData>* p_particulierData, vector<Sensor>* p_sensors )
+PointsManager::PointsManager( UserDataAccess p_uda, vector<ParticulierData>* p_particulierData, vector<Sensor>* p_sensors, AuthService* p_authService )
 // Algorithme :
 //
-: uda(p_uda), particulierData(p_particulierData), sensors(p_sensors)
+: uda(p_uda), particulierData(p_particulierData), sensors(p_sensors), authService(p_authService)
 {
 #ifdef MAP
     cout << "Appel au constructeur de <PointsManager>" << endl;

@@ -29,6 +29,13 @@ bool AdminServices::excludeSensor( string sensorId )
 // Algorithme :
 //
 {
+    // vérifie si l'utilisateur a les droits administrateur
+    if (!authService->checkRequiredRole(UserType::ADMIN))
+    {
+        cerr << "Accès refusé : droits administrateur requis" << endl;
+        return false;
+    }
+
     bool exist = false;
     Sensor* sensorExclu; 
     for ( auto sensor : *sensors )
@@ -63,6 +70,13 @@ void  AdminServices::evaluate(Statistics stats)
 // Algorithme :
 //
 {
+    // vérifie si l'utilisateur a les droits administrateur
+    if (!authService->checkRequiredRole(UserType::ADMIN))
+    {
+        cerr << "Accès refusé : droits administrateur requis" << endl;
+        return;
+    }
+
     std::cout << "\n=== Évaluation des performances des méthodes de Statistics ===\n";
 
     // Définir période fixe correspondant aux données
@@ -181,10 +195,10 @@ AdminServices::AdminServices( const AdminServices & unAdminServices )
     sensors = unAdminServices.sensors;
 } //----- Fin de AdminServices (constructeur de copie)
 
-AdminServices::AdminServices ( UserDataAccess p_uda, vector<Sensor>* p_sensors )
+AdminServices::AdminServices ( UserDataAccess p_uda, vector<Sensor>* p_sensors, AuthService* p_authService )
 // Algorithme :
 //
-: uda(p_uda), sensors(p_sensors)
+: uda(p_uda), sensors(p_sensors), authService(p_authService)
 {
 #ifdef MAP
     cout << "Appel au constructeur de <AdminServices>" << endl;

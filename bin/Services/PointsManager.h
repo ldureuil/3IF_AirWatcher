@@ -12,6 +12,7 @@ PointsManager  -  todo
 #include "../DataAccess/UserDataAccess.h"
 #include "../Data/ParticulierData.h"
 #include "../Data/Sensor.h"
+#include "../Authentification/AuthService.h"
 
 //------------------------------------------------------------- Constantes
 
@@ -60,7 +61,7 @@ public:
     // Contrat :
     //
 
-    PointsManager( UserDataAccess p_uda, vector<ParticulierData>* p_particulierData, vector<Sensor>* p_sensors );
+    PointsManager( UserDataAccess p_uda, vector<ParticulierData>* p_particulierData, vector<Sensor>* p_sensors, AuthService* p_authService );
     // Mode d'emploi : Passe un pointeur vers un vecteur de capteurs pour
     // éviter une copie inutile
     // Contrat :
@@ -77,6 +78,7 @@ private:
     UserDataAccess uda;
     vector<ParticulierData>* particulierData;
     vector<Sensor>* sensors;
+    AuthService* authService;
 
 protected:
     //----------------------------------------------------- Méthodes protégées

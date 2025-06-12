@@ -29,6 +29,7 @@ using namespace std;
 ///////////////////////////////////////////////////////////////////  PRIVE
 //------------------------------------------------------------- Constantes
 const int RAYON = 60000;
+
 //------------------------------------------------------------------ Types
 
 //---------------------------------------------------- Variables statiques
@@ -157,7 +158,7 @@ void run()
     }
     
 
-    UserType userType = session.getUserType(); //PROVISOIRE !!!!!!! -> session.getUserType()
+    UserType userType = session.getUserType();
 
     DataLoader dataLoader = DataLoader();
     vector<Sensor> *sensors = dataLoader.loadSensor("../data", userType);;
@@ -167,9 +168,9 @@ void run()
     userDataAccess.initializeCSVFile("../../data/ParticulierData.csv");
     vector<ParticulierData> particulierData = userDataAccess.loadParticulierData();
     
-    PointsManager pointsManager = PointsManager(userDataAccess, &particulierData, sensors);
-    Statistics statistics = Statistics(sensors, cleaners, &pointsManager);
-    AdminServices adminServices = AdminServices(userDataAccess, sensors);
+    PointsManager pointsManager = PointsManager(userDataAccess, &particulierData, sensors, &authService);
+    Statistics statistics = Statistics(sensors, cleaners, &pointsManager, &authService);
+    AdminServices adminServices = AdminServices(userDataAccess, sensors, &authService);
 
     while (!fin)
     {

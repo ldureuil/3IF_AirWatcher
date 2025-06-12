@@ -4,10 +4,10 @@ Lien du document Word des rendus :
 https://insalyonfrance-my.sharepoint.com/:w:/g/personal/edosanjos_insa-lyon_fr/EVSNzSARSPZKgMgsQqCgS6YBehI4z2Srng06fMhz2f5D9A
 
 ## TO-DO LIST: RENDU APP VF
-- Implémenter la fonction Administrateur d'évaluation des différents algorithmes ➕ -> Karim
+- Implémenter la fonction Administrateur d'évaluation des différents algorithmes (segmentation fault) ➕ -> Karim
 - Mettre des moyennes pondérées pour CompareSensors et AnalyseCleaner
-- Tester les fonctions principales -> Tlm
-- Ajouter le check des permissions utilisateur dans la couche service -> Enzo
+- Tester les fonctions principales -> Tlm 
+- getPoints() donne le nombre de points de user1 même si 
 
 - Supprimer les branches obsolètes ☠️ -> Tlm
 - Faire des commentaires -> Tlm sauf Enzo qui a bien travaillé
