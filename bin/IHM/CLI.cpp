@@ -323,7 +323,7 @@ void run()
 
                 break;
             case 'M': // PAS IMPLÉMENTÉ (analyse des performances)
-                cout << "Cette fonction n'a pas encore été implémentée, et nous en sommes désolés !" << endl;
+		adminServices.evaluate(statistics);
                 break;
             case 'C':
                 cout << "Entrez l'ID du cleaner à analyser : " << endl;
