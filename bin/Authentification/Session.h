@@ -1,5 +1,5 @@
 /*************************************************************************
-Session  -  todo
+Session  -  Classe de gestion des sessions utilisateur
                              -------------------
     début                : 16/05/2025
 *************************************************************************/
@@ -17,16 +17,18 @@ Session  -  todo
 
 //------------------------------------------------------------------------
 // Rôle de la classe <Session>
-// todo
-//
+// Cette classe gère les sessions utilisateur, en stockant le type d'utilisateur
 //------------------------------------------------------------------------
 
 class Session {
     //----------------------------------------------------------------- PUBLIC
 public:
     //----------------------------------------------------- Méthodes publiques
-    UserType getUserType ( );
-    string getUserID ( );
+    UserType getUserType ( ) const;
+    // Mode d'emploi :
+    //
+    // Contrat :
+    //
 
     //------------------------------------------------- Surcharge d'opérateurs
     Session& operator = ( const Session& unSession );
@@ -49,6 +51,12 @@ public:
     // Contrat :
     //
 
+    Session ( UserType p_userType );
+    // Mode d'emploi :
+    //
+    // Contrat :
+    //
+
     virtual ~Session ( );
     // Mode d'emploi :
     //
@@ -57,7 +65,6 @@ public:
 
     //------------------------------------------------------------------ PRIVE
 private:
-    string userId;
     UserType userType;
 
 protected:

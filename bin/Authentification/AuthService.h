@@ -1,5 +1,5 @@
 /*************************************************************************
-AuthService  -  todo
+AuthService  -  Service d'authentification des utilisateurs
                              -------------------
     début                : 15/05/2025
 *************************************************************************/
@@ -11,6 +11,7 @@ AuthService  -  todo
 //--------------------------------------------------- Interfaces utilisées
 #include "UserType.h"
 #include "Session.h"
+#include "../Data/Credentials.h"
 
 //------------------------------------------------------------- Constantes
 
@@ -18,21 +19,23 @@ AuthService  -  todo
 
 //------------------------------------------------------------------------
 // Rôle de la classe <AuthService>
-// todo
-//
+// Cette classe gère l'authentification des utilisateurs. Elle permet aux
+// utilisateurs de se connecter avec un identifiant et un mot de passe, et
+// de vérifier s'ils ont les rôles requis pour effectuer certaines actions
+// dans l'application.
 //------------------------------------------------------------------------
 
 class AuthService {
     //----------------------------------------------------------------- PUBLIC
 public:
     //----------------------------------------------------- Méthodes publiques
-    Session login(string login, string password);
+    Session login( string databasePath, string login, string password );
     // Mode d'emploi :
     //
     // Contrat :
     //
 
-    bool checkRequiredRole(Session session, UserType role);
+    bool checkRequiredRole( UserType role );
     // Mode d'emploi :
     //
     // Contrat :
@@ -67,7 +70,8 @@ public:
     //
 
     //------------------------------------------------------------------ PRIVE
-
+private:
+    Session currentSession;
 
 protected:
     //----------------------------------------------------- Méthodes protégées
