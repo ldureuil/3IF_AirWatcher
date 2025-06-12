@@ -9,7 +9,7 @@ SOURCES = IHM/CLI.cpp \
 		  DataAccess/DataLoader.cpp DataAccess/AuthDataAccess.cpp DataAccess/UserDataAccess.cpp \
 		  Data/Cleaner.cpp Data/Credentials.cpp Data/Measurement.cpp Data/Sensor.cpp Data/ParticulierData.cpp \
 		  Services/AdminServices.cpp Services/PointsManager.cpp Services/Statistics.cpp \
-		  Authentification/Session.cpp # Authentification/AuthService.cpp
+		  Authentification/Session.cpp Authentification/AuthService.cpp
 OBJECTS = $(patsubst %.cpp, $(BUILD_DIR)/%.o, $(SOURCES))
 
 

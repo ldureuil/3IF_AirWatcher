@@ -101,19 +101,21 @@ void run()
 // Algorithme :
 //
 {
-        /*
+    // Initialisation des services et de l'authentification
+    cout << "Bienvenue dans l'application AirWatcher !" << endl;
     AuthDataAccess authDataAccess = AuthDataAccess();
-    vector<Credentials> authData = authDataAccess.loadCredentials();
+    //vector<Credentials> authData = authDataAccess.loadCredentials();
     AuthService authService = AuthService();
 
+    string credentialsFilePath = "../data/credentials.csv";
     string login;
     string password;
-    */
+    
 
     Session session = Session();
     bool fin = false;
-    /*
     bool connecte = false;
+
     while (!fin && !connecte)
     {
 
@@ -135,9 +137,10 @@ void run()
                 cout << "Entrez votre mot de passe : ";
                 cin >> password;
 
-                session = authService.login(login, password);
+                session = authService.login(credentialsFilePath, login, password);
 
-                if (session.getLogin() != login)
+                if (session.getUserType() == UserType::UNDEFINED)
+                    // Identifiants invalides
                 {
                     cout << "Identifiants incorrects, veuillez réessayer." << endl;
                 }
@@ -152,9 +155,9 @@ void run()
                 break;
         }
     }
-    */
+    
 
-    UserType userType = USER; //PROVISOIRE !!!!!!! -> session.getUserType()
+    UserType userType = session.getUserType(); //PROVISOIRE !!!!!!! -> session.getUserType()
 
     DataLoader dataLoader = DataLoader();
     vector<Sensor> *sensors = dataLoader.loadSensor("../data", userType);;
@@ -163,7 +166,6 @@ void run()
     UserDataAccess userDataAccess = UserDataAccess();
     userDataAccess.initializeCSVFile("../../data/ParticulierData.csv");
     vector<ParticulierData> particulierData = userDataAccess.loadParticulierData();
-
     
     PointsManager pointsManager = PointsManager(userDataAccess, &particulierData, sensors);
     Statistics statistics = Statistics(sensors, cleaners, &pointsManager);
