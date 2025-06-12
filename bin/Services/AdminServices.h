@@ -11,7 +11,7 @@ AdminServices  -  todo
 //--------------------------------------------------- Interfaces utilisées
 #include "../DataAccess/UserDataAccess.h"
 #include "../Data/Sensor.h"
-
+#include "../Services/Statistics.h"
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
@@ -32,6 +32,11 @@ public:
     // Contrat :
     //
 
+    void evaluate(Statistics stats);
+    // Mode d'emploi :
+    //
+    // Contrat :
+    //
 
     //------------------------------------------------- Surcharge d'opérateurs
     AdminServices& operator = ( const AdminServices& unAdminServices );
