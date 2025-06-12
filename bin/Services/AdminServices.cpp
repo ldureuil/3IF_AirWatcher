@@ -15,6 +15,10 @@ using namespace std;
 //------------------------------------------------------ Include personnel
 #include "AdminServices.h"
 #include <chrono>
+#include <iomanip>
+#include <sstream>
+#include <string>
+#include <ctime>
 
 //------------------------------------------------------------- Constantes
 
@@ -59,51 +63,94 @@ void  AdminServices::evaluate(Statistics stats)
 // Algorithme :
 //
 {
-    using namespace std::chrono;
-    cout << "\n=== Évaluation des performances des méthodes de Statistics ===\n";
+    std::cout << "\n=== Évaluation des performances des méthodes de Statistics ===\n";
 
-    time_t now = time(nullptr);
-    time_t before = now - 3600; // 1 heure avant
+    // Définir période fixe correspondant aux données
+    /*
+    std::tm tm_start = {};
+    tm_start.tm_year = 2019 - 1900;  // année 2019
+    tm_start.tm_mon = 0;            // janvier
+    tm_start.tm_mday = 1;
+    tm_start.tm_hour = 0;
+    std::time_t before = std::mktime(&tm_start);
+    tm_start.tm_mday = 8;
+    std::time_t now = std::mktime(&tm_start);
+    */
 
-    // Méthode 1 : computeZone
-    auto t1 = high_resolution_clock::now();
-    auto res1 = stats.computeZone(45.75, 4.85, before, now, 1000, 2000);
-    auto t2 = high_resolution_clock::now();
-    cout << "computeZone() : " << duration_cast<milliseconds>(t2 - t1).count() << " ms (" << res1.size() << " mesures)\n";
+    time_t start;
+    time_t end;
 
-    // Méthode 2 : analyzeCleaner
-    vector<Measurement> cleaners;
+    std::string dateStr;
 
-    if (stats.getCleanerByID("Cleaner1") != nullptr)
+    std::tm tm_start = {};
+    dateStr = "2019-01-03";
+    std::istringstream ss1(dateStr);
+    ss1 >> std::get_time(&tm_start, "%Y-%m-%d");
+    start = mktime(&tm_start);
+
+    std::tm tm_end = {};
+    dateStr = "2019-05-25";
+    std::istringstream ss2(dateStr);
+    ss2 >> std::get_time(&tm_end, "%Y-%m-%d");
+    end = mktime(&tm_end);
+
+    // Déclaration des timestamps
+    std::chrono::high_resolution_clock::time_point t1, t2;
+
+    // 1. computeZone
+    t1 = std::chrono::high_resolution_clock::now();
+    auto res1 = stats.computeZone(43.9600415, 4.3593173, start, end, 50000); // 50 km
+    t2 = std::chrono::high_resolution_clock::now();
+    auto duration1 = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
+    std::cout << "computeZone() : " << duration1.count() << " ms (" << res1.size() << " mesures)" << std::endl;
+
+    // 2. analyzeCleaner
+    std::vector<Measurement> cleanerStats;
+    if (stats.getCleanerByID("Cleaner0") != nullptr)
     {
-        cleaners = stats.analyzeCleaner("Cleaner1", 1000);
+        t1 = std::chrono::high_resolution_clock::now();
+        cleanerStats = stats.analyzeCleaner("Cleaner0", 50000);
+        t2 = std::chrono::high_resolution_clock::now();
+        auto duration2 = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
+        std::cout << "analyzeCleaner() : " << duration2.count() << " ms (" << cleanerStats.size() << " mesures)" << std::endl;
     }
     else
     {
-        cout << "Cleaner 'Cleaner1' introuvable." << endl;
+        std::cout << "Cleaner 'Cleaner0' introuvable → test ignoré." << std::endl;
     }
-    auto t3 = high_resolution_clock::now();
-    cout << "analyzeCleaner() : " << duration_cast<milliseconds>(t3 - t2).count() << " ms (" << cleaners.size() << " mesures)\n";
 
-    // Méthode 3 : analyzeSensor
-    t1 = high_resolution_clock::now();
-    int result = stats.analyzeSensor("Sensor-001");
-    t2 = high_resolution_clock::now();
-    cout << "analyzeSensor() : " << duration_cast<milliseconds>(t2 - t1).count() << " ms (résultat : " << result << ")\n";
+    // 3. analyzeSensor
+    if (stats.getSensorByID("Sensor0") != nullptr)
+    {
+        t1 = std::chrono::high_resolution_clock::now();
+        int result = stats.analyzeSensor("Sensor0");
+        t2 = std::chrono::high_resolution_clock::now();
+        auto duration3 = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
+        std::cout << "analyzeSensor() : " << duration3.count() << " ms (résultat : " << result << ")" << std::endl;
+    }
+    else
+    {
+        std::cout << "Sensor 'Sensor0' introuvable → test ignoré." << std::endl;
+    }
 
-    // Méthode 4 : compareSensors
-    t1 = high_resolution_clock::now();
-    auto sensors = stats.compareSensors("Sensor-001", before, now);
-    t2 = high_resolution_clock::now();
-    cout << "compareSensors() : " << duration_cast<milliseconds>(t2 - t1).count() << " ms (" << sensors.size() << " capteurs)\n";
+    // 4. compareSensors
+    if (stats.getSensorByID("Sensor0") != nullptr)
+    {
+        t1 = std::chrono::high_resolution_clock::now();
+        auto similar = stats.compareSensors("Sensor0", start, end);
+        t2 = std::chrono::high_resolution_clock::now();
+        auto duration4 = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
+        std::cout << "compareSensors() : " << duration4.count() << " ms (" << similar.size() << " capteurs comparés)" << std::endl;
+    }
 
-    // Méthode 5 : extrapolateAQI
-    t1 = high_resolution_clock::now();
-    auto aqi = stats.extrapolateAQI(45.75, 4.85, before, now, 2000);
-    t2 = high_resolution_clock::now();
-    cout << "extrapolateAQI() : " << duration_cast<milliseconds>(t2 - t1).count() << " ms (" << aqi.size() << " extrapolations)\n";
+    // 5. extrapolateAQI
+    t1 = std::chrono::high_resolution_clock::now();
+    auto extrapolated = stats.extrapolateAQI(44.8, 1.8, start, end, 2000);
+    t2 = std::chrono::high_resolution_clock::now();
+    auto duration5 = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
+    std::cout << "extrapolateAQI() : " << duration5.count() << " ms (" << extrapolated.size() << " extrapolations)" << std::endl;
 
-    cout << "=== Fin de l'évaluation ===\n\n";
+    std::cout << "=== Fin de l'évaluation ===" << std::endl;
 
 }
 
