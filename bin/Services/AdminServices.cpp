@@ -18,7 +18,7 @@ using namespace std;
 #include <iomanip>
 #include <sstream>
 #include <string>
-#include <ctime>
+#include <ctime>
 
 //------------------------------------------------------------- Constantes
 
@@ -150,7 +150,7 @@ void  AdminServices::evaluate(Statistics stats)
     auto duration5 = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
     std::cout << "extrapolateAQI() : " << duration5.count() << " ms (" << extrapolated.size() << " extrapolations)" << std::endl;
 
-    std::cout << "=== Fin de l'évaluation ===" << std::endl;
+    std::cout << "=== Fin de l'évaluation ===" << std::endl;
 
 }
 
