@@ -66,7 +66,7 @@ bool AdminServices::excludeSensor( string sensorId )
 } //----- Fin de excludeSensor
 
 
-vector<double>  AdminServices::evaluate( Statistics stats )
+vector<double>  AdminServices::evaluate( Statistics & stats )
 // Algorithme :
 //
 {
