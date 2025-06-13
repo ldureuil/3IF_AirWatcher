@@ -1,5 +1,5 @@
 /*************************************************************************
-ParticulierData  -  todo
+ParticulierData  -  Objet métier représentant les données d'un particulier
                              -------------------
     début                : 16/05/2025
 *************************************************************************/
@@ -16,7 +16,7 @@ ParticulierData  -  todo
 
 //------------------------------------------------------------------------
 // Rôle de la classe <ParticulierData>
-// todo
+// Représenter les données d'un particulier, y compris son identifiant, son nombre de points et son statut d'exclusion.
 //
 //------------------------------------------------------------------------
 

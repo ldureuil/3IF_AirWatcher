@@ -30,16 +30,10 @@ class AuthService {
 public:
     //----------------------------------------------------- Méthodes publiques
     Session login( string databasePath, string login, string password );
-    // Mode d'emploi :
-    //
-    // Contrat :
-    //
+    // Mode d'emploi : Authentifie un utilisateur en vérifiant ses identifiants
 
     bool checkRequiredRole( UserType role );
-    // Mode d'emploi :
-    //
-    // Contrat :
-    //
+    // Mode d'emploi : Vérifie si le rôle de l'utilisateur dans la session correspond au rôle requis
 
 
     //------------------------------------------------- Surcharge d'opérateurs
