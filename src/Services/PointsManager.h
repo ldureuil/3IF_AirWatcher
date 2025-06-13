@@ -1,5 +1,5 @@
 /*************************************************************************
-PointsManager  -  todo
+PointsManager  -  Service pour la gestion des points des utilisateurs en fonction des capteurs utilisés
                              -------------------
     début                : 16/05/2025
 *************************************************************************/
@@ -21,7 +21,7 @@ PointsManager  -  todo
 
 //------------------------------------------------------------------------
 // Rôle de la classe <PointsManager>
-// todo
+// Cette classe gère l'attribution de points aux utilisateurs en fonction des capteurs utilisés.
 //
 //------------------------------------------------------------------------
 

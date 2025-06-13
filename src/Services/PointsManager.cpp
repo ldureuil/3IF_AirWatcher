@@ -1,5 +1,5 @@
 /*************************************************************************
-PointsManager  -  todo
+PointsManager  -  Service pour la gestion des points des utilisateurs en fonction des capteurs utilisés
                              -------------------
     début                : 16/05/2025
 *************************************************************************/
