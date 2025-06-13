@@ -185,7 +185,7 @@ vector<Measurement> Statistics::analyzeCleaner( string cleanerID, int radius )
 //
 {
     // vérifie si l'utilisateur a les droits fournisseur
-    if (!authService->checkRequiredRole(UserType::FOURNISSEUR))
+    if (!authService->checkRequiredRole(UserType::FOURNISSEUR)&& !authService->checkRequiredRole(UserType::ADMIN))
     {
         cerr << "Accès refusé : droits fournisseur requis" << endl;
         return {};
@@ -361,7 +361,7 @@ vector<Sensor> Statistics::compareSensors( string sensorId, time_t period_start,
 //
 {
     // vérifie si l'utilisateur a les droits user
-    if (!authService->checkRequiredRole(UserType::USER))
+    if (!authService->checkRequiredRole(UserType::USER) &&!authService->checkRequiredRole(UserType::ADMIN) )
     {
         cerr << "Accès refusé : droits utilisateur requis" << endl;
         return {};
