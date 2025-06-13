@@ -39,8 +39,7 @@ Session AuthService::login( string credentialsFilePath, string login, string pas
 } //----- Fin de login
 
 bool AuthService::checkRequiredRole( UserType role )
-// Algorithme :
-//
+// Algorithme : Vérifie si le rôle de l'utilisateur dans la session correspond au rôle requis
 {
     // Vérifie si le rôle de l'utilisateur dans la session correspond au rôle requis
     if (currentSession.getUserType() == role) {
