@@ -3,6 +3,7 @@ CXX := g++
 CXXFLAGS = -ansi -pedantic -Wall -std=c++17
 CXXFLAGS_DEBUG := -ansi -pedantic -Wall -std=c++17 -g -DMAP
 TARGET := AirWatcher
+TARGET_TEST := Test_AirWatcher
 BUILD_DIR := build
 
 SOURCES = IHM/CLI.cpp \
@@ -38,3 +39,11 @@ clean:
 
 cleano:
 	rm -rf $(BUILD_DIR)
+
+test: Test_AirWatcher
+
+Test_AirWatcher: build/Tests/main_tests.o
+	$(CXX) $(CXXFLAGS) -o $(TARGET_TEST) build/Tests/main_tests.o $(filter-out $(BUILD_DIR)/IHM/CLI.o, $(OBJECTS))
+
+build/Tests/main_tests.o: Tests/main_tests.cpp
+	$(CXX) $(CXXFLAGS) -c Tests/main_tests.cpp -o build/Tests/main_tests.o
