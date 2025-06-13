@@ -276,7 +276,7 @@ void run()
                 }
                 break;
             case 'P':
-                points = pointsManager.getPoints("User1"); // À remplacer par session.getUserID() quand on aura un système d'auth
+                points = pointsManager.getPoints(session.getUserId());
                 if (points == -1)
                 {
                     cout << "Vous n'êtes pour l'instant pas inscrit dans la liste des particuliers ayant gagné des points." << endl;
@@ -326,7 +326,7 @@ void run()
 
                 break;
             case 'M': // PAS IMPLÉMENTÉ (analyse des performances)
-		adminServices.evaluate(statistics);
+		        adminServices.evaluate(statistics);
                 break;
             case 'C':
                 cout << "Entrez l'ID du cleaner à analyser : " << endl;

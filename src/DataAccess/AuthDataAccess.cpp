@@ -64,6 +64,12 @@ Credentials AuthDataAccess::findCredentials( string credentialsFilePath, string 
         getline(ss, token, ';');
         string userTypeString = token;
 
+        // lire l'UserId
+        string userId = "";
+        if (getline(ss, token, ';')) {
+            userId = token;
+        }
+
         UserType userType;
         if (userTypeString == "ADMIN")
             userType = UserType::ADMIN;
@@ -79,7 +85,7 @@ Credentials AuthDataAccess::findCredentials( string credentialsFilePath, string 
         if (login == p_login && password == p_password)
         {
             // Créer un objet Credentials avec les informations trouvées
-            Credentials credentials(login, password, userType);
+            Credentials credentials(login, password, userType, userId);
 
             file.close();
             return credentials; // Retourner les credentials trouvés

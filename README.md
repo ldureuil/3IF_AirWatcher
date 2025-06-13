@@ -6,8 +6,7 @@ https://insalyonfrance-my.sharepoint.com/:w:/g/personal/edosanjos_insa-lyon_fr/E
 ## TO-DO LIST: RENDU APP VF
 - Implémenter la fonction Administrateur d'évaluation des différents algorithmes (segmentation fault) ➕ -> Karim
 - Mettre des moyennes pondérées pour CompareSensors et AnalyseCleaner
-- Tester les fonctions principales -> Tlm 
-- getPoints() donne le nombre de points de user1 même si 
+- Tester les fonctions principales -> Tlm
 
 - Supprimer les branches obsolètes ☠️ -> Tlm
 - Faire des commentaires -> Tlm sauf Enzo qui a bien travaillé

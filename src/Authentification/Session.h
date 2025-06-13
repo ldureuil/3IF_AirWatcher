@@ -30,6 +30,8 @@ public:
     // Contrat :
     //
 
+    string getUserId ( ) const;
+
     //------------------------------------------------- Surcharge d'opérateurs
     Session& operator = ( const Session& unSession );
     // Mode d'emploi :
@@ -51,7 +53,7 @@ public:
     // Contrat :
     //
 
-    Session ( UserType p_userType );
+    Session ( UserType p_userType, string p_userId = "" );
     // Mode d'emploi :
     //
     // Contrat :
@@ -66,6 +68,7 @@ public:
     //------------------------------------------------------------------ PRIVE
 private:
     UserType userType;
+    string userId;
 
 protected:
     //----------------------------------------------------- Méthodes protégées

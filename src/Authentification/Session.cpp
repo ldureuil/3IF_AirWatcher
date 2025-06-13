@@ -27,6 +27,13 @@ UserType Session::getUserType ( ) const
     return userType;
 } //----- Fin de getUserType
 
+string Session::getUserId ( ) const
+// Algorithme :
+//
+{
+    return userId;
+} //----- Fin de getUserId
+
 
 //------------------------------------------------- Surcharge d'opérateurs
 Session& Session::operator = ( const Session& unSession )
@@ -36,6 +43,7 @@ Session& Session::operator = ( const Session& unSession )
     if (this != &unSession)
     {
         this->userType = unSession.userType;
+        this->userId = unSession.userId;
     }
 
     return *this;
@@ -51,22 +59,24 @@ Session::Session ( const Session & unSession )
     cout << "Appel au constructeur de copie de <Session>" << endl;
 #endif
     this->userType = unSession.userType;
+    this->userId = unSession.userId;
 } //----- Fin de Session (constructeur de copie)
 
 Session::Session ( )
-// Algorithme :
+// Algorithme : Initialisation par défaut
 //
 {
 #ifdef MAP
     cout << "Appel au constructeur de <Session>" << endl;
 #endif
-    this->userType = UNDEFINED; // Initialisation par défaut
+    this->userType = UNDEFINED;
+    this->userId = "";
 } //----- Fin de Session
 
-Session::Session ( UserType p_userType )
+Session::Session ( UserType p_userType, string p_userId )
 // Algorithme :
 //
-: userType(p_userType)
+: userType(p_userType), userId(p_userId)
 {
 #ifdef MAP
     cout << "Appel au constructeur de <Session>" << endl;

@@ -33,7 +33,7 @@ Session AuthService::login( string credentialsFilePath, string login, string pas
         return Session();
     } else {
         // Identifiants valides, créer une session
-        currentSession = Session(credentials.getUserType());
+        currentSession = Session(credentials.getUserType(), credentials.getUserId());
         return currentSession;
     }
 } //----- Fin de login

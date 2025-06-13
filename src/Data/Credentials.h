@@ -47,6 +47,12 @@ public:
     // Contrat :
     //
 
+    string getUserId ( ) const;
+    // Mode d'emploi :
+    //
+    // Contrat :
+    //
+
 
     //------------------------------------------------- Surcharge d'opérateurs
     Credentials& operator = ( const Credentials& unCredentials );
@@ -63,13 +69,7 @@ public:
     // Contrat :
     //
 
-    Credentials ( );
-    // Mode d'emploi :
-    //
-    // Contrat :
-    //
-
-    Credentials ( string p_login, string p_password, UserType p_userType );
+    Credentials ( string p_login = "", string p_password = "", UserType p_userType = UNDEFINED, string p_userId = "" );
     // Mode d'emploi :
     //
     // Contrat :
@@ -86,6 +86,7 @@ private:
     string login;
     string password;
     UserType userType;
+    string userId;
 
 protected:
     //----------------------------------------------------- Méthodes protégées

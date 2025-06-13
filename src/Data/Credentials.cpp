@@ -44,6 +44,13 @@ UserType Credentials::getUserType ( ) const
     return userType;
 } //----- Fin de getUserType
 
+string Credentials::getUserId ( ) const
+// Algorithme :
+//
+{
+    return userId;
+} //----- Fin de getUserId
+
 
 //------------------------------------------------- Surcharge d'opérateurs
 Credentials& Credentials::operator = ( const Credentials& unCredentials )
@@ -55,6 +62,7 @@ Credentials& Credentials::operator = ( const Credentials& unCredentials )
         this->login = unCredentials.login;
         this->password = unCredentials.password;
         this->userType = unCredentials.userType;
+        this->userId = unCredentials.userId;
     }
 
     return *this;
@@ -72,23 +80,13 @@ Credentials::Credentials ( const Credentials & unCredentials )
     this->login = unCredentials.login;
     this->password = unCredentials.password;
     this->userType = unCredentials.userType;
+    this->userId = unCredentials.userId;
 } //----- Fin de Credentials (constructeur de copie)
 
-Credentials::Credentials ( )
+Credentials::Credentials ( string p_login, string p_password, UserType p_userType, string p_userId )
 // Algorithme :
 //
-{
-#ifdef MAP
-    cout << "Appel au constructeur de <Credentials>" << endl;
-#endif
-    login = "";
-    password = "";
-} //----- Fin de Credentials
-
-Credentials::Credentials ( string p_login, string p_password, UserType p_userType )
-// Algorithme :
-//
-: login(p_login), password(p_password), userType(p_userType)
+: login(p_login), password(p_password), userType(p_userType), userId(p_userId)
 {
 #ifdef MAP
     cout << "Appel au constructeur de <Credentials>" << endl;

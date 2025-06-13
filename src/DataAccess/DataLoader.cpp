@@ -36,7 +36,7 @@ vector<Sensor>* DataLoader::loadSensor( string databasePath, UserType userType )
 // Algorithme : charge les données des capteurs à partir des fichiers csv attributes,
 // measurements, sensors et users contenu dans le dossier data. Les attributs sont
 // chargés en premier et doivent garder le même nom pour un chargement plus efficace
-// des mesures. todo : adapter pour les userType
+// des mesures.
 {
     // Créer une map des capteurs déjà chargés avec leur id en valeur et l'id en clé
     unordered_map<string, int> sensorsMap;
@@ -249,7 +249,7 @@ vector<Sensor>* DataLoader::loadSensor( string databasePath, UserType userType )
 
 vector<Cleaner>* DataLoader::loadCleaner( string databasePath, UserType userType )
 // Algorithme : charge les données des cleaners à partir du fichier csv contenu
-// dans le dossier data (cleaners). todo : adapter pour les userType
+// dans le dossier data (cleaners).
 {
     for (const auto& entry : fs::directory_iterator(databasePath))
     {
