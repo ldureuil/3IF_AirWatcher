@@ -66,7 +66,7 @@ bool AdminServices::excludeSensor( string sensorId )
 } //----- Fin de excludeSensor
 
 
-void  AdminServices::evaluate(Statistics stats)
+vector<double>  AdminServices::evaluate( Statistics stats )
 // Algorithme :
 //
 {
@@ -74,7 +74,7 @@ void  AdminServices::evaluate(Statistics stats)
     if (!authService->checkRequiredRole(UserType::ADMIN))
     {
         cerr << "Accès refusé : droits administrateur requis" << endl;
-        return;
+        return vector<double>();
     }
 
     std::cout << "\n=== Évaluation des performances des méthodes de Statistics ===\n";
@@ -111,12 +111,16 @@ void  AdminServices::evaluate(Statistics stats)
     // Déclaration des timestamps
     std::chrono::high_resolution_clock::time_point t1, t2;
 
+    // Vecteur des résultats de l'exécution
+    std::vector<double> results;
+
     // 1. computeZone
     t1 = std::chrono::high_resolution_clock::now();
     auto res1 = stats.computeZone(43.9600415, 4.3593173, start, end, 50000); // 50 km
     t2 = std::chrono::high_resolution_clock::now();
     auto duration1 = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
     std::cout << "computeZone() : " << duration1.count() << " ms (" << res1.size() << " mesures)" << std::endl;
+    results.push_back(duration1.count());
 
     // 2. analyzeCleaner
     std::vector<Measurement> cleanerStats;
@@ -127,6 +131,7 @@ void  AdminServices::evaluate(Statistics stats)
         t2 = std::chrono::high_resolution_clock::now();
         auto duration2 = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
         std::cout << "analyzeCleaner() : " << duration2.count() << " ms (" << cleanerStats.size() << " mesures)" << std::endl;
+        results.push_back(duration2.count());
     }
     else
     {
@@ -141,6 +146,7 @@ void  AdminServices::evaluate(Statistics stats)
         t2 = std::chrono::high_resolution_clock::now();
         auto duration3 = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
         std::cout << "analyzeSensor() : " << duration3.count() << " ms (résultat : " << result << ")" << std::endl;
+        results.push_back(duration3.count());
     }
     else
     {
@@ -155,6 +161,7 @@ void  AdminServices::evaluate(Statistics stats)
         t2 = std::chrono::high_resolution_clock::now();
         auto duration4 = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
         std::cout << "compareSensors() : " << duration4.count() << " ms (" << similar.size() << " capteurs comparés)" << std::endl;
+        results.push_back(duration4.count());
     }
 
     // 5. extrapolateAQI
@@ -163,9 +170,10 @@ void  AdminServices::evaluate(Statistics stats)
     t2 = std::chrono::high_resolution_clock::now();
     auto duration5 = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
     std::cout << "extrapolateAQI() : " << duration5.count() << " ms (" << extrapolated.size() << " extrapolations)" << std::endl;
+    results.push_back(duration5.count());
 
     std::cout << "=== Fin de l'évaluation ===" << std::endl;
-
+    return results;
 }
 
 //------------------------------------------------- Surcharge d'opérateurs
