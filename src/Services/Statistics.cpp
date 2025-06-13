@@ -184,8 +184,8 @@ vector<Measurement> Statistics::analyzeCleaner( string cleanerID, int radius )
 // Algorithme :
 //
 {
-    // vérifie si l'utilisateur a les droits fournisseur
-    if (!authService->checkRequiredRole(UserType::FOURNISSEUR)&& !authService->checkRequiredRole(UserType::ADMIN))
+    // vérifie si l'utilisateur a les droits fournisseur/admin pour la mesure des performances
+    if (!authService->checkRequiredRole(UserType::FOURNISSEUR) && !authService->checkRequiredRole(UserType::ADMIN))
     {
         cerr << "Accès refusé : droits fournisseur requis" << endl;
         return {};

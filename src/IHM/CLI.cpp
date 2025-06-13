@@ -262,11 +262,7 @@ void run()
 
                 similarSensors = statistics.compareSensors(sensorID, start, end);
 
-                if (similarSensors.empty())
-                {
-                    cout << "Il y a eu une erreur lors de la comparaison des capteurs." << endl;
-                }
-                else
+                if (!similarSensors.empty())
                 {
                     cout << "Voici la liste des capteurs, triée par similarité décroissante avec le capteur considéré, sur la période considérée : " << endl;
                     for (vector<Sensor>::iterator sensor = similarSensors.begin(); sensor != similarSensors.end(); sensor++)
@@ -274,6 +270,7 @@ void run()
                         cout << sensor->getId() << " : " << ++compteur << "e; ";
                     }
                 }
+
                 break;
             case 'P':
                 points = pointsManager.getPoints(session.getUserId());
@@ -285,6 +282,7 @@ void run()
                 {
                     cout << "Voici votre solde de points actuel : " << points << endl;
                 }
+
                 break;
             case 'S':
                 cout << "Entrez l'ID du capteur à analyser : " << endl;
@@ -294,15 +292,11 @@ void run()
 
                 if (exitStatus == 1)
                 {
-                    cout << "Ce capteur a été jugé fiable sur la période considérée. Nous avons pas trouvé de gros écart avec les capteurs les plus proches." << endl;
+                    cout << "Ce capteur a été jugé fiable sur la période considérée. Nous n'avons pas trouvé de gros écart avec les capteurs les plus proches." << endl;
                 }
                 else if (exitStatus == 0)
                 {
                     cout << "Ce capteur a été jugé suspect par nos analyses, de gros écarts ont été détéctés avec ses voisins." << endl;
-                }
-                else
-                {
-                    cout << "Les mesures présentes dans la base sur la période considérée ne nous ont pas permis de trancher quant à la fiabilité du capteur en question.";
                 }
 
                 break;
@@ -311,21 +305,13 @@ void run()
                 cin >> sensorID;
 
                 exitStatus = adminServices.excludeSensor(sensorID);
-                if (exitStatus == 1)
+                if (exitStatus)
                 {
                     cout << "Ce capteur et toutes les mesures provenant de ce particulier ont été exclues des requêtes futures." << endl;
                 }
-                else if (exitStatus == 0)
-                {
-                    cout << "Ce capteur était déjà exclus de la base." << endl;
-                }
-                else
-                {
-                    cout << "L'ID renseigné ne correspond pas à un capteur de la base. L'exclusion n'a pas pu avoir lieu.";
-                }
 
                 break;
-            case 'M': // PAS IMPLÉMENTÉ (analyse des performances)
+            case 'M':
 		        adminServices.evaluate(statistics);
                 break;
             case 'C':
@@ -335,11 +321,7 @@ void run()
                 statisticsCleaner = vector<Measurement>();
                 statisticsCleaner = statistics.analyzeCleaner(cleanerID, RAYON);
 
-                if (statisticsCleaner.empty())
-                {
-                    cout << "Les capteurs à proximité du cleaner considéré et leurs mesures sur la période considérée ne nous ont pas permis de réaliser de statistiques." << endl;
-                }
-                else
+                if (!statisticsCleaner.empty())
                 {
                     cout << "Voici les pourcentages d'amélioration de chaque indicateur de la qualité de l'air grâce au cleaner : " << endl;
                     for (vector<Measurement>::iterator indicateur = statisticsCleaner.begin(); indicateur != statisticsCleaner.end(); indicateur++)
