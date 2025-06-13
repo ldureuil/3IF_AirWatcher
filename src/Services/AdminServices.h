@@ -34,7 +34,7 @@ public:
     // Contrat :
     //
 
-    vector<double> evaluate(Statistics stats);
+    vector<double> evaluate(Statistics& stats);
     // Mode d'emploi :
     //
     // Contrat :
