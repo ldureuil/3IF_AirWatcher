@@ -35,6 +35,9 @@ public:
     bool checkRequiredRole( UserType role );
     // Mode d'emploi : Vérifie si le rôle de l'utilisateur dans la session correspond au rôle requis
 
+    bool setCurrentSession ( UserType userType, string userId = "" );
+    // Mode d'emploi : Définit la session courante
+
 
     //------------------------------------------------- Surcharge d'opérateurs
     AuthService& operator = ( const AuthService& unAuthService );

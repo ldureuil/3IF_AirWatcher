@@ -33,7 +33,7 @@ namespace fs = std::filesystem;
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Méthodes publiques
-vector<Sensor>* DataLoader::loadSensor( string databasePath, UserType userType )
+vector<Sensor>* DataLoader::loadSensor( string databasePath )
 // Algorithme : charge les données des capteurs à partir des fichiers csv attributes,
 // measurements, sensors et users contenu dans le dossier data. Les attributs sont
 // chargés en premier et doivent garder le même nom pour un chargement plus efficace
@@ -248,7 +248,7 @@ vector<Sensor>* DataLoader::loadSensor( string databasePath, UserType userType )
     }
 } //----- Fin de loadSensor
 
-vector<Cleaner>* DataLoader::loadCleaner( string databasePath, UserType userType )
+vector<Cleaner>* DataLoader::loadCleaner( string databasePath )
 // Algorithme : charge les données des cleaners à partir du fichier csv contenu
 // dans le dossier data (cleaners).
 {

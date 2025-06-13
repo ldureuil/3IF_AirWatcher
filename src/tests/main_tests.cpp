@@ -1,9 +1,7 @@
 /*************************************************************************
-                           main_tests  -  description
+main_tests  -  description todo
                              -------------------
-    début                : $DATE$
-    copyright            : (C) $YEAR$ par $AUTHOR$
-    e-mail               : $EMAIL$
+    début                : 12/06/2025
 *************************************************************************/
 
 //------ Réalisation du module <main_tests> (fichier main_tests.cpp) -----
@@ -47,9 +45,14 @@ int test1 ( Statistics test_stats, double lat, double lng, time_t start, time_t 
 // l'air pour calculer une moyenne
 {
     vector<Measurement> results = test_stats.computeZone(lat, lng, start, end, radius);
-    cout << results[0].getValue() << " " << results[2].getValue() << endl;
-
-    return EXIT_SUCCESS;
+    // Vérifier si le vecteur contient suffisamment d'éléments avant d'y accéder
+    if (!results.empty() && results.size() > 2) {
+        cout << results[0].getValue() << " " << results[2].getValue() << endl;
+        return EXIT_SUCCESS;
+    } else {
+        cerr << "Aucun résultat ou données insuffisantes" << endl;
+        return EXIT_FAILURE;
+    }
 } //----- fin de test1
 
 
@@ -87,7 +90,8 @@ int main ( )
 //
 {
     AuthService authService = AuthService();
-    Session session = Session(UserType::ADMIN);
+
+    authService.setCurrentSession(UserType::ADMIN);
 
     DataLoader dataLoader = DataLoader();
     vector<Sensor> *sensors = dataLoader.loadSensor("tests/test_data", ADMIN);

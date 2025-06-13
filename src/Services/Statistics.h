@@ -43,7 +43,7 @@ public:
     // Contrat :
     //
 
-    vector<Measurement> computeZone( double lat, double lng, time_t period_start, time_t period_end = 0, int radius = 0, int radiusExtrapolation = 0);
+    vector<Measurement> computeZone( double lat, double lng, time_t period_start, time_t period_end, int radius = 0, int radiusExtrapolation = 0);
     // Mode d'emploi :
     //
     // Contrat :

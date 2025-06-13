@@ -9,7 +9,7 @@ package "Données" {
     - userId : string
     + distanceTo(lat : double, lng : double) : double
     + getSensorNeighbours(sensors : vector<Sensor>*, radius : int) : vector<Sensor>
-    + getMeasurements(period_start : DateTime, period_end : DateTime) : vector<vector<Measurement>>
+    + getMeasurements(period_start : DateTime, period_end : DateTime) : vector<Measurement>
     + getClosestMeasurements(instant : DateTime, before_after : int) : vector<Measurement>
     }
 
@@ -35,12 +35,13 @@ package "Données" {
     - login : string
     - password : string
     - userType : UserType
+    - userId : string
     }
 
     class ParticulierData {
     - id : string
     - points : int
-    - excluded : bool
+    - isExcluded : bool
     }
 }
 
@@ -49,23 +50,32 @@ package "Services" {
     class Statistics {
     - vector<Sensor>* sensors
     - vector<Cleaner>* cleaners
+    - PointsManager* pointsManager
+    - AuthService* authService
     + analyzeSensor(sensorID: string) : int
-    + analyzeCleaner(cleanerID: string, radius : int) : vector<long>
+    + analyzeCleaner(cleanerID: string, radius : int) : vector<Measurement>
     + computeZone(lat : double, lng : double, period_start : DateTime, period_end : DateTime, radius : int) : vector<Measurement>
     + compareSensors(sensorID: string, period_start : DateTime, period_end : DateTime) : vector<Sensor>
-    + extrapolateAQI(lat : double, lng : double, period_start : DateTime, period_end : DateTime) : vector<Measurement>
+    + extrapolateAQI(lat : double, lng : double, period_start : DateTime, period_end : DateTime, radiusExtrapolation : int) : vector<Measurement>
+    + getSensorById(id : string) : Sensor*
+    + getCleanerById(id : string) : Cleaner*
     }
 
     class PointsManager {
+    - UserDataAccess uda
     - vector<Sensor>* sensors
     - vector<ParticulierData>* particulierData
+    - AuthService* authService
     + award(sensorsUsed : vector<string>) : bool
     + getPoints(userId : string) : int
     }
 
     class AdminServices {
+    - UserDataAccess uda
     - vector<Sensor>* sensors
+    - AuthService* authService
     + excludeSensor(sensorID: string)
+    + evaluate(stats : Statistics*) : vector<double>
     }
 
     package "Authentification" {
@@ -74,20 +84,19 @@ package "Services" {
         - User
         - Particulier
         - Fournisseur
+        - Undefined
         }
 
         class Session {
-        - userId : string
         - userType : UserType
-        + getUserId() : string
-        + getUserType() : UserType
+        - userId : string
         }
 
         class AuthService {
-        - usersCredentials : vector<Credentials>
-        + login(login : string, password : string) : Session
-        + checkRequiredRole(session : Session, role : UserType) : bool
-        + findCredentials(login : string) : Credentials
+        - currentSession : Session
+        + login(databasePath : string, login : string, password : string) : Session
+        + checkRequiredRole(role : UserType) : bool
+        + setCurrentSession(userType : UserType, userid : string) : bool
         }
     }
 }
@@ -97,18 +106,19 @@ package "Accès aux données" {
     class DataLoader {
     - sensors : vector<Sensor>
     - cleaners : vector<Cleaner>
-    + loadSensor(databasePath : string, userType : UserType) : vector<Sensor>*
-    + loadCleaner(databasePath : string, userType : UserType) : vector<Cleaner>*
+    + loadSensor(databasePath : string) : vector<Sensor>*
+    + loadCleaner(databasePath : string) : vector<Cleaner>*
     }
 
     class UserDataAccess {
-    + loadParticulierData() : vector<ParticulierData>*
-    + updateUserPoints(userID : string)
-    + addExcludedUser(userID : string)
+    + initializeCSVFile(filename : string) : bool
+    + loadParticulierData() : vector<ParticulierData>
+    + updateUserPoints(userId : string)
+    + addExcludedUser(userId : string)
     }
 
     class AuthDataAccess {
-    + loadCredentials() : vector<Credentials>
+    + findCredentials(databasePath : string, login : string, password : string) : Credentials
     }
 }
 

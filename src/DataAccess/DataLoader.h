@@ -29,13 +29,13 @@ class DataLoader {
     //----------------------------------------------------------------- PUBLIC
 public:
     //----------------------------------------------------- Méthodes publiques
-    vector<Sensor>* loadSensor( string databasePath, UserType userType );
+    vector<Sensor>* loadSensor( string databasePath );
     // Mode d'emploi :
     //
     // Contrat :
     //
 
-    vector<Cleaner>* loadCleaner( string databasePath, UserType userType );
+    vector<Cleaner>* loadCleaner( string databasePath );
     // Mode d'emploi :
     //
     // Contrat :

@@ -12,3 +12,4 @@ https://insalyonfrance-my.sharepoint.com/:w:/g/personal/edosanjos_insa-lyon_fr/E
 - À terme, il faudra reprendre le diagramme de classes, car on a fait quelques changements
 - La relation entre un capteur et une mesure est une composition, changer le style de la flèche
 - modifier algo
+- modifier MCD et Dds

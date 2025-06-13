@@ -49,6 +49,13 @@ bool AuthService::checkRequiredRole( UserType role )
     }
 } //----- Fin de checkRequiredRole
 
+bool AuthService::setCurrentSession ( UserType userType, string userId )
+// Algorithme : Définit la session courante
+{
+    currentSession = Session(userType, userId);
+    return true;
+} //----- Fin de setCurrentSession
+
 
 //------------------------------------------------- Surcharge d'opérateurs
 AuthService& AuthService::operator = ( const AuthService& unAuthService )

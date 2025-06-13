@@ -31,7 +31,6 @@ A --> UC_AnalyzeSensor
 A --> UC_ExcludeSensor
 A --> UC_AnalyzeSensorPerf
 A --|> U
-A --> UC_Auth
 
 ' Le fournisseur
 F --> UC_TrackCleaner
@@ -40,7 +39,6 @@ F --> UC_Auth
 ' Le particulier
 P --> UC_ShowPoints
 P --|> U
-P --> UC_Auth
 
 ' L'utilisateur
 U --> UC_CompareSensors
