@@ -42,8 +42,8 @@ cleano:
 
 test: Test_AirWatcher
 
-Test_AirWatcher: build/Tests/main_tests.o
-	$(CXX) $(CXXFLAGS) -o $(TARGET_TEST) build/Tests/main_tests.o $(filter-out $(BUILD_DIR)/IHM/CLI.o, $(OBJECTS))
+Test_AirWatcher: build/Tests/functional_tests_main.o
+	$(CXX) $(CXXFLAGS) -o $(TARGET_TEST) build/Tests/functional_tests_main.o $(filter-out $(BUILD_DIR)/IHM/CLI.o, $(OBJECTS))
 
-build/Tests/main_tests.o: tests/functional_tests_main.cpp
-	$(CXX) $(CXXFLAGS) -c Tests/main_tests.cpp -o build/Tests/main_tests.o
+build/Tests/functional_tests_main.o: tests/functional_tests_main.cpp
+	$(CXX) $(CXXFLAGS) -c Tests/functional_tests_main.cpp -o build/Tests/functional_tests_main.o
