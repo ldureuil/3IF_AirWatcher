@@ -45,5 +45,5 @@ test: Test_AirWatcher
 Test_AirWatcher: build/Tests/main_tests.o
 	$(CXX) $(CXXFLAGS) -o $(TARGET_TEST) build/Tests/main_tests.o $(filter-out $(BUILD_DIR)/IHM/CLI.o, $(OBJECTS))
 
-build/Tests/main_tests.o: Tests/main_tests.cpp
+build/Tests/main_tests.o: tests/functional_tests_main.cpp
 	$(CXX) $(CXXFLAGS) -c Tests/main_tests.cpp -o build/Tests/main_tests.o
