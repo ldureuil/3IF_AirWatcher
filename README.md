@@ -12,14 +12,14 @@ AirWatcher est une application en mode console qui analyse les données de capte
 
 ## Consignes pour la compilation et l'exécution
 
-Pour compiler l'application, placez-vous dans le dossier src (cd src), puis exécutez la commande "make".
-Lancez ensuite l'application avec "./AirWatcher".
+Pour compiler l'application, placez-vous dans le dossier src (cd src), puis exécutez la commande _**make**_.
+Lancez ensuite l'application avec _**./AirWatcher**_.
 
-Pour compiler les mains des tests unitaires et fonctionnels, utilisez la commande "make test".
-Pour les tests unitaires, exécutez la commande "./Unit_Test_AirWatcher" ;
-lancez les tests fonctionnels grâce à "./Functional_Test_AirWatcher".
+Pour compiler les mains des tests unitaires et fonctionnels, utilisez la commande _**make test**_.
+Pour les tests unitaires, exécutez la commande _**./Unit_Test_AirWatcher**_ ;
+lancez les tests fonctionnels grâce à _**./Functional_Test_AirWatcher**_.
 
-Pour le nettoyage, utilisez "make cleano" (conserve les exécutables) et "make clean" (supprime tous les fichiers compilés)
+Pour le nettoyage, utilisez _**make cleano**_ (conserve les exécutables) et _**make clean**_ (supprime tous les fichiers compilés)
 
 ## Consignes pour l'authentification
 
