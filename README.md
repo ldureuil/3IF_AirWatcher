@@ -1,15 +1,30 @@
 # 3IF_AirWatcher
-TP de Génie Logiciel
-Lien du document Word des rendus :
-https://insalyonfrance-my.sharepoint.com/:w:/g/personal/edosanjos_insa-lyon_fr/EVSNzSARSPZKgMgsQqCgS6YBehI4z2Srng06fMhz2f5D9A
+### Auteurs : B3227 - DOS ANJOS Enzo, RICO VILLA Xchel ; B3228 - DUREUIL Lilas, MADRANE Karim
 
-## TO-DO LIST: RENDU APP VF
-- Faire des commentaires -> Karim, Lilas, Enzo
-- Clean le code 🧹
-- Faire le vrai README -> Lilas
+## Description de l'application
 
-## Ajustements au niveau du rendu PDF
-- À terme, il faudra reprendre le diagramme de classes, car on a fait quelques changements
-- La relation entre un capteur et une mesure est une composition, changer le style de la flèche
-- modifier algo
-- modifier MCD et Dds
+AirWatcher est une application en mode console qui analyse les données de capteurs et produit des statistiques sur la qualité de l'air et son évolution. L'application est principalement utilisée par une agence gouvernementale, et intègre les questions de fiabilité, de performance, et de sécurité. Ses principales fonctionnalités sont :
+- Calculer des statistiques personnalisées sur la qualité de l'air,
+- Fournir des données à la fois sur les capteurs en service et sur les purificateurs d'air installés,
+- Gérer les points des particuliers possédant des capteurs,
+- Exclure les capteurs de particuliers jugés suspects,
+- Mesurer les performances de l'application.
+
+## Consignes pour la compilation et l'exécution
+
+Pour compiler l'application, placez-vous dans le dossier src (cd src), puis exécutez la commande _**make**_.
+Lancez ensuite l'application avec _**./AirWatcher**_.
+
+Pour compiler les mains des tests unitaires et fonctionnels, utilisez la commande _**make test**_.
+Pour les tests unitaires, exécutez la commande _**./Unit_Test_AirWatcher**_ ;
+lancez les tests fonctionnels grâce à _**./Functional_Test_AirWatcher**_.
+
+Pour le nettoyage, utilisez _**make cleano**_ (conserve les exécutables) et _**make clean**_ (supprime tous les fichiers compilés)
+
+## Consignes pour l'authentification
+
+Pour pouvoir tester l'application en empruntant les différents rôles utilisateurs, voici les combinaisons login / mot de passe à emprunter :
+- Rôle Administrateur : admin / mdp
+- Rôle Fournisseur : fournisseur / mdp
+- Rôle Particulier : particulier0 / mdp ou particulier1 / mdp
+- Rôle Utilisateur : user / mdp
