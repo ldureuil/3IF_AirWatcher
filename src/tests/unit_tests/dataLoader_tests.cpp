@@ -41,6 +41,7 @@ void dataLoader_tests::runTests()
     // Tests pour AuthDataAccess::findCredentials
     testFindCredentialsWithEmptyFile(); // T64
     testFindCredentialsWithData(); // T65
+    testFindCredentialsWrongLogin(); // T66
 
     cout << "=== Fin des tests unitaires pour DataLoader ===" << endl;
 } //----- Fin de runTests
@@ -139,6 +140,23 @@ void dataLoader_tests::testFindCredentialsWithData()
         cout << "  ERREUR: Échec de la recherche de credentials" << endl;
     }
 } //----- Fin de testFindCredentialsWithData
+
+void dataLoader_tests::testFindCredentialsWrongLogin()
+// Algorithme : teste la méthode findCredentials avec un login inexistant
+{
+    cout << "T66: Test de findCredentials avec un login inexistant" << endl;
+
+    // Tester la méthode findCredentials
+    AuthDataAccess authDA;
+    Credentials cred = authDA.findCredentials("../data/credentials.csv", "Addmin0", "mdp");
+
+    // Vérifier que les bons credentials sont retournés
+    if (cred.getLogin().empty() && cred.getPassword().empty()) {
+        cout << "  OK: Aucun credentials trouvés" << endl;
+    } else {
+        cout << "  ERREUR: login retournés" << endl;
+    }
+} //----- Fin de testFindCredentialsWrongLogin
 
 
 //-------------------------------------------- Constructeurs - destructeur

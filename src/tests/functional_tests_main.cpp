@@ -94,8 +94,8 @@ int main ( )
     authService.setCurrentSession(UserType::ADMIN);
 
     DataLoader dataLoader = DataLoader();
-    vector<Sensor> *sensors = dataLoader.loadSensor("tests/test_data", ADMIN);
-    vector<Cleaner> *cleaners = dataLoader.loadCleaner("tests/test_data", ADMIN);
+    vector<Sensor> *sensors = dataLoader.loadSensor("tests/test_data");
+    vector<Cleaner> *cleaners = dataLoader.loadCleaner("tests/test_data");
 
     UserDataAccess userDataAccess = UserDataAccess();
     userDataAccess.initializeCSVFile("tests/test_data/ParticulierData.csv");

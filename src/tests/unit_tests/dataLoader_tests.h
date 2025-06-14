@@ -24,15 +24,53 @@ class dataLoader_tests {
 public:
     //----------------------------------------------------- Méthodes publiques
     void runTests();
+    // Mode d'emploi : exécute les tests unitaires pour la couche DataLoader
+    //
+    // Contrat :
+    //
 
     void testLoadSensorWithData();
-    void testLoadSensorWithEmptyData();
-    void testLoadCleanerWithData();
-    void testLoadCleanerWithEmptyData();
+    // Mode d'emploi : teste la méthode loadSensor avec la base de données entière
+    //
+    // Contrat :
+    //
 
-    // Méthodes de test pour AuthDataAccess
+    void testLoadSensorWithEmptyData();
+    // Mode d'emploi : teste la méthode loadSensor avec une base de données vide
+    //
+    // Contrat :
+    //
+
+    void testLoadCleanerWithData();
+    // Mode d'emploi : teste la méthode loadCleaner avec la base de données entière
+    //
+    // Contrat :
+    //
+
+    void testLoadCleanerWithEmptyData();
+    // Mode d'emploi : teste la méthode loadCleaner avec une base de données vide
+    //
+    // Contrat :
+    //
+
     void testFindCredentialsWithEmptyFile();
+    // Mode d'emploi : teste la méthode findCredentials avec un fichier CSV vide
+    //
+    // Contrat :
+    //
+
     void testFindCredentialsWithData();
+    // Mode d'emploi : teste la méthode findCredentials avec des données valides
+    //
+    // Contrat :
+    //
+
+    void testFindCredentialsWrongLogin();
+    // Mode d'emploi : teste la méthode findCredentials avec un login inexistant
+    //
+    // Contrat :
+    //
+
 
     //-------------------------------------------- Constructeurs - destructeur
     dataLoader_tests( );
