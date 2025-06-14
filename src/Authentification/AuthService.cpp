@@ -49,10 +49,10 @@ bool AuthService::checkRequiredRole( UserType role )
     }
 } //----- Fin de checkRequiredRole
 
-bool AuthService::setCurrentSession ( UserType userType, string userId )
+bool AuthService::setCurrentSession ( Session& session )
 // Algorithme : Définit la session courante
 {
-    currentSession = Session(userType, userId);
+    currentSession = session;
     return true;
 } //----- Fin de setCurrentSession
 
@@ -89,6 +89,8 @@ AuthService::AuthService ( )
 #ifdef MAP
     cout << "Appel au constructeur de <AuthService>" << endl;
 #endif
+    this->currentSession = Session(UNDEFINED, "");
+
 } //----- Fin de AuthService
 
 

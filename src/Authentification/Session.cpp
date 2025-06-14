@@ -67,7 +67,7 @@ Session::Session ( )
 #ifdef MAP
     cout << "Appel au constructeur de <Session>" << endl;
 #endif
-    this->userType = UNDEFINED;
+    this->userType = UserType::UNDEFINED;
     this->userId = "";
 } //----- Fin de Session
 

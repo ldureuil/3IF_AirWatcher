@@ -70,7 +70,6 @@ int test5 ( AdminServices adminService, Statistics full_stats )
     return EXIT_SUCCESS;
 } //----- fin de test5
 
-
 int test6 ( AdminServices adminService )
 // Algorithme : Appelle la fonction administrateur d'exclusion d'un
 // capteur sans avoir le rôle requis
@@ -89,9 +88,12 @@ int main ( )
 // Algorithme :
 //
 {
-    AuthService authService = AuthService();
+    // Créer une session valide
+    Session adminSession(UserType::ADMIN);
 
-    authService.setCurrentSession(UserType::ADMIN);
+    // Initialiser AuthService avec cette session
+    AuthService authService;
+    authService.setCurrentSession(adminSession);
 
     DataLoader dataLoader = DataLoader();
     vector<Sensor> *sensors = dataLoader.loadSensor("tests/test_data");
@@ -129,7 +131,7 @@ int main ( )
     std::vector<double> results;
 
 
-    int ok = test1(stats, 43.9600415, 4.3593173, start, end, 50000);
+    int ok = test1(stats, 44, 1, start, end, 50);
 
     return 0;
 } //----- fin de Nom

@@ -563,6 +563,7 @@ Statistics& Statistics::operator = ( const Statistics& unStatistics )
     {
         this->sensors = unStatistics.sensors;
         this->cleaners = unStatistics.cleaners;
+        this->authService = unStatistics.authService;
     }
 
     return *this;
@@ -580,6 +581,7 @@ Statistics::Statistics( const Statistics & unStatistics )
     this->sensors = unStatistics.sensors;
     this->cleaners = unStatistics.cleaners;
     this->pointsManager = unStatistics.pointsManager;
+    this->authService = unStatistics.authService;
 } //----- Fin de Statistics (constructeur de copie)
 
 
