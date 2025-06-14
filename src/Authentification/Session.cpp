@@ -34,7 +34,6 @@ string Session::getUserId ( ) const
     return userId;
 } //----- Fin de getUserId
 
-
 //------------------------------------------------- Surcharge d'opérateurs
 Session& Session::operator = ( const Session& unSession )
 // Algorithme :
@@ -48,7 +47,6 @@ Session& Session::operator = ( const Session& unSession )
 
     return *this;
 } //----- Fin de operator =
-
 
 //-------------------------------------------- Constructeurs - destructeur
 Session::Session ( const Session & unSession )
@@ -91,7 +89,6 @@ Session::~Session ( )
     cout << "Appel au destructeur de <Session>" << endl;
 #endif
 } //----- Fin de ~Session
-
 
 //------------------------------------------------------------------ PRIVE
 

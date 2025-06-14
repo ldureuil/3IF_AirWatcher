@@ -195,9 +195,9 @@ vector<Sensor>* DataLoader::loadSensor( string databasePath )
             }
             else if (filePath.find("users") != string::npos)
             {
+                usersFound = true;
                 while (getline(file, line))
                 {
-                    usersFound = true;
                     // Charger les userID des particuliers
                     stringstream ss(line);
                     string token;

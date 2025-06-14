@@ -24,10 +24,15 @@ class dataLoader_tests {
 public:
     //----------------------------------------------------- Méthodes publiques
     void runTests();
-    // Mode d'emploi : Exécute les tests unitaires pour les méthodes de la couche DataLoader
-    //
-    // Contrat :
-    //
+
+    void testLoadSensorWithData();
+    void testLoadSensorWithEmptyData();
+    void testLoadCleanerWithData();
+    void testLoadCleanerWithEmptyData();
+
+    // Méthodes de test pour AuthDataAccess
+    void testFindCredentialsWithEmptyFile();
+    void testFindCredentialsWithData();
 
     //-------------------------------------------- Constructeurs - destructeur
     dataLoader_tests( );
