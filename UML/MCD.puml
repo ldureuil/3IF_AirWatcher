@@ -52,9 +52,8 @@ package "Services" {
     - vector<Cleaner>* cleaners
     - PointsManager* pointsManager
     - AuthService* authService
-    + analyzeSensor(sensorID: string) : int
     + analyzeCleaner(cleanerID: string, radius : int) : vector<Measurement>
-    + computeZone(lat : double, lng : double, period_start : DateTime, period_end : DateTime, radius : int) : vector<Measurement>
+    + computeZone(lat : double, lng : double, period_start : DateTime, period_end : DateTime, radius : int, pointsFile : string) : vector<Measurement>
     + compareSensors(sensorID: string, period_start : DateTime, period_end : DateTime) : vector<Sensor>
     + extrapolateAQI(lat : double, lng : double, period_start : DateTime, period_end : DateTime, radiusExtrapolation : int) : vector<Measurement>
     + getSensorById(id : string) : Sensor*
@@ -66,7 +65,7 @@ package "Services" {
     - vector<Sensor>* sensors
     - vector<ParticulierData>* particulierData
     - AuthService* authService
-    + award(sensorsUsed : vector<string>) : bool
+    + award(sensorsUsed : vector<string>, (filename : string)) : bool
     + getPoints(userId : string) : int
     }
 
@@ -74,7 +73,8 @@ package "Services" {
     - UserDataAccess uda
     - vector<Sensor>* sensors
     - AuthService* authService
-    + excludeSensor(sensorID: string)
+    + analyzeSensor(sensorID: string) : int
+    + excludeSensor(sensorID: string, pointsFile : string) : bool
     + evaluate(stats : Statistics*) : vector<double>
     }
 
@@ -112,9 +112,9 @@ package "Accès aux données" {
 
     class UserDataAccess {
     + initializeCSVFile(filename : string) : bool
-    + loadParticulierData() : vector<ParticulierData>
-    + updateUserPoints(userId : string)
-    + addExcludedUser(userId : string)
+    + loadParticulierData(filename : string) : vector<ParticulierData>
+    + updateUserPoints(userId : string, filename : string)
+    + addExcludedUser(userId : string, filename : string)
     }
 
     class AuthDataAccess {

@@ -11,16 +11,22 @@ using namespace std;
 //------------------------------------------------------ Include personnel
 #include "unit_tests/dataLoader_tests.h"
 //#include "unit_tests/data_tests.h"
-//#include "unit_tests/services_tests.h"
+#include "unit_tests/services_tests.h"
 
 int main() {
     cout << "====== Lancement des tests unitaires ======" << endl;
 
+    int nbTestsOk = 0;
+
+    // Tests de la couche Services
+    services_tests sTests;
+    nbTestsOk += sTests.runTests();
+
     // Tests de la couche DataLoader
     dataLoader_tests dlTests;
-    dlTests.runTests();
+    nbTestsOk += dlTests.runTests();
 
-    // Ajouter ici les autres tests unitaires
+    cout << "Nombre de tests réussis : " << nbTestsOk << endl;
 
     cout << "====== Fin des tests unitaires ======" << endl;
     return 0;

@@ -14,7 +14,7 @@ SOURCES = IHM/CLI.cpp \
 		  Authentification/Session.cpp Authentification/AuthService.cpp
 OBJECTS = $(patsubst %.cpp, $(BUILD_DIR)/%.o, $(SOURCES))
 
-TEST_UNIT_SOURCES = tests/unit_tests/dataLoader_tests.cpp
+TEST_UNIT_SOURCES = tests/unit_tests/dataLoader_tests.cpp tests/unit_tests/services_tests.cpp
 TEST_UNIT_OBJECTS = $(patsubst %.cpp, $(BUILD_DIR)/%.o, $(TEST_UNIT_SOURCES))
 
 

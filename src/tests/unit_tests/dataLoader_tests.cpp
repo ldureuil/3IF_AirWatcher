@@ -25,28 +25,32 @@ using namespace std;
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Méthodes publiques
-void dataLoader_tests::runTests()
+int dataLoader_tests::runTests()
 // Algorithme : exécute les tests unitaires pour la couche DataLoader
 {
     cout << "=== Début des tests unitaires pour DataLoader ===" << endl;
 
+    int nbTestsOk = 0;
+
     // Tests pour loadSensor
-    testLoadSensorWithData();    // T60
-    testLoadSensorWithEmptyData(); // T61
+    nbTestsOk += testLoadSensorWithData();    // T60
+    nbTestsOk += testLoadSensorWithEmptyData(); // T61
 
     // Tests pour loadCleaner
-    testLoadCleanerWithData();    // T62
-    testLoadCleanerWithEmptyData(); // T63
+    nbTestsOk += testLoadCleanerWithData();    // T62
+    nbTestsOk += testLoadCleanerWithEmptyData(); // T63
 
     // Tests pour AuthDataAccess::findCredentials
-    testFindCredentialsWithEmptyFile(); // T64
-    testFindCredentialsWithData(); // T65
-    testFindCredentialsWrongLogin(); // T66
+    nbTestsOk += testFindCredentialsWithEmptyFile(); // T64
+    nbTestsOk += testFindCredentialsWithData(); // T65
+    nbTestsOk += testFindCredentialsWrongLogin(); // T66
 
     cout << "=== Fin des tests unitaires pour DataLoader ===" << endl;
+
+    return nbTestsOk;
 } //----- Fin de runTests
 
-void dataLoader_tests::testLoadSensorWithData()
+bool dataLoader_tests::testLoadSensorWithData()
 // Algorithme : teste la méthode loadSensor avec la base de données entière
 {
     cout << "T60: Test de loadSensor avec une base contenant plusieurs capteurs" << endl;
@@ -57,12 +61,14 @@ void dataLoader_tests::testLoadSensorWithData()
     // Vérifier que les capteurs sont bien chargés
     if (sensors != nullptr && sensors->size() > 0) {
         cout << "  OK: " << sensors->size() << " capteurs chargés avec succès" << endl;
+        return true;
     } else {
         cout << "  ERREUR: Échec du chargement des capteurs" << endl;
+        return false;
     }
 } //----- Fin de testLoadSensorWithData
 
-void dataLoader_tests::testLoadSensorWithEmptyData()
+bool dataLoader_tests::testLoadSensorWithEmptyData()
 // Algorithme : teste la méthode loadSensor avec une base de données vide
 {
     cout << "T61: Test de loadSensor avec une base vide" << endl;
@@ -73,12 +79,14 @@ void dataLoader_tests::testLoadSensorWithEmptyData()
     // Vérifier que le résultat est bien nullptr
     if (sensors != nullptr && sensors->empty()) {
         cout << "  OK: Retour vide pour une base vide" << endl;
+        return true;
     } else {
         cout << "  ERREUR: Le résultat n'est pas vide pour une base vide" << endl;
+        return false;
     }
 } //----- Fin de testLoadSensorWithEmptyData
 
-void dataLoader_tests::testLoadCleanerWithData()
+bool dataLoader_tests::testLoadCleanerWithData()
 // Algorithme : teste la méthode loadCleaner avec la base de données entière
 {
     cout << "T62: Test de loadCleaner avec une base contenant plusieurs cleaners" << endl;
@@ -89,12 +97,14 @@ void dataLoader_tests::testLoadCleanerWithData()
     // Vérifier que les cleaners sont bien chargés
     if (cleaners != nullptr && cleaners->size() > 0) {
         cout << "  OK: " << cleaners->size() << " cleaners chargés avec succès" << endl;
+        return true;
     } else {
         cout << "  ERREUR: Échec du chargement des cleaners" << endl;
+        return false;
     }
 } //----- Fin de testLoadCleanerWithData
 
-void dataLoader_tests::testLoadCleanerWithEmptyData()
+bool dataLoader_tests::testLoadCleanerWithEmptyData()
 // Algorithme : teste la méthode loadCleaner avec une base de données vide
 {
     cout << "T63: Test de loadCleaner avec une base vide" << endl;
@@ -105,12 +115,14 @@ void dataLoader_tests::testLoadCleanerWithEmptyData()
     // Vérifier que le résultat est vide
     if (cleaners != nullptr && cleaners->empty()) {
         cout << "  OK: Retour vide pour une base vide" << endl;
+        return true;
     } else {
         cout << "  ERREUR: Le résultat n'est pas vide pour une base vide" << endl;
+        return false;
     }
 } //----- Fin de testLoadCleanerWithEmptyData
 
-void dataLoader_tests::testFindCredentialsWithEmptyFile() {
+bool dataLoader_tests::testFindCredentialsWithEmptyFile() {
     cout << "T64: Test de findCredentials avec un fichier CSV vide" << endl;
 
     AuthDataAccess authDA;
@@ -119,12 +131,14 @@ void dataLoader_tests::testFindCredentialsWithEmptyFile() {
     // Vérifier que les credentials sont vides
     if (cred.getLogin().empty()) {
         cout << "  OK: Credentials vides retournées pour un fichier vide" << endl;
+        return true;
     } else {
         cout << "  ERREUR: Des credentials non vides ont été retournées" << endl;
+        return false;
     }
 } //----- Fin de testFindCredentialsWithEmptyFile
 
-void dataLoader_tests::testFindCredentialsWithData()
+bool dataLoader_tests::testFindCredentialsWithData()
 // Algorithme : teste la méthode findCredentials avec des données valides
 {
     cout << "T65: Test de findCredentials avec des données" << endl;
@@ -136,12 +150,14 @@ void dataLoader_tests::testFindCredentialsWithData()
     // Vérifier que les bons credentials sont retournés
     if (cred.getLogin() == "admin" && cred.getPassword() == "mdp") {
         cout << "  OK: Credentials trouvées avec succès" << endl;
+        return true;
     } else {
         cout << "  ERREUR: Échec de la recherche de credentials" << endl;
+        return false;
     }
 } //----- Fin de testFindCredentialsWithData
 
-void dataLoader_tests::testFindCredentialsWrongLogin()
+bool dataLoader_tests::testFindCredentialsWrongLogin()
 // Algorithme : teste la méthode findCredentials avec un login inexistant
 {
     cout << "T66: Test de findCredentials avec un login inexistant" << endl;
@@ -153,8 +169,10 @@ void dataLoader_tests::testFindCredentialsWrongLogin()
     // Vérifier que les bons credentials sont retournés
     if (cred.getLogin().empty() && cred.getPassword().empty()) {
         cout << "  OK: Aucun credentials trouvés" << endl;
+        return true;
     } else {
         cout << "  ERREUR: login retournés" << endl;
+        return false;
     }
 } //----- Fin de testFindCredentialsWrongLogin
 
