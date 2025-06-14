@@ -32,7 +32,7 @@ public:
     Session login( string databasePath, string login, string password );
     // Mode d'emploi : Authentifie un utilisateur en vérifiant ses identifiants
 
-    bool checkRequiredRole( UserType role );
+    virtual bool checkRequiredRole( UserType role );
     // Mode d'emploi : Vérifie si le rôle de l'utilisateur dans la session correspond au rôle requis
 
     bool setCurrentSession ( UserType userType, string userId = "" );

@@ -19,7 +19,7 @@ services_tests  -  tests unitaires des méthodes de la couche services
 // Exécute les tests unitaires pour les méthodes de la couche Services
 //------------------------------------------------------------------------
 
-class Services_Tests
+class services_tests
 {
     //----------------------------------------------------------------- PUBLIC
 public:
