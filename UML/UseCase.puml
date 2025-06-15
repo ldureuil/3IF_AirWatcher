@@ -1,4 +1,4 @@
-@startuml
+@startuml UseCase
 left to right direction
 
 
@@ -49,8 +49,8 @@ UC_CalcAverage <|-- UC_SpecifiedPeriod
 UC_CalcAverage <|-- UC_GivenMoment
 UC_CalcAverage <|-- UC_GivenPoint
 UC_CalcAverage <|-- UC_Area
-UC_TrackCleaner .-> UC_AirQualityImprovement : include
-UC_TrackCleaner .-> UC_CleanedRadius : include
+UC_TrackCleaner .-> UC_AirQualityImprovement : includes
+UC_TrackCleaner .-> UC_CleanedRadius : includes
 
 
 actor "Serveur central" as S
