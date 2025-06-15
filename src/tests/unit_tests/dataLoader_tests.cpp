@@ -28,22 +28,22 @@ using namespace std;
 int dataLoader_tests::runTests()
 // Algorithme : exécute les tests unitaires pour la couche DataLoader
 {
-    cout << "=== Début des tests unitaires pour DataLoader ===" << endl;
+    cout << "=== Début des tests unitaires pour DataAccess ===" << endl;
 
     int nbTestsOk = 0;
 
     // Tests pour loadSensor
-    nbTestsOk += testLoadSensorWithData();    // T64
-    nbTestsOk += testLoadSensorWithEmptyData(); // T65
+    nbTestsOk += testLoadSensorWithData();    // T60
+    nbTestsOk += testLoadSensorWithEmptyData(); // T61
 
     // Tests pour loadCleaner
-    nbTestsOk += testLoadCleanerWithData();    // T66
-    nbTestsOk += testLoadCleanerWithEmptyData(); // T67
+    nbTestsOk += testLoadCleanerWithData();    // T62
+    nbTestsOk += testLoadCleanerWithEmptyData(); // T63
 
     // Tests pour AuthDataAccess::findCredentials
-    nbTestsOk += testFindCredentialsWithEmptyFile(); // T68
-    nbTestsOk += testFindCredentialsWithData(); // T69
-    nbTestsOk += testFindCredentialsWrongLogin(); // T70
+    nbTestsOk += testFindCredentialsWithEmptyFile(); // T64
+    nbTestsOk += testFindCredentialsWithData(); // T65
+    nbTestsOk += testFindCredentialsWrongLogin(); // T66
 
     cout << "=== Fin des tests unitaires pour DataLoader ===" << endl;
 
@@ -53,7 +53,7 @@ int dataLoader_tests::runTests()
 bool dataLoader_tests::testLoadSensorWithData()
 // Algorithme : teste la méthode loadSensor avec la base de données entière
 {
-    cout << "T64: Test de loadSensor avec une base contenant plusieurs capteurs" << endl;
+    cout << "T60: Test de loadSensor avec une base contenant plusieurs capteurs" << endl;
 
     DataLoader dataLoader;
     vector<Sensor>* sensors = dataLoader.loadSensor("../data");
@@ -71,7 +71,7 @@ bool dataLoader_tests::testLoadSensorWithData()
 bool dataLoader_tests::testLoadSensorWithEmptyData()
 // Algorithme : teste la méthode loadSensor avec une base de données vide
 {
-    cout << "T65: Test de loadSensor avec une base vide" << endl;
+    cout << "T61: Test de loadSensor avec une base vide" << endl;
 
     DataLoader dataLoader;
     vector<Sensor>* sensors = dataLoader.loadSensor("tests/test_data/t61");
@@ -89,7 +89,7 @@ bool dataLoader_tests::testLoadSensorWithEmptyData()
 bool dataLoader_tests::testLoadCleanerWithData()
 // Algorithme : teste la méthode loadCleaner avec la base de données entière
 {
-    cout << "T66: Test de loadCleaner avec une base contenant plusieurs cleaners" << endl;
+    cout << "T62: Test de loadCleaner avec une base contenant plusieurs cleaners" << endl;
 
     DataLoader dataLoader;
     vector<Cleaner>* cleaners = dataLoader.loadCleaner("../data");
@@ -107,7 +107,7 @@ bool dataLoader_tests::testLoadCleanerWithData()
 bool dataLoader_tests::testLoadCleanerWithEmptyData()
 // Algorithme : teste la méthode loadCleaner avec une base de données vide
 {
-    cout << "T67: Test de loadCleaner avec une base vide" << endl;
+    cout << "T63: Test de loadCleaner avec une base vide" << endl;
 
     DataLoader dataLoader;
     vector<Cleaner>* cleaners = dataLoader.loadCleaner("tests/test_data/t63");
@@ -123,7 +123,7 @@ bool dataLoader_tests::testLoadCleanerWithEmptyData()
 } //----- Fin de testLoadCleanerWithEmptyData
 
 bool dataLoader_tests::testFindCredentialsWithEmptyFile() {
-    cout << "T68: Test de findCredentials avec un fichier CSV vide" << endl;
+    cout << "T64: Test de findCredentials avec un fichier CSV vide" << endl;
 
     AuthDataAccess authDA;
     Credentials cred = authDA.findCredentials("tests/test_data/t64/credentials.csv", "user", "pass");
@@ -141,7 +141,7 @@ bool dataLoader_tests::testFindCredentialsWithEmptyFile() {
 bool dataLoader_tests::testFindCredentialsWithData()
 // Algorithme : teste la méthode findCredentials avec des données valides
 {
-    cout << "T69: Test de findCredentials avec des données" << endl;
+    cout << "T65: Test de findCredentials avec des données" << endl;
 
     // Tester la méthode findCredentials
     AuthDataAccess authDA;
@@ -160,7 +160,7 @@ bool dataLoader_tests::testFindCredentialsWithData()
 bool dataLoader_tests::testFindCredentialsWrongLogin()
 // Algorithme : teste la méthode findCredentials avec un login inexistant
 {
-    cout << "T70: Test de findCredentials avec un login inexistant" << endl;
+    cout << "T66: Test de findCredentials avec un login inexistant" << endl;
 
     // Tester la méthode findCredentials
     AuthDataAccess authDA;

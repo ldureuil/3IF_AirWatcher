@@ -30,7 +30,7 @@ int main() {
     dataLoader_tests dlTests;
     nbTestsOk += dlTests.runTests();
 
-    cout << "Nombre de tests réussis : " << nbTestsOk << endl;
+    cout << "Nombre de tests réussis : " << nbTestsOk << " / 62 tests implémentés" << endl;
 
     cout << "====== Fin des tests unitaires ======" << endl;
     return 0;

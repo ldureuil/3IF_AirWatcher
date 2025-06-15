@@ -37,6 +37,28 @@ public:
     bool testGetMeasurementsAucune();
     bool testGetMeasurementsAvecDonnees();
 
+    bool testGetSensorNeighboursIsole();
+    bool testGetSensorNeighboursAvecVoisins();
+
+    bool testGetClosestMeasurementsAucune();
+    bool testGetClosestMeasurementsAnterieures();
+    bool testGetClosestMeasurementsPosterieures();
+    bool testGetClosestMeasurementsToutesProches();
+
+    bool testIsWithinDansIntervalle();
+    bool testIsWithinHorsIntervalle();
+
+    bool testGetNeighbouringSensorsAucun();
+    bool testGetNeighbouringSensorsPlusieurs();
+
+    bool testUpdateUserPointsExistant();
+
+    bool testAddExcludedUserValide();
+    bool testAddExcludedUserDejaExclu();
+
+    bool testLoadParticulierDataVide();
+    bool testLoadParticulierDataAvecDonnees();
+
     //-------------------------------------------- Constructeurs - destructeur
     data_tests( );
     // Mode d'emploi :

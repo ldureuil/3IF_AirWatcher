@@ -81,13 +81,16 @@ int services_tests::runTests( )
     nbTestsOk += testExcludeSensorDejaExclu(); // T29
     nbTestsOk += testExcludeSensorValide(); // T30
 
+    // Tests pour AdminServices::evaluate
+    nbTestsOk += testEvaluate(); // T31
+
     // Tests pour AuthService::login
-    nbTestsOk += testLoginCombiValide(); // T31
-    nbTestsOk += testLoginCombiInvalide(); // T32
+    nbTestsOk += testLoginCombiValide(); // T32
+    nbTestsOk += testLoginCombiInvalide(); // T33
 
     // Tests pour AuthService::checkRequiredRole
-    nbTestsOk += testCheckRequiredRolePrivilegeSuperieur(); // T33
-    nbTestsOk += testCheckRequiredRolePrivilegeInferieur(); // T34
+    nbTestsOk += testCheckRequiredRolePrivilegeSuperieur(); // T34
+    nbTestsOk += testCheckRequiredRolePrivilegeInferieur(); // T35
 
     cout << "=== Fin des tests unitaires pour Services ===" << endl;
 
@@ -1162,8 +1165,10 @@ bool services_tests::testEvaluate()
     AuthService authService;
     authService.setCurrentSession(session);
 
+    PointsManager pointsManager(uda, &particulierData, sensors, &authService);
+
     AdminServices adminServices(uda, sensors, &authService);
-    Statistics stats(sensors, cleaners, nullptr, &authService);
+    Statistics stats(sensors, cleaners, &pointsManager, &authService);
 
     // Test de l'évaluation des capteurs
     vector<double> result = adminServices.evaluate(stats);
