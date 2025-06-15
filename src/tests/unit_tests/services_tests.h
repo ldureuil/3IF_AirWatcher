@@ -68,6 +68,11 @@ public:
     bool testExcludeSensorDejaExclu();
     bool testExcludeSensorValide();
 
+    bool testLoginCombiValide();
+    bool testLoginCombiInvalide();
+    bool testCheckRequiredRolePrivilegeSuperieur();
+    bool testCheckRequiredRolePrivilegeInferieur();
+
     //-------------------------------------------- Constructeurs - destructeur
     services_tests( );
     // Mode d'emploi :

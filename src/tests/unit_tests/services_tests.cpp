@@ -81,6 +81,14 @@ int services_tests::runTests( )
     nbTestsOk += testExcludeSensorDejaExclu();
     nbTestsOk += testExcludeSensorValide();
 
+    // Tests pour AuthService::login
+    nbTestsOk += testLoginCombiValide();
+    nbTestsOk += testLoginCombiInvalide();
+
+    // Tests pour AuthService::checkRequiredRole
+    nbTestsOk += testCheckRequiredRolePrivilegeSuperieur();
+    nbTestsOk += testCheckRequiredRolePrivilegeInferieur();
+
     cout << "=== Fin des tests unitaires pour Services ===" << endl;
 
     return nbTestsOk;
@@ -334,7 +342,7 @@ bool services_tests::testComputeZoneEstimationPonctuelle()
 
     // Coordonnées proches de capteurs connus
     double lat = 44;
-    double lng = -1;
+    double lng = 4.0;
 
     // Période avec mesures
     struct tm tm_start = {};
@@ -350,7 +358,7 @@ bool services_tests::testComputeZoneEstimationPonctuelle()
     time_t end = mktime(&tm_end);
 
     // Test avec un rayon de 0 (estimation ponctuelle)
-    vector<Measurement> result = stats.computeZone(lat, lng, start, end, 0);
+    vector<Measurement> result = stats.computeZone(lat, lng, start, end, 0, 10000);
 
     // Vérification
     if (!result.empty()) {
@@ -917,7 +925,7 @@ bool services_tests::testAwardCapteursValidesEtExclus()
 
     PointsManager pointsManager(uda, &particulierData, sensors, &authService);
 
-    // Test avec un mélange de capteurs valides et exclus
+    // Test avec un mélange de capteurs valides et excluscapteur_inexistant
     vector<string> sensorsList = {"Sensor70", "Sensor36"};
     bool result = pointsManager.award(sensorsList);
 
@@ -1065,7 +1073,7 @@ bool services_tests::testExcludeSensorInexistant()
     AdminServices adminServices(uda, sensors, &authService);
 
     // Test avec un capteur inexistant
-    string sensorId = "capteur_inexistant";
+    string sensorId = "Sensor100";
     bool result = adminServices.excludeSensor(sensorId);
 
     // Vérification que la méthode renvoie false pour un capteur inexistant
@@ -1076,7 +1084,7 @@ bool services_tests::testExcludeSensorInexistant()
         cout << "  ERREUR: excludeSensor a renvoyé true pour un capteur inexistant" << endl;
         return false;
     }
-}
+} //----- Fin de testExcludeSensorInexistant
 
 bool services_tests::testExcludeSensorDejaExclu()
 // Algorithme : teste la méthode excludeSensor avec un capteur dont l'utilisateur est déjà exclu
@@ -1105,7 +1113,7 @@ bool services_tests::testExcludeSensorDejaExclu()
         cout << "  ERREUR: excludeSensor a échoué pour un utilisateur déjà exclu" << endl;
         return false;
     }
-}
+} //----- Fin de testExcludeSensorDejaExclu
 
 bool services_tests::testExcludeSensorValide()
 // Algorithme : teste la méthode excludeSensor avec un capteur valide
@@ -1135,7 +1143,101 @@ bool services_tests::testExcludeSensorValide()
         cout << "  ERREUR: excludeSensor a échoué pour un capteur valide" << endl;
         return false;
     }
-}
+} //----- Fin de testExcludeSensorValide
+
+bool services_tests::testLoginCombiValide()
+// Algorithme : teste la méthode login avec une combinaison valide
+{
+    cout << "T31: Test de login avec une combinaison valide" << endl;
+
+    AuthService authService;
+
+    // Test avec une combinaison login/mot de passe valide
+    string credentialsFilePath = "../data/credentials.csv";
+    string login = "admin";
+    string password = "mdp";
+
+    Session session = authService.login(credentialsFilePath, login, password);
+
+    // Vérification que la session est valide
+    if (session.getUserType() != UserType::UNDEFINED && !session.getUserId().empty()) {
+        cout << "  OK: Login réussi, session valide créée pour " << login << endl;
+        return true;
+    } else {
+        cout << "  ERREUR: Échec de login avec des identifiants valides" << endl;
+        return false;
+    }
+} //----- Fin de testLoginCombiValide
+
+bool services_tests::testLoginCombiInvalide()
+// Algorithme : teste la méthode login avec une combinaison invalide
+{
+    cout << "T32: Test de login avec une combinaison invalide" << endl;
+
+    AuthService authService;
+
+    // Test avec une combinaison login/mot de passe invalide
+    string credentialsFilePath = "../data/credentials.csv";
+    string login = "admin";
+    string password = "motDePasse";
+
+    Session session = authService.login(credentialsFilePath, login, password);
+
+    // Vérification que la session est invalide (type UNDEFINED)
+    if (session.getUserType() == UserType::UNDEFINED && session.getUserId().empty()) {
+        cout << "  OK: Login échoué comme prévu avec des identifiants invalides" << endl;
+        return true;
+    } else {
+        cout << "  ERREUR: Login réussi avec des identifiants invalides" << endl;
+        return false;
+    }
+} //----- Fin de testLoginCombiInvalide
+
+bool services_tests::testCheckRequiredRolePrivilegeSuperieur()
+// Algorithme : teste la méthode checkRequiredRole avec un rôle de session supérieur au rôle requis
+{
+    cout << "T33: Test de checkRequiredRole avec un rôle de session supérieur" << endl;
+
+    // Création d'une session avec le rôle ADMIN
+    Session session(UserType::ADMIN);
+    AuthService authService;
+    authService.setCurrentSession(session);
+
+    // Test avec un rôle requis inférieur (USER)
+    bool result = authService.checkRequiredRole(UserType::USER);
+
+    // Vérification que l'accès est autorisé
+    if (!result) {
+        cout << "  OK: L'accès est refusé pour un rôle supérieur" << endl;
+        return true;
+    } else {
+        cout << "  ERREUR: L'accès est autorisé pour un rôle supérieur" << endl;
+        return false;
+    }
+} //----- Fin de testCheckRequiredRolePrivilegeSuperieur
+
+bool services_tests::testCheckRequiredRolePrivilegeInferieur()
+// Algorithme : teste la méthode checkRequiredRole avec un rôle de session inférieur au rôle requis
+{
+    cout << "T34: Test de checkRequiredRole avec un rôle de session inférieur" << endl;
+
+    // Création d'une session avec le rôle FOURNISSEUR
+    Session session(UserType::FOURNISSEUR);
+    AuthService authService;
+    authService.setCurrentSession(session);
+
+    // Test avec un rôle requis différent (PARTICULIER)
+    bool result = authService.checkRequiredRole(UserType::PARTICULIER);
+
+    // Vérification que l'accès est refusé
+    if (!result) {
+        cout << "  OK: L'accès est refusé pour un rôle inférieur" << endl;
+        return true;
+    } else {
+        cout << "  ERREUR: L'accès est autorisé pour un rôle inférieur" << endl;
+        return false;
+    }
+} //----- Fin de testCheckRequiredRolePrivilegeInferieur
 
 //-------------------------------------------- Constructeurs - destructeur
 services_tests::services_tests( )
