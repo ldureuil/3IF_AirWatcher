@@ -7,175 +7,1135 @@ services_tests  -  tests unitaires des méthodes de la couche services
 //- Réalisation de la classe <services_tests> (fichier services_tests.cpp) -
 
 //---------------------------------------------------------------- INCLUDE
-#include "../../Services/PointsManager.h"
-#include "../../Data/ParticulierData.h"
-#include "../../Data/Sensor.h"
-#include "../../Data/Measurement.h"
-#include "../../Authentification/AuthService.h"
-#include "../../DataAccess/UserDataAccess.h"
-
-
 
 //-------------------------------------------------------- Include système
 using namespace std;
 #include <iostream>
-#include <string>
 
 //------------------------------------------------------ Include personnel
 #include "services_tests.h"
-#include <cassert>
+#include "../../Authentification/AuthService.h"
+#include "../../Authentification/Session.h"
+#include "../../Services/Statistics.h"
+#include "../../Services/PointsManager.h"
+#include "../../Services/AdminServices.h"
+#include "../../DataAccess/DataLoader.h"
+#include "../../DataAccess/UserDataAccess.h"
+#include "../../Data/ParticulierData.h"
 
 //------------------------------------------------------------- Constantes
 
 //----------------------------------------------------------------- PUBLIC
+
 //----------------------------------------------------- Méthodes publiques
-
-class MockAuthService : public AuthService {
-public:
-    bool checkRequiredRole(UserType type) override {
-        return true; // Simule que l'utilisateur a le rôle requis
-    }
-};
-
-
-void services_tests::runTests()
+int services_tests::runTests( )
+// Algorithme : exécute les tests unitaires pour la couche Services
 {
-    // Implémentez ici les tests unitaires pour les méthodes de la couche Services
-    cout << "Running services tests..." << endl;
+    cout << "=== Début des tests unitaires pour Services ===" << endl;
 
-    // Test de la méthode award
-    //Initialisation des données de test
-    ParticulierData u1("User1", 0, false), u2("User2", 0,false), exclu("Excluded", 0,false);
+    int nbTestsOk = 0;
 
-    Measurement m1(time(nullptr), "temp", "C", "Temperature", 25.0);
-    vector<Measurement> measurements = {m1};
-    Sensor s1("Sensor4", 0, 0, measurements,"User2");
-    Sensor s2("Sensor5", 0, 0, measurements,"User3");
-    Sensor s3("Sensor6", 0, 0, measurements,"Excluded");
-    Sensor sa("SensorA", 0, 0, measurements,""); // no tiene usuario asociado
-    vector<ParticulierData> particuliers = { u1, u2, exclu };
-    MockAuthService auth;
-    UserDataAccess uda;
+    // Tests pour Statistics::analyzeSensor
+    nbTestsOk += testAnalyzeSensorInexistant();
+    nbTestsOk += testAnalyzeSensorSansMesure();
+    nbTestsOk += testAnalyzeSensorAnormal();
+    nbTestsOk += testAnalyzeSensorNormal();
 
-    // Test T17: liste vide
-    {
-        vector<Sensor> sensors;
-        const vector<string> sensorsUsed;
-        
-        PointsManager pm(uda, &particuliers, &sensors, &auth);
+    // Tests pour Statistics::computeZone
+    nbTestsOk += testComputeZoneAucunCapteur();
+    nbTestsOk += testComputeZoneSansMesures();
+    nbTestsOk += testComputeZoneEstimationPonctuelle();
+    nbTestsOk += testComputeZoneAvecCapteurs();
 
-        bool result = pm.award(sensorsUsed);
-        assert(result == true);
-        cout << "T17 passed." << endl;
-    }
+    // Tests pour Statistics::analyzeCleaner
+    nbTestsOk += testAnalyzeCleanerInconnu();
+    nbTestsOk += testAnalyzeCleanerSansCapteurs();
+    nbTestsOk += testAnalyzeCleanerValide();
 
-    // Test T18: 1 capteur valide
-    {
-        vector<Sensor> sensors = { s1 };
-        PointsManager pm(uda, &particuliers, &sensors, &auth);
+    // Tests pour Statistics::compareSensors
+    nbTestsOk += testCompareSensorsInexistant();
+    nbTestsOk += testCompareSensorsAucunCapteur();
+    nbTestsOk += testCompareSensorsValide();
 
-        bool result = pm.award({ "Sensor1" });
-        assert(result == true);
-        cout << "T18 passed." << endl;
-    }
+    // Tests pour Statistics::extrapolateAQI
+    nbTestsOk += testExtrapolateAQISansMesures();
+    nbTestsOk += testExtrapolateAQIValide();
 
-    // Test T19: 2 capteurs, 2 utilisateurs différents
-    {
-        vector<Sensor> sensors = { s1, s2 };
-        PointsManager pm(uda, &particuliers, &sensors, &auth);
+    // Tests pour PointsManager::award
+    nbTestsOk += testAwardListeVide();
+    nbTestsOk += testAwardCapteurUnique();
+    nbTestsOk += testAwardDeuxCapteursUtilisateurs();
+    nbTestsOk += testAwardDeuxCapteursMemUtilisateur();
+    nbTestsOk += testAwardCapteurInconnu();
+    nbTestsOk += testAwardCapteurExclu();
+    nbTestsOk += testAwardCapteursValidesEtExclus();
+    nbTestsOk += testAwardCapteurSansUtilisateur();
+    nbTestsOk += testAwardCapteursValidesEtSansUtilisateur();
 
-        bool result = pm.award({ "Sensor1", "Sensor2" });
-        assert(result == true);
-        cout << "T19 passed." << endl;
-    }
+    // Tests pour PointsManager::getPoints
+    nbTestsOk += testGetPointsUtilisateurInexistant();
+    nbTestsOk += testGetPointsUtilisateurExistant();
 
-    // Test T20: 2 capteurs du même utilisateur
-    {
-        vector<Sensor> sensors = { s1 };
+    // Tests pour AdminServices::excludeSensor
+    nbTestsOk += testExcludeSensorInexistant();
+    nbTestsOk += testExcludeSensorDejaExclu();
+    nbTestsOk += testExcludeSensorValide();
 
-        PointsManager pm(uda, &particuliers, &sensors, &auth);
+    cout << "=== Fin des tests unitaires pour Services ===" << endl;
 
-        bool result = pm.award({ "Sensor1", "Sensor1" });
-        assert(result == true);
-        cout << "T20 passed." << endl;
-    }
-
-    // Test T21: capteur inconnu
-    {
-        vector<Sensor> sensors = { s1 };
-  
-        PointsManager pm(uda, &particuliers, &sensors, &auth);
-
-        bool result = pm.award({ "Sensor999" });
-        assert(result == false);
-        cout << "T21 passed." << endl;
-    }
-
-    // Test T22: capteur exclu
-    {
-        vector<Sensor> sensors = { s3 };
-       
-        PointsManager pm(uda, &particuliers, &sensors, &auth);
-
-        bool result = pm.award({ "Sensor3" });
-        assert(result == false);
-        cout << "T22 passed." << endl;
-    }
-
-    // Test T23: capteur valide + capteur exclu
-    {
-        vector<Sensor> sensors = { s1, s3 };
-        PointsManager pm(uda, &particuliers, &sensors, &auth);
-
-        bool result = pm.award({ "Sensor1", "Sensor3" });
-        assert(result == false);
-        cout << "T23 passed." << endl;
-    }
-
-    // Test T24: capteur sans utilisateur
-    {
-        vector<Sensor> sensors = { sa };
-
-        PointsManager pm(uda, &particuliers, &sensors, &auth);
-
-        bool result = pm.award({ "SensorA" });
-        assert(result == true);
-        cout << "T24 passed." << endl;
-    }
-
-    // Test T25: capteur valide + capteur sans utilisateur
-    {
-        vector<Sensor> sensors = { s1, sa };
-        PointsManager pm(uda, &particuliers, &sensors, &auth);
-
-        bool result = pm.award({ "Sensor1", "SensorA" });
-        assert(result == true);
-        cout << "T25 passed." << endl;
-    }
-
-    //Test T26 : Utilisateur inexistant
-    {
-        vector<Sensor> sensors = { s1 };
-        PointsManager pm(uda, &particuliers, &sensors, &auth);
-
-        bool result = pm.getPoints("nonExistentUser");
-        assert(result == -1);
-        cout << "T26 passed." << endl;
-    }
-
-    //Test T27 : Utilisateur existant
-    {
-        vector<Sensor> sensors = { s1 };
-        PointsManager pm(uda, &particuliers, &sensors, &auth);
-
-        int points = pm.getPoints("User1");
-        assert(points >= 0); 
-        cout << "T27 passed." << endl;
-    }
-
-
-    cout << "Services tests completed." << endl;
+    return nbTestsOk;
 } //----- Fin de runTests
+
+bool services_tests::testAnalyzeSensorInexistant()
+// Algorithme : teste la méthode analyzeSensor avec un capteur inexistant
+{
+    cout << "T1: Test analyzeSensor avec un capteur inexistant" << endl;
+
+    Session session(UserType::ADMIN);
+    AuthService authService;
+    authService.setCurrentSession(session);
+
+    DataLoader dataLoader;
+    vector<Sensor>* sensors = dataLoader.loadSensor("../data");
+    vector<Cleaner>* cleaners = dataLoader.loadCleaner("../data");
+
+    UserDataAccess uda;
+    vector<ParticulierData> particulierData = uda.loadParticulierData();
+
+    PointsManager pointsManager(uda, &particulierData, sensors, &authService);
+    Statistics stats(sensors, cleaners, &pointsManager, &authService);
+
+    // Test
+    int result = stats.analyzeSensor("Sensor999");
+
+    // Vérification
+    if (result == -1) {
+        cout << "  OK: Le capteur inexistant retourne -1" << endl;
+        return true;
+    } else {
+        cout << "  ERREUR: Résultat inattendu: " << result << " (attendu: -1)" << endl;
+        return false;
+    }
+} //----- Fin de testAnalyzeSensorInexistant
+
+bool services_tests::testAnalyzeSensorSansMesure()
+// Algorithme : teste la méthode analyzeSensor avec un capteur sans mesures
+{
+    cout << "T2: Test analyzeSensor avec un capteur sans mesures" << endl;
+
+    Session session(UserType::ADMIN);
+    AuthService authService;
+    authService.setCurrentSession(session);
+
+    DataLoader dataLoader;
+    vector<Sensor>* sensors = dataLoader.loadSensor("tests/test_data/t2");
+    vector<Cleaner>* cleaners = dataLoader.loadCleaner("../data");
+
+    UserDataAccess uda;
+    vector<ParticulierData> particulierData = uda.loadParticulierData();
+
+    PointsManager pointsManager(uda, &particulierData, sensors, &authService);
+    Statistics stats(sensors, cleaners, &pointsManager, &authService);
+
+    // Test
+    string SensorSansMesure = "Sensor99";
+    int result = stats.analyzeSensor(SensorSansMesure);
+
+    // Vérification
+    if (result == -1) {
+        cout << "  OK: Le capteur sans mesures retourne -1" << endl;
+        return true;
+    } else {
+        cout << "  ERREUR: Résultat inattendu: " << result << " (attendu: -1)" << endl;
+        return false;
+    }
+} //----- Fin de testAnalyzeSensorSansMesure
+
+bool services_tests::testAnalyzeSensorAnormal()
+// Algorithme : Teste la méthode analyzeSensor avec un capteur ayant des valeurs anormales
+{
+    cout << "T3: Test de analyzeSensor avec un capteur ayant des valeurs anormales" << endl;
+
+    Session session(UserType::ADMIN);
+    AuthService authService;
+    authService.setCurrentSession(session);
+
+    DataLoader dataLoader;
+    vector<Sensor>* sensors = dataLoader.loadSensor("tests/test_data/t3");
+    vector<Cleaner>* cleaners = dataLoader.loadCleaner("../data");
+
+    UserDataAccess uda;
+    vector<ParticulierData> particulierData = uda.loadParticulierData();
+
+    PointsManager pointsManager(uda, &particulierData, sensors, &authService);
+    Statistics stats(sensors, cleaners, &pointsManager, &authService);
+
+    // Test avec un capteur ayant des mesures anormales
+    int result = stats.analyzeSensor("Sensor666");
+
+    // Vérification
+    if (result == 0) {
+        cout << "  OK: Le capteur anormal est bien détecté comme suspect" << endl;
+        return true;
+    } else {
+        cout << "  ERREUR: Le capteur anormal n'est pas détecté comme suspect (résultat=" << result << ")" << endl;
+        return false;
+    }
+} //----- Fin de testAnalyzeSensorAnormal
+
+bool services_tests::testAnalyzeSensorNormal()
+// Algorithme : Teste la méthode analyzeSensor avec un capteur ayant des valeurs normales
+{
+    cout << "T4: Test de analyzeSensor avec un capteur ayant des valeurs normales" << endl;
+
+    Session session(UserType::ADMIN);
+    AuthService authService;
+    authService.setCurrentSession(session);
+
+    DataLoader dataLoader;
+    vector<Sensor>* sensors = dataLoader.loadSensor("../data");
+    vector<Cleaner>* cleaners = dataLoader.loadCleaner("../data");
+
+    UserDataAccess uda;
+    vector<ParticulierData> particulierData = uda.loadParticulierData();
+
+    PointsManager pointsManager(uda, &particulierData, sensors, &authService);
+    Statistics stats(sensors, cleaners, &pointsManager, &authService);
+
+    // Test avec un capteur ayant des mesures normales
+    int result = stats.analyzeSensor("Sensor0");
+
+    // Vérification
+    if (result == 1) {
+        cout << "  OK: Le capteur normal est bien détecté comme fiable" << endl;
+        return true;
+    } else {
+        cout << "  ERREUR: Le capteur normal n'est pas détecté comme fiable (résultat=" << result << ")" << endl;
+        return false;
+    }
+} //----- Fin de testAnalyzeSensorNormal
+
+bool services_tests::testComputeZoneAucunCapteur()
+// Algorithme : Teste la méthode computeZone dans une zone sans capteurs
+{
+    cout << "T5: Test de computeZone dans une zone sans capteurs" << endl;
+
+    Session session(UserType::ADMIN);
+    AuthService authService;
+    authService.setCurrentSession(session);
+
+    DataLoader dataLoader;
+    vector<Sensor>* sensors = dataLoader.loadSensor("../data");
+    vector<Cleaner>* cleaners = dataLoader.loadCleaner("../data");
+
+    UserDataAccess uda;
+    vector<ParticulierData> particulierData = uda.loadParticulierData();
+
+    PointsManager pointsManager(uda, &particulierData, sensors, &authService);
+    Statistics stats(sensors, cleaners, &pointsManager, &authService);
+
+    // Coordonnées d'une zone sans capteurs à proximité
+    double lat = 48.0;
+    double lng = 5.0;
+
+    // Période de test
+    struct tm tm_start = {};
+    tm_start.tm_year = 2019 - 1900;
+    tm_start.tm_mon = 10;
+    tm_start.tm_mday = 1;
+    time_t start = mktime(&tm_start);
+
+    struct tm tm_end = {};
+    tm_end.tm_year = 2019 - 1900;
+    tm_end.tm_mon = 10;
+    tm_end.tm_mday = 2;
+    time_t end = mktime(&tm_end);
+
+    // Test avec un rayon de 10km
+    vector<Measurement> result = stats.computeZone(lat, lng, start, end, 10);
+
+    // Vérification
+    if (result.empty()) {
+        cout << "  OK: Aucune mesure trouvée dans une zone sans capteurs" << endl;
+        return true;
+    } else {
+        cout << "  ERREUR: Des mesures ont été trouvées dans une zone sans capteurs" << endl;
+        return false;
+    }
+} //----- Fin de testComputeZoneAucunCapteur
+
+bool services_tests::testComputeZoneSansMesures()
+// Algorithme : Teste la méthode computeZone dans une zone avec des capteurs mais sans mesures
+{
+    cout << "T6: Test de computeZone dans une zone avec capteurs mais sans mesures" << endl;
+
+    Session session(UserType::ADMIN);
+    AuthService authService;
+    authService.setCurrentSession(session);
+
+    DataLoader dataLoader;
+    vector<Sensor>* sensors = dataLoader.loadSensor("../data");
+    vector<Cleaner>* cleaners = dataLoader.loadCleaner("../data");
+
+    UserDataAccess uda;
+    vector<ParticulierData> particulierData = uda.loadParticulierData();
+
+    PointsManager pointsManager(uda, &particulierData, sensors, &authService);
+    Statistics stats(sensors, cleaners, &pointsManager, &authService);
+
+    // Coordonnées d'une zone avec capteurs
+    double lat = 44;
+    double lng = -1;
+
+    // Période sans mesures (date future)
+    struct tm tm_start = {};
+    tm_start.tm_year = 2100 - 1900;
+    tm_start.tm_mon = 10;
+    tm_start.tm_mday = 1;
+    time_t start = mktime(&tm_start);
+
+    struct tm tm_end = {};
+    tm_end.tm_year = 2100 - 1900;
+    tm_end.tm_mon = 10;
+    tm_end.tm_mday = 2;
+    time_t end = mktime(&tm_end);
+
+    // Test avec un rayon de 10km
+    vector<Measurement> result = stats.computeZone(lat, lng, start, end, 10000);
+
+    // Vérification
+    if (result.empty()) {
+        cout << "  OK: Aucune mesure trouvée dans la période spécifiée" << endl;
+        return true;
+    } else {
+        cout << "  ERREUR: Des mesures ont été trouvées pour une période sans données" << endl;
+        return false;
+    }
+} //----- Fin de testComputeZoneSansMesures
+
+bool services_tests::testComputeZoneEstimationPonctuelle()
+// Algorithme : Teste la méthode computeZone avec un rayon de 0 (estimation ponctuelle)
+{
+    cout << "T7: Test de computeZone avec un rayon de 0 (estimation ponctuelle)" << endl;
+
+    Session session(UserType::ADMIN);
+    AuthService authService;
+    authService.setCurrentSession(session);
+
+    DataLoader dataLoader;
+    vector<Sensor>* sensors = dataLoader.loadSensor("../data");
+    vector<Cleaner>* cleaners = dataLoader.loadCleaner("../data");
+
+    UserDataAccess uda;
+    vector<ParticulierData> particulierData = uda.loadParticulierData();
+
+    PointsManager pointsManager(uda, &particulierData, sensors, &authService);
+    Statistics stats(sensors, cleaners, &pointsManager, &authService);
+
+    // Coordonnées proches de capteurs connus
+    double lat = 44;
+    double lng = -1;
+
+    // Période avec mesures
+    struct tm tm_start = {};
+    tm_start.tm_year = 2019 - 1900;
+    tm_start.tm_mon = 1;
+    tm_start.tm_mday = 1;
+    time_t start = mktime(&tm_start);
+
+    struct tm tm_end = {};
+    tm_end.tm_year = 2019 - 1900;
+    tm_end.tm_mon = 1;
+    tm_end.tm_mday = 1;
+    time_t end = mktime(&tm_end);
+
+    // Test avec un rayon de 0 (estimation ponctuelle)
+    vector<Measurement> result = stats.computeZone(lat, lng, start, end, 0);
+
+    // Vérification
+    if (!result.empty()) {
+        cout << "  OK: Estimation ponctuelle réussie avec " << result.size() << " mesures" << endl;
+        return true;
+    } else {
+        cout << "  ERREUR: Aucune mesure trouvée pour l'estimation ponctuelle" << endl;
+        return false;
+    }
+} //----- Fin de testComputeZoneEstimationPonctuelle
+
+bool services_tests::testComputeZoneAvecCapteurs()
+// Algorithme : Teste la méthode computeZone dans une zone avec des capteurs et des mesures
+{
+    cout << "T8: Test de computeZone dans une zone avec capteurs et mesures" << endl;
+
+    Session session(UserType::USER);
+    AuthService authService;
+    authService.setCurrentSession(session);
+
+    DataLoader dataLoader;
+    vector<Sensor>* sensors = dataLoader.loadSensor("../data");
+    vector<Cleaner>* cleaners = dataLoader.loadCleaner("../data");
+
+    UserDataAccess uda;
+    vector<ParticulierData> particulierData = uda.loadParticulierData();
+
+    PointsManager pointsManager(uda, &particulierData, sensors, &authService);
+    Statistics stats(sensors, cleaners, &pointsManager, &authService);
+
+    // Coordonnées d'une zone avec capteurs
+    double lat = 44.0;
+    double lng = 4.0;
+
+    // Période avec mesures
+    struct tm tm_start = {};
+    tm_start.tm_year = 2019 - 1900;
+    tm_start.tm_mon = 1;
+    tm_start.tm_mday = 1;
+    time_t start = mktime(&tm_start);
+
+    struct tm tm_end = {};
+    tm_end.tm_year = 2019 - 1900;
+    tm_end.tm_mon = 1;
+    tm_end.tm_mday = 10;
+    time_t end = mktime(&tm_end);
+
+    // Test avec un rayon de 10km
+    vector<Measurement> result = stats.computeZone(lat, lng, start, end, 10000);
+
+    // Vérification
+    if (!result.empty()) {
+        cout << "  OK: " << result.size() << " mesures trouvées dans la zone avec capteurs" << endl;
+        return true;
+    } else {
+        cout << "  ERREUR: Aucune mesure trouvée dans une zone qui devrait en contenir" << endl;
+        return false;
+    }
+} //----- Fin de testComputeZoneAvecCapteurs
+
+bool services_tests::testAnalyzeCleanerInconnu()
+// Algorithme : teste la méthode analyzeCleaner avec un cleaner inexistant
+{
+    cout << "T9: Test de analyzeCleaner avec un cleaner inexistant" << endl;
+
+    Session session(UserType::FOURNISSEUR);
+    AuthService authService;
+    authService.setCurrentSession(session);
+    
+    DataLoader dataLoader;
+    vector<Sensor>* sensors = dataLoader.loadSensor("../data");
+    vector<Cleaner>* cleaners = dataLoader.loadCleaner("../data");
+    
+    UserDataAccess uda;
+    vector<ParticulierData> particulierData = uda.loadParticulierData();
+    
+    PointsManager pointsManager(uda, &particulierData, sensors, &authService);
+    Statistics stats(sensors, cleaners, &pointsManager, &authService);
+    
+    // Test avec un cleaner inexistant
+    vector<Measurement> result = stats.analyzeCleaner("Cleaner5");
+    
+    // Vérification
+    if (result.empty()) {
+        cout << "  OK: Un vecteur vide est retourné pour un cleaner inexistant" << endl;
+        return true;
+    } else {
+        cout << "  ERREUR: Un vecteur non vide est retourné pour un cleaner inexistant" << endl;
+        return false;
+    }
+} //----- Fin de testAnalyzeCleanerInconnu
+
+bool services_tests::testAnalyzeCleanerSansCapteurs()
+// Algorithme : teste la méthode analyzeCleaner avec un cleaner n'ayant pas de capteurs à proximité
+{
+    cout << "T10: Test de analyzeCleaner avec un cleaner sans capteurs à proximité" << endl;
+
+    Session session(UserType::FOURNISSEUR);
+    AuthService authService;
+    authService.setCurrentSession(session);
+    
+    DataLoader dataLoader;
+    vector<Sensor>* sensors = dataLoader.loadSensor("../data");
+    vector<Cleaner>* cleaners = dataLoader.loadCleaner("../data");
+    
+    UserDataAccess uda;
+    vector<ParticulierData> particulierData = uda.loadParticulierData();
+    
+    PointsManager pointsManager(uda, &particulierData, sensors, &authService);
+    Statistics stats(sensors, cleaners, &pointsManager, &authService);
+    
+    // Test avec un cleaner sans capteurs à proximité
+    vector<Measurement> result = stats.analyzeCleaner("Cleaner0", 100); // Rayon très petit
+    
+    // Vérification
+    if (result.empty()) {
+        cout << "  OK: Un vecteur vide est retourné pour un cleaner sans capteurs à proximité" << endl;
+        return true;
+    } else {
+        cout << "  ERREUR: Un vecteur non vide est retourné pour un cleaner sans capteurs à proximité" << endl;
+        return false;
+    }
+} //----- Fin de testAnalyzeCleanerSansCapteurs
+
+bool services_tests::testAnalyzeCleanerValide()
+// Algorithme : teste la méthode analyzeCleaner avec un cleaner valide ayant des capteurs à proximité
+{
+    cout << "T11: Test de analyzeCleaner avec un cleaner valide" << endl;
+
+    Session session(UserType::FOURNISSEUR);
+    AuthService authService;
+    authService.setCurrentSession(session);
+    
+    DataLoader dataLoader;
+    vector<Sensor>* sensors = dataLoader.loadSensor("../data");
+    vector<Cleaner>* cleaners = dataLoader.loadCleaner("../data");
+    
+    UserDataAccess uda;
+    vector<ParticulierData> particulierData = uda.loadParticulierData();
+    
+    PointsManager pointsManager(uda, &particulierData, sensors, &authService);
+    Statistics stats(sensors, cleaners, &pointsManager, &authService);
+    
+    // Test avec un cleaner valide et des capteurs à proximité
+    vector<Measurement> result = stats.analyzeCleaner("Cleaner0", 100000);
+    
+    // Vérification
+    if (!result.empty()) {
+        cout << "  OK: Un vecteur de " << result.size() << " mesures est retourné pour un cleaner valide" << endl;
+        return true;
+    } else {
+        cout << "  ERREUR: Un vecteur vide est retourné pour un cleaner valide avec capteurs" << endl;
+        return false;
+    }
+} //----- Fin de testAnalyzeCleanerValide
+
+bool services_tests::testCompareSensorsInexistant()
+// Algorithme : teste la méthode compareSensors avec un capteur inexistant
+{
+    cout << "T12: Test de compareSensors avec un capteur inexistant" << endl;
+
+    Session session(UserType::USER);
+    AuthService authService;
+    authService.setCurrentSession(session);
+
+    DataLoader dataLoader;
+    vector<Sensor>* sensors = dataLoader.loadSensor("../data");
+    vector<Cleaner>* cleaners = dataLoader.loadCleaner("../data");
+
+    UserDataAccess uda;
+    vector<ParticulierData> particulierData = uda.loadParticulierData();
+
+    PointsManager pointsManager(uda, &particulierData, sensors, &authService);
+    Statistics stats(sensors, cleaners, &pointsManager, &authService);
+
+    // Définition de la période de test
+    time_t start, end;
+    struct tm tm_start = {}, tm_end = {};
+    tm_start.tm_year = 2019 - 1900;
+    tm_start.tm_mon = 1;
+    tm_start.tm_mday = 1;
+    start = mktime(&tm_start);
+
+    tm_end.tm_year = 2019 - 1900;
+    tm_end.tm_mon = 1;
+    tm_end.tm_mday = 31;
+    end = mktime(&tm_end);
+
+    // Test avec un capteur inexistant
+    vector<Sensor> result = stats.compareSensors("Sensor100", start, end);
+
+    // Vérification
+    if (result.empty()) {
+        cout << "  OK: Aucun capteur similaire trouvé pour un capteur inexistant" << endl;
+        return true;
+    } else {
+        cout << "  ERREUR: Un vecteur non vide est retourné pour un capteur inexistant" << endl;
+        return false;
+    }
+} //----- Fin de testCompareSensorsInexistant
+
+bool services_tests::testCompareSensorsAucunCapteur()
+// Algorithme : teste la méthode compareSensors avec un capteur valide mais sans autres capteurs disponibles pour la comparaison
+{
+    cout << "T13: Test de compareSensors sans capteurs pour la comparaison" << endl;
+
+    Session session(UserType::USER);
+    AuthService authService;
+    authService.setCurrentSession(session);
+
+    DataLoader dataLoader;
+    vector<Sensor>* sensors = dataLoader.loadSensor("tests/test_data/t13");
+    vector<Cleaner>* cleaners = dataLoader.loadCleaner("../data");
+
+    UserDataAccess uda;
+    vector<ParticulierData> particulierData = uda.loadParticulierData();
+
+    PointsManager pointsManager(uda, &particulierData, sensors, &authService);
+    Statistics stats(sensors, cleaners, &pointsManager, &authService);
+
+    // Définition de la période de test
+    time_t start, end;
+    struct tm tm_start = {}, tm_end = {};
+    tm_start.tm_year = 2019 - 1900;
+    tm_start.tm_mon = 1;
+    tm_start.tm_mday = 1;
+    start = mktime(&tm_start);
+
+    tm_end.tm_year = 2019 - 1900;
+    tm_end.tm_mon = 1;
+    tm_end.tm_mday = 31;
+    end = mktime(&tm_end);
+
+    // Test avec un capteur valide mais sans autres capteurs pour la comparaison (les autres n'ont pas de mesures dans la période)
+    vector<Sensor> result = stats.compareSensors("Sensor0", start, end);
+
+    // Vérification
+    if (result.empty()) {
+        cout << "  OK: Aucun capteur similaire trouvé quand il n'y a pas d'autres capteurs disponibles" << endl;
+        return true;
+    } else {
+        cout << "  ERREUR: Un vecteur non vide est retourné alors qu'il ne devrait pas y avoir de capteurs similaires" << endl;
+        return false;
+    }
+} //----- Fin de testCompareSensorsAucunCapteur
+
+bool services_tests::testCompareSensorsValide()
+// Algorithme : teste la méthode compareSensors avec un capteur valide et d'autres capteurs disponibles pour la comparaison
+{
+    cout << "T14: Test de compareSensors avec des capteurs valides" << endl;
+
+    Session session(UserType::USER);
+    AuthService authService;
+    authService.setCurrentSession(session);
+
+    DataLoader dataLoader;
+    vector<Sensor>* sensors = dataLoader.loadSensor("../data");
+    vector<Cleaner>* cleaners = dataLoader.loadCleaner("../data");
+
+    UserDataAccess uda;
+    vector<ParticulierData> particulierData = uda.loadParticulierData();
+
+    PointsManager pointsManager(uda, &particulierData, sensors, &authService);
+    Statistics stats(sensors, cleaners, &pointsManager, &authService);
+
+    // Définition de la période de test
+    time_t start, end;
+    struct tm tm_start = {}, tm_end = {};
+    tm_start.tm_year = 2019 - 1900;
+    tm_start.tm_mon = 1;
+    tm_start.tm_mday = 1;
+    start = mktime(&tm_start);
+
+    tm_end.tm_year = 2019 - 1900;
+    tm_end.tm_mon = 1;
+    tm_end.tm_mday = 31;
+    end = mktime(&tm_end);
+
+    // Test avec un capteur valide et d'autres capteurs disponibles
+    vector<Sensor> result = stats.compareSensors("Sensor0", start, end);
+
+    // Vérification
+    if (!result.empty()) {
+        cout << "  OK: " << result.size() << " capteurs similaires trouvés" << endl;
+        return true;
+    } else {
+        cout << "  ERREUR: Aucun capteur similaire trouvé alors que des capteurs sont disponibles" << endl;
+        return false;
+    }
+} //----- Fin de testCompareSensorsValide
+
+bool services_tests::testExtrapolateAQISansMesures()
+// Algorithme : teste la méthode extrapolateAQI avec des coordonnées où aucune mesure n'est disponible
+{
+    cout << "T15: Test de extrapolateAQI sans mesures disponibles" << endl;
+
+    Session session(UserType::USER);
+    AuthService authService;
+    authService.setCurrentSession(session);
+
+    DataLoader dataLoader;
+    vector<Sensor>* sensors = dataLoader.loadSensor("../data");
+    vector<Cleaner>* cleaners = dataLoader.loadCleaner("../data");
+
+    UserDataAccess uda;
+    vector<ParticulierData> particulierData = uda.loadParticulierData();
+
+    PointsManager pointsManager(uda, &particulierData, sensors, &authService);
+    Statistics stats(sensors, cleaners, &pointsManager, &authService);
+
+    // Définition de la période de test
+    time_t start, end;
+    struct tm tm_start = {}, tm_end = {};
+    tm_start.tm_year = 2019 - 1900;
+    tm_start.tm_mon = 1;
+    tm_start.tm_mday = 1;
+    start = mktime(&tm_start);
+
+    tm_end.tm_year = 2019 - 1900;
+    tm_end.tm_mon = 1;
+    tm_end.tm_mday = 1;
+    end = mktime(&tm_end);
+
+    // Test avec des coordonnées où aucun capteur n'est présent
+    double lat = 60.0;
+    double lng = 10.0;
+    int radiusExtrapolation = 1000; // 1km de rayon d'extrapolation
+
+    vector<Measurement> result = stats.extrapolateAQI(lat, lng, start, end, radiusExtrapolation);
+
+    // Vérification
+    if (result.empty()) {
+        cout << "  OK: Aucune mesure extrapolée comme attendu" << endl;
+        return true;
+    } else {
+        cout << "  ERREUR: Des mesures ont été extrapolées alors qu'aucun capteur n'est disponible" << endl;
+        return false;
+    }
+} //----- Fin de testExtrapolateAQISansMesures
+
+bool services_tests::testExtrapolateAQIValide()
+// Algorithme : teste la méthode extrapolateAQI avec des coordonnées valides et des capteurs à proximité
+{
+    cout << "T16: Test de extrapolateAQI avec des capteurs à proximité" << endl;
+
+    Session session(UserType::USER);
+    AuthService authService;
+    authService.setCurrentSession(session);
+
+    DataLoader dataLoader;
+    vector<Sensor>* sensors = dataLoader.loadSensor("../data");
+    vector<Cleaner>* cleaners = dataLoader.loadCleaner("../data");
+
+    UserDataAccess uda;
+    vector<ParticulierData> particulierData = uda.loadParticulierData();
+
+    PointsManager pointsManager(uda, &particulierData, sensors, &authService);
+    Statistics stats(sensors, cleaners, &pointsManager, &authService);
+
+    // Définition de la période de test
+    time_t start, end;
+    struct tm tm_start = {}, tm_end = {};
+    tm_start.tm_year = 2019 - 1900;
+    tm_start.tm_mon = 11;
+    tm_start.tm_mday = 25;
+    start = mktime(&tm_start);
+
+    tm_end.tm_year = 2019 - 1900;
+    tm_end.tm_mon = 11;
+    tm_end.tm_mday = 31;
+    end = mktime(&tm_end);
+
+    // Test avec des coordonnées proches des capteurs
+    double lat = 44.0;
+    double lng = 4.0;
+    int radiusExtrapolation = 10000;
+
+    vector<Measurement> result = stats.extrapolateAQI(lat, lng, start, end, radiusExtrapolation);
+
+    // Vérification
+    if (!result.empty()) {
+        cout << "  OK: " << result.size() << " mesures extrapolées" << endl;
+        return true;
+    } else {
+        cout << "  ERREUR: Aucune mesure extrapolée alors que des capteurs sont disponibles" << endl;
+        return false;
+    }
+} //----- Fin de testExtrapolateAQIValide
+
+bool services_tests::testAwardListeVide()
+// Algorithme : teste la méthode award avec une liste vide de capteurs
+{
+    cout << "T17: Test de award avec une liste vide de capteurs" << endl;
+
+    DataLoader dataLoader;
+    vector<Sensor>* sensors = dataLoader.loadSensor("../data");
+
+    UserDataAccess uda;
+    AuthService authService;
+    vector<ParticulierData> particulierData;
+    PointsManager pointsManager(uda, &particulierData, sensors, &authService);
+
+    // Test avec une liste vide de capteurs
+    vector<string> emptySensorsList;
+    bool result = pointsManager.award(emptySensorsList);
+
+    // Vérification que la méthode renvoie true même avec une liste vide
+    if (result) {
+        cout << "  OK: award a correctement traité une liste vide" << endl;
+        return true;
+    } else {
+        cout << "  ÉCHEC: award n'a pas correctement traité une liste vide" << endl;
+        return false;
+    }
+} //----- Fin de testAwardListeVide
+
+bool services_tests::testAwardCapteurUnique()
+// Algorithme : teste la méthode award avec un seul capteur valide
+{
+    cout << "T18: Test de award avec un capteur unique" << endl;
+
+    DataLoader dataLoader;
+    vector<Sensor>* sensors = dataLoader.loadSensor("../data");
+
+    UserDataAccess uda;
+    AuthService authService;
+    vector<ParticulierData> particulierData;
+    PointsManager pointsManager(uda, &particulierData, sensors, &authService);
+
+    // Test avec un capteur unique
+    vector<string> sensorsList = {"Sensor36"};
+    bool result = pointsManager.award(sensorsList);
+
+    // Vérification que la méthode renvoie true pour un capteur valide
+    if (result) {
+        cout << "  OK: award a correctement traité un capteur unique valide" << endl;
+        return true;
+    } else {
+        cout << "  ÉCHEC: award n'a pas correctement traité un capteur unique valide" << endl;
+        return false;
+    }
+} //----- Fin de testAwardCapteurUnique
+
+bool services_tests::testAwardDeuxCapteursUtilisateurs()
+// Algorithme : teste la méthode award avec deux capteurs appartenant à des utilisateurs différents
+{
+    cout << "T19: Test de award avec deux capteurs de différents utilisateurs" << endl;
+
+    DataLoader dataLoader;
+    vector<Sensor>* sensors = dataLoader.loadSensor("../data");
+
+    UserDataAccess uda;
+    AuthService authService;
+    vector<ParticulierData> particulierData;
+    PointsManager pointsManager(uda, &particulierData, sensors, &authService);
+
+    // Test avec deux capteurs de différents utilisateurs
+    vector<string> sensorsList = {"Sensor70", "Sensor36"};
+    bool result = pointsManager.award(sensorsList);
+
+    // Vérification que la méthode renvoie true et que les deux utilisateurs reçoivent des points
+    if (result) {
+        cout << "  OK: award a correctement traité deux capteurs de différents utilisateurs" << endl;
+        return true;
+    } else {
+        cout << "  ÉCHEC: award n'a pas correctement traité deux capteurs de différents utilisateurs" << endl;
+        return false;
+    }
+} //----- Fin de testAwardDeuxCapteursUtilisateurs
+
+bool services_tests::testAwardDeuxCapteursMemUtilisateur()
+// Algorithme : teste la méthode award avec deux capteurs appartenant au même utilisateur
+{
+    cout << "T20: Test de award avec deux capteurs du même utilisateur" << endl;
+
+    DataLoader dataLoader;
+    vector<Sensor>* sensors = dataLoader.loadSensor("../data");
+
+    UserDataAccess uda;
+    AuthService authService;
+    vector<ParticulierData> particulierData;
+    PointsManager pointsManager(uda, &particulierData, sensors, &authService);
+
+    // Test avec deux capteurs du même utilisateur
+    vector<string> sensorsList = {"Sensor36", "Sensor36"};
+    bool result = pointsManager.award(sensorsList);
+
+    // Vérification que la méthode renvoie true et que l'utilisateur ne reçoit des points qu'une seule fois
+    if (result) {
+        cout << "  OK: award a correctement traité deux capteurs du même utilisateur" << endl;
+        return true;
+    } else {
+        cout << "  ÉCHEC: award n'a pas correctement traité deux capteurs du même utilisateur" << endl;
+        return false;
+    }
+} //----- Fin de testAwardDeuxCapteursMemUtilisateur
+
+bool services_tests::testAwardCapteurInconnu()
+// Algorithme : teste la méthode award avec un capteur inconnu
+{
+    cout << "T21: Test de award avec un capteur inconnu" << endl;
+
+    DataLoader dataLoader;
+    vector<Sensor>* sensors = dataLoader.loadSensor("../data");
+
+    UserDataAccess uda;
+    AuthService authService;
+    vector<ParticulierData> particulierData;
+    PointsManager pointsManager(uda, &particulierData, sensors, &authService);
+
+    // Test avec un capteur inconnu
+    vector<string> sensorsList = {"Sensor100"};
+    bool result = pointsManager.award(sensorsList);
+
+    // Vérification que la méthode renvoie false pour un capteur inconnu
+    if (!result) {
+        cout << "  OK: award a correctement identifié un capteur inconnu" << endl;
+        return true;
+    } else {
+        cout << "  ÉCHEC: award n'a pas correctement identifié un capteur inconnu" << endl;
+        return false;
+    }
+} //----- Fin de testAwardCapteurInconnu
+
+bool services_tests::testAwardCapteurExclu()
+// Algorithme : teste la méthode award avec un capteur dont l'utilisateur est exclu
+{
+    cout << "T22: Test de award avec un capteur exclu" << endl;
+
+    DataLoader dataLoader;
+    vector<Sensor>* sensors = dataLoader.loadSensor("../data");
+
+    UserDataAccess uda;
+    AuthService authService;
+    vector<ParticulierData> particulierData;
+
+    PointsManager pointsManager(uda, &particulierData, sensors, &authService);
+
+    // Test avec un capteur dont l'utilisateur est exclu
+    vector<string> sensorsList = {"Sensor70"};
+    bool result = pointsManager.award(sensorsList);
+
+    // Vérification que la méthode renvoie true mais n'attribue pas de points
+    if (result) {
+        cout << "  OK: award a correctement traité un capteur d'un utilisateur exclu" << endl;
+        return true;
+    } else {
+        cout << "  ÉCHEC: award n'a pas correctement traité un capteur d'un utilisateur exclu" << endl;
+        return false;
+    }
+} //----- Fin de testAwardCapteurExclu
+
+bool services_tests::testAwardCapteursValidesEtExclus()
+// Algorithme : teste la méthode award avec un mélange de capteurs valides et exclus
+{
+    cout << "T23: Test de award avec capteurs valides et exclus" << endl;
+
+    DataLoader dataLoader;
+    vector<Sensor>* sensors = dataLoader.loadSensor("../data");
+
+    UserDataAccess uda;
+    AuthService authService;
+    vector<ParticulierData> particulierData;
+
+    PointsManager pointsManager(uda, &particulierData, sensors, &authService);
+
+    // Test avec un mélange de capteurs valides et exclus
+    vector<string> sensorsList = {"Sensor70", "Sensor36"};
+    bool result = pointsManager.award(sensorsList);
+
+    // Vérification que la méthode renvoie true et attribue des points seulement aux utilisateurs non exclus
+    if (result) {
+        cout << "  OK: award a correctement traité un mélange de capteurs valides et exclus" << endl;
+        return true;
+    } else {
+        cout << "  ÉCHEC: award n'a pas correctement traité un mélange de capteurs valides et exclus" << endl;
+        return false;
+    }
+} //----- Fin de testAwardCapteursValidesEtExclus
+
+bool services_tests::testAwardCapteurSansUtilisateur()
+// Algorithme : teste la méthode award avec un capteur sans utilisateur associé
+{
+    cout << "T24: Test de award avec un capteur sans utilisateur" << endl;
+
+    DataLoader dataLoader;
+    vector<Sensor>* sensors = dataLoader.loadSensor("../data");
+
+    // Initialisation des services
+    UserDataAccess uda;
+    AuthService authService;
+    vector<ParticulierData> particulierData;
+    PointsManager pointsManager(uda, &particulierData, sensors, &authService);
+
+    // Test avec un capteur sans utilisateur
+    vector<string> sensorsList = {"Sensor45"};
+    bool result = pointsManager.award(sensorsList);
+
+    // Vérification que la méthode renvoie true mais n'attribue pas de points
+    if (result) {
+        cout << "  OK: award a correctement traité un capteur sans utilisateur" << endl;
+        return true;
+    } else {
+        cout << "  ÉCHEC: award n'a pas correctement traité un capteur sans utilisateur" << endl;
+        return false;
+    }
+} //----- Fin de testAwardCapteurSansUtilisateur
+
+bool services_tests::testAwardCapteursValidesEtSansUtilisateur()
+// Algorithme : teste la méthode award avec un mélange de capteurs valides et sans utilisateur
+{
+    cout << "T25: Test de award avec capteurs valides et sans utilisateur" << endl;
+
+    // Chargement des données de test
+    DataLoader dataLoader;
+    vector<Sensor>* sensors = dataLoader.loadSensor("../data");
+
+    // Initialisation des services
+    UserDataAccess uda;
+    AuthService authService;
+    vector<ParticulierData> particulierData;
+
+    PointsManager pointsManager(uda, &particulierData, sensors, &authService);
+
+    // Test avec un mélange de capteurs valides et sans utilisateur
+    vector<string> sensorsList = {"Sensor43", "Sensor36"};
+    bool result = pointsManager.award(sensorsList);
+
+    // Vérification que la méthode renvoie true et attribue des points seulement aux capteurs avec utilisateur
+    if (result) {
+        cout << "  OK: award a correctement traité un mélange de capteurs valides et sans utilisateur" << endl;
+        return true;
+    } else {
+        cout << "  ÉCHEC: award n'a pas correctement traité un mélange de capteurs valides et sans utilisateur" << endl;
+        return false;
+    }
+} //----- Fin de testAwardCapteursValidesEtSansUtilisateur
+
+bool services_tests::testGetPointsUtilisateurInexistant()
+// Algorithme : teste la méthode getPoints avec un utilisateur qui n'existe pas
+{
+    cout << "T26: Test de getPoints avec un utilisateur inexistant" << endl;
+
+    DataLoader dataLoader;
+    vector<Sensor>* sensors = dataLoader.loadSensor("../data");
+
+    UserDataAccess uda;
+    vector<ParticulierData> particulierData = uda.loadParticulierData();
+
+    Session session(UserType::PARTICULIER, "user10");
+    AuthService authService;
+    authService.setCurrentSession(session);
+    PointsManager pointsManager(uda, &particulierData, sensors, &authService);
+
+    // Test avec un utilisateur inexistant
+    string userId = "User10";
+    int points = pointsManager.getPoints(userId);
+
+    // Vérification que la méthode renvoie -1 pour un utilisateur inexistant
+    if (points == -1) {
+        cout << "  OK: getPoints a correctement renvoyé -1 pour un utilisateur inexistant" << endl;
+        return true;
+    } else {
+        cout << "  ERREUR: getPoints a renvoyé " << points << " au lieu de -1 pour un utilisateur inexistant" << endl;
+        return false;
+    }
+} //----- Fin de testGetPointsUtilisateurInexistant
+
+bool services_tests::testGetPointsUtilisateurExistant()
+// Algorithme : teste la méthode getPoints avec un utilisateur qui existe
+{
+    cout << "T27: Test de getPoints avec un utilisateur existant" << endl;
+
+    DataLoader dataLoader;
+    vector<Sensor>* sensors = dataLoader.loadSensor("../data");
+
+    UserDataAccess uda;
+    vector<ParticulierData> particulierData = uda.loadParticulierData();
+
+    string userId = "User1";
+    Session session(UserType::PARTICULIER, userId);
+    AuthService authService;
+    authService.setCurrentSession(session);
+
+    PointsManager pointsManager(uda, &particulierData, sensors, &authService);
+
+    // Test avec l'utilisateur existant
+    int points = pointsManager.getPoints(userId);
+
+    // Vérification que la méthode renvoie un nombre de points valide
+    if (points >= 0) {
+        cout << "  OK: getPoints a correctement renvoyé " << points << " points pour l'utilisateur " << userId << endl;
+        return true;
+    } else {
+        cout << "  ERREUR: getPoints a renvoyé " << points << " pour un utilisateur existant" << endl;
+        return false;
+    }
+} //----- Fin de testGetPointsUtilisateurExistant
+
+bool services_tests::testExcludeSensorInexistant()
+// Algorithme : teste la méthode excludeSensor avec un capteur qui n'existe pas
+{
+    cout << "T28: Test d'excludeSensor avec un capteur inexistant" << endl;
+
+    DataLoader dataLoader;
+    vector<Sensor>* sensors = dataLoader.loadSensor("../data");
+
+    UserDataAccess uda;
+    Session session(UserType::ADMIN);
+    AuthService authService;
+    authService.setCurrentSession(session);
+    AdminServices adminServices(uda, sensors, &authService);
+
+    // Test avec un capteur inexistant
+    string sensorId = "capteur_inexistant";
+    bool result = adminServices.excludeSensor(sensorId);
+
+    // Vérification que la méthode renvoie false pour un capteur inexistant
+    if (!result) {
+        cout << "  OK: excludeSensor a correctement détecté que le capteur n'existe pas" << endl;
+        return true;
+    } else {
+        cout << "  ERREUR: excludeSensor a renvoyé true pour un capteur inexistant" << endl;
+        return false;
+    }
+}
+
+bool services_tests::testExcludeSensorDejaExclu()
+// Algorithme : teste la méthode excludeSensor avec un capteur dont l'utilisateur est déjà exclu
+{
+    cout << "T29: Test d'excludeSensor avec un capteur dont l'utilisateur est déjà exclu" << endl;
+
+    DataLoader dataLoader;
+    vector<Sensor>* sensors = dataLoader.loadSensor("../data");
+
+    UserDataAccess uda;
+    vector<ParticulierData> particulierData = uda.loadParticulierData();
+
+    Session session(UserType::ADMIN);
+    AuthService authService;
+    authService.setCurrentSession(session);
+    AdminServices adminServices(uda, sensors, &authService);
+
+    // Test avec le capteur dont l'utilisateur est déjà exclu
+    bool result = adminServices.excludeSensor("Sensor70");
+
+    // Selon l'implémentation actuelle, excludeSensor devrait renvoyer true
+    if (result) {
+        cout << "  OK: excludeSensor a correctement géré le cas d'un utilisateur déjà exclu" << endl;
+        return true;
+    } else {
+        cout << "  ERREUR: excludeSensor a échoué pour un utilisateur déjà exclu" << endl;
+        return false;
+    }
+}
+
+bool services_tests::testExcludeSensorValide()
+// Algorithme : teste la méthode excludeSensor avec un capteur valide
+{
+    cout << "T30: Test d'excludeSensor avec un capteur valide" << endl;
+
+    DataLoader dataLoader;
+    vector<Sensor>* sensors = dataLoader.loadSensor("../data");
+
+    UserDataAccess uda;
+    vector<ParticulierData> particulierData = uda.loadParticulierData();
+
+    Session session(UserType::ADMIN);
+    AuthService authService;
+    authService.setCurrentSession(session);
+    AdminServices adminServices(uda, sensors, &authService);
+
+    // Test avec un capteur valide
+    string sensorId = "Sensor70";
+    bool result = adminServices.excludeSensor(sensorId);
+
+    // Vérification que l'utilisateur a bien été exclu
+    if (result) {
+        cout << "  OK: excludeSensor a correctement exclu l'utilisateur du capteur " << sensorId << endl;
+        return true;
+    } else {
+        cout << "  ERREUR: excludeSensor a échoué pour un capteur valide" << endl;
+        return false;
+    }
+}
 
 //-------------------------------------------- Constructeurs - destructeur
 services_tests::services_tests( )

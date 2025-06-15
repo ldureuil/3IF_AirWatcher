@@ -24,11 +24,49 @@ class services_tests
     //----------------------------------------------------------------- PUBLIC
 public:
     //----------------------------------------------------- Méthodes publiques
-    void runTests();
+    int runTests();
     // Mode d'emploi : Exécute les tests unitaires pour les méthodes de la couche Services
     //
     // Contrat :
     //
+
+    bool testAnalyzeSensorInexistant();
+    bool testAnalyzeSensorSansMesure();
+    bool testAnalyzeSensorAnormal();
+    bool testAnalyzeSensorNormal();
+
+    bool testComputeZoneAucunCapteur();
+    bool testComputeZoneSansMesures();
+    bool testComputeZoneEstimationPonctuelle();
+    bool testComputeZoneAvecCapteurs();
+
+    bool testAnalyzeCleanerInconnu();
+    bool testAnalyzeCleanerSansCapteurs();
+    bool testAnalyzeCleanerValide();
+
+    bool testCompareSensorsInexistant();
+    bool testCompareSensorsAucunCapteur();
+    bool testCompareSensorsValide();
+
+    bool testExtrapolateAQISansMesures();
+    bool testExtrapolateAQIValide();
+
+    bool testAwardListeVide();
+    bool testAwardCapteurUnique();
+    bool testAwardDeuxCapteursUtilisateurs();
+    bool testAwardDeuxCapteursMemUtilisateur();
+    bool testAwardCapteurInconnu();
+    bool testAwardCapteurExclu();
+    bool testAwardCapteursValidesEtExclus();
+    bool testAwardCapteurSansUtilisateur();
+    bool testAwardCapteursValidesEtSansUtilisateur();
+
+    bool testGetPointsUtilisateurInexistant();
+    bool testGetPointsUtilisateurExistant();
+
+    bool testExcludeSensorInexistant();
+    bool testExcludeSensorDejaExclu();
+    bool testExcludeSensorValide();
 
     //-------------------------------------------- Constructeurs - destructeur
     services_tests( );
