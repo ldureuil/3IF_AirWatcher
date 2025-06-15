@@ -31,52 +31,51 @@ cli -> auth : 2. login(login, mdp)
         auth --> cli : 6. s
         cli --> user : 7. Authentification réussie
 
-== Chargement des données ==
+== Chargement des capteurs ==
     cli -> dl  : 8. loadData(s.userType)
     activate dl
-    alt s.userType == ADMIN
-        dl -> dl : charge tous les jeux de données  (capteurs, mesures, cleaners, exclusions, points)
-    else s.userType == USER
-        dl -> dl : charge capteurs fiables, mesures et cleaners
-    else s.userType == PARTICULIER
-        dl -> dl : charge capteurs appartenant au particulier, capteurs fiables, mesures, cleaners et points
-    else s.userType == FOURNISSEUR
-        dl -> dl : charge cleaners appartenant au fournisseur
-    end
     create "s1 : Sensor" as s1
     dl -> s1 : <<create>>
-    dl --> cli  : 9. capteurs fiables, mesures et cleaners chargés
+    dl --> cli  : 9. capteurs fiables et leurs mesures chargés
+    deactivate dl
+
+== Chargement des cleaners ==
+    cli -> dl  : 10. loadData(s.userType)
+    activate dl
+    create "c1 : Cleaner" as c1
+    dl -> c1 : <<create>>
+    dl --> cli  : 11. purificateurs chargés
     deactivate dl
 
 == Requête d’un utilisateur utilisant un capteur s1 ==
-        user -> cli : 10. computeZone(lat, lng, period_start, period_end, radius)
-        cli -> service : 11. computeZone(lat, lng, period_start, period_end, radius)
+        user -> cli : 12. computeZone(lat, lng, period_start, period_end, radius)
+        cli -> service : 13. computeZone(lat, lng, period_start, period_end, radius)
         
         activate service
-            service -> auth : 12. checkRequiredRole(USER)
-            auth --> service : 13. USER
+            service -> auth : 14. checkRequiredRole(USER)
+            auth --> service : 15. USER
 
-            service -> dl : 14. getSensor(s1.id)
+            service -> dl : 16. getSensor(s1.id)
             activate dl
-                dl --> service : 15. s1 : Sensor
+                dl --> service : 17. s1 : Sensor
             deactivate dl
 
-            service -> s1 : 16. getMeasurements()
+            service -> s1 : 18. getMeasurements()
             activate s1
-                s1 --> service : 17. list<Measurement>
+                s1 --> service : 19. list<Measurement>
             deactivate s1
 
-            service -> service : 18. calcule moyenne AQI
+            service -> service : 20. calcule moyenne AQI
 
-            service -> points : 19. award(s1)
+            service -> points : 21. award(s1)
             activate points
-                points -> uda : 20. updateUserPoints(s1.userId)
+                points -> uda : 22. updateUserPoints(s1.userId)
                 activate uda
-                    points --> service : 21. Points ajoutés
+                    points --> service : 23. Points ajoutés
                 deactivate uda
             deactivate points
 
-            service --> cli : 22. AQI
+            service --> cli : 24. AQI
         deactivate service
     deactivate auth
 deactivate cli

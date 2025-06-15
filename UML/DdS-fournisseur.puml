@@ -29,61 +29,60 @@ cli -> auth : 2. login(login, mdp)
         auth --> cli : 6. s
         cli --> user : 7. Authentification réussie
 
-== Chargement des données ==
+== Chargement des capteurs ==
     cli -> dl  : 8. loadData(s.userType)
     activate dl
-    alt s.userType == USER
-        dl -> dl : charge tous les jeux de données  (capteurs, mesures, cleaners, exclusions, points)
-    else s.userType == ADMIN
-        dl -> dl : charge capteurs fiables, mesures et cleaners
-    else s.userType == PARTICULIER
-        dl -> dl : charge capteurs appartenant au particulier, capteurs fiables, mesures, cleaners et points
-    else s.userType == FOURNISSEUR
-        dl -> dl : charge cleaners appartenant au fournisseur
-    end
+    create "s1 : Sensor" as s1
+    dl -> s1 : <<create>>
+    dl --> cli  : 9. capteurs fiables et leurs mesures chargés
+    deactivate dl
+
+== Chargement des cleaners ==
+    cli -> dl  : 10. loadData(s.userType)
+    activate dl
     create "c1 : Cleaner" as c1
     dl -> c1 : <<create>>
-    dl --> cli  : 9. cleaners appartenant au fournisseur chargés
+    dl --> cli  : 11. purificateurs chargés
     deactivate dl
 
 == Requête d’analyse ==
-user -> cli : 10. analyzeCleaner(cleanerID, radius)
+user -> cli : 12: analyzeCleaner(cleanerID, radius)
 
-cli -> service : 11. analyzeCleaner(cleanerID, radius)
+cli -> service : 13. analyzeCleaner(cleanerID, radius)
 activate service
-    service -> auth : 12. checkRequiredRole(FOURNISSEUR)
-    auth --> service : 13. FOURNISSEUR
+    service -> auth : 14. checkRequiredRole(FOURNISSEUR)
+    auth --> service : 15. FOURNISSEUR
     == Récupération du purificateur ==
-    service -> dl : 14. getCleaner(cleanerID)
+    service -> dl : 16. getCleaner(cleanerID)
     activate dl
-        dl --> service : 15. c1 : Cleaner
+        dl --> service : 17. c1 : Cleaner
     deactivate dl
 
     == Recherche des capteurs proches ==
-    service -> c1 : 16. getNeighbouringSensors(radius)
+    service -> c1 : 18. getNeighbouringSensors(radius)
     activate c1
         create "list[i] : list<Sensor>" as list
-        c1 --> list : 17. <<create>>
-        c1 --> service : 18. list
+        c1 --> list : 19. <<create>>
+        c1 --> service : 20. list
     deactivate c1
 
     == Récupération des mesures ==
     loop Pour chaque capteur
-        service -> list : 19. getClosestMeasurements(activation_start, -1)
+        service -> list : 21. getClosestMeasurements(activation_start, -1)
         activate list
-            list --> service : 20. list<Measurement> (avant)
+            list --> service : 22. list<Measurement> (avant)
         deactivate list
-        service -> list : 21. getClosestMeasurements(activation_end, 1)
+        service -> list : 23. getClosestMeasurements(activation_end, 1)
         activate list
-            list --> service : 22. list<Measurement> (après)
+            list --> service : 24. list<Measurement> (après)
         deactivate list
     end
 
     == Calcul de l'amélioration ==
-    service -> service : 23. Moyenne des mesures avant/après
-    service -> service : 24. Calcul du pourcentage d’amélioration
+    service -> service : 25. Moyenne des mesures avant/après
+    service -> service : 26. Calcul du pourcentage d’amélioration
 
-    service --> cli : 25. Résultat (pourcentage par polluant)
+    service --> cli : 27. Résultat (pourcentage par polluant)
 deactivate service
 deactivate cli
 

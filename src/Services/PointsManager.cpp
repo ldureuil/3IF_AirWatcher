@@ -18,11 +18,12 @@ using namespace std;
 #include "PointsManager.h"
 
 //------------------------------------------------------------- Constantes
+const int POINT_ATTRIBUTION = 1;
 
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Méthodes publiques
-bool PointsManager::award(const vector<string>& sensorsUsed)
+bool PointsManager::award(const vector<string>& sensorsUsed, string filename)
 //Algorithme : itère sur chaque capteur utilisé et vérifie s'il est connu.
 // Si le capteur est trouvé, on met à jour les points de l'utilisateur
 // Sinon, on le signale
@@ -58,19 +59,25 @@ bool PointsManager::award(const vector<string>& sensorsUsed)
         {
             continue; // Passe au capteur suivant
         }
-        // On vérifie si l'utilisateur est exclu
+        
+        bool isExcluded = false;
+        ParticulierData *particulierDataUser = nullptr;
         for (ParticulierData& particulier : *(this->particulierData))
         {
             if (particulier.getId() == userSensorId)
             {
-                continue; // Passe au capteur suivant
+                isExcluded = particulier.getIsExcluded();
+                particulierDataUser = &particulier;
+                break;
             }
         }
+        if (isExcluded) continue;
 
         // On vérifie si l'utilisateur a déjà été traité
         if(users.find(userSensorId) == users.end())
         {
-            userDataAccess.updateUserPoints(userSensorId);
+            userDataAccess.updateUserPoints(userSensorId, filename);
+            particulierDataUser->setPoints(particulierDataUser->getPoints() + POINT_ATTRIBUTION);
         }
 
         // On ajoute l'utilisateur à la liste des utilisateurs traités

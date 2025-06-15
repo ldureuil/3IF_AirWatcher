@@ -29,8 +29,8 @@ class PointsManager {
     //----------------------------------------------------------------- PUBLIC
 public:
     //----------------------------------------------------- Méthodes publiques
-    bool award(const vector<string>& sensorsUsed);
-    // Mode d'emploi : on attribue des points à un ou plusieurs utilisateurs 
+    bool award(const vector<string>& sensorsUsed, string filename = "../data/ParticulierData.csv");
+    // Mode d'emploi : on attribue des points à un ou plusieurs utilisateurs
     // en fonction des capteurs utilisés.
     // Contrat :
     //

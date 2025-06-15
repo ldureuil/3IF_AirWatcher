@@ -108,7 +108,7 @@ int Statistics::analyzeSensor(string sensorID)
         if (mean > 0) // évite division par zéro
         {
             
-            double relativeDiff = diff / mean; 
+            double relativeDiff = diff / mean;
 
             if (relativeDiff > anomalyThreshold)
             {
@@ -258,7 +258,7 @@ vector<Measurement> Statistics::analyzeCleaner( string cleanerID, int radius )
     return result;
 } //----- Fin de analyzeCleaner
 
-vector<Measurement> Statistics::computeZone( double lat, double lng, time_t period_start, time_t period_end, int radius, int radiusExtrapolation )
+vector<Measurement> Statistics::computeZone( double lat, double lng, time_t period_start, time_t period_end, int radius, int radiusExtrapolation, string pointsFile )
 // Algorithme :
 //
 {
@@ -351,7 +351,7 @@ vector<Measurement> Statistics::computeZone( double lat, double lng, time_t peri
         result.push_back(m);
     }
 
-    pointsManager->award(matchingSensorIds);
+    pointsManager->award(matchingSensorIds, pointsFile);
 
     return result;
 } //----- Fin de computeZone
