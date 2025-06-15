@@ -52,7 +52,6 @@ void run()
     string credentialsFilePath = "../data/credentials.csv";
     string login;
     string password;
-    
 
     Session session = Session();
     bool fin = false;
@@ -61,7 +60,7 @@ void run()
     while (!fin && !connecte)
     {
 
-        cout << "Menu authentification :" << endl;
+        cout << endl << "Menu authentification :" << endl;
         cout << "1: S'authentifier" << endl;
         cout << "0: Quitter l'application" << endl;
 
@@ -82,7 +81,7 @@ void run()
                 session = authService.login(credentialsFilePath, login, password);
 
                 if (session.getUserType() == UserType::UNDEFINED)
-                    // Identifiants invalides
+                // Identifiants invalides
                 {
                     cout << "Identifiants incorrects, veuillez réessayer." << endl;
                 }
@@ -102,12 +101,12 @@ void run()
     UserType userType = session.getUserType();
 
     DataLoader dataLoader = DataLoader();
-    vector<Sensor> *sensors = dataLoader.loadSensor("../data");;
+    vector<Sensor> *sensors = dataLoader.loadSensor("../data");
     vector<Cleaner> *cleaners = dataLoader.loadCleaner("../data");
 
     UserDataAccess userDataAccess = UserDataAccess();
     userDataAccess.initializeCSVFile("../../data/ParticulierData.csv");
-    vector<ParticulierData> particulierData = userDataAccess.loadParticulierData();
+    vector<ParticulierData> particulierData = userDataAccess.loadParticulierData("../data/ParticulierData.csv");
     
     PointsManager pointsManager = PointsManager(userDataAccess, &particulierData, sensors, &authService);
     Statistics statistics = Statistics(sensors, cleaners, &pointsManager, &authService);
@@ -115,7 +114,7 @@ void run()
 
     while (!fin)
     {
-        cout << "Menu principal de l'application :" << endl;
+        cout << endl << "Menu principal de l'application :" << endl;
         if (userType == FOURNISSEUR)
         {
             cout << "C: Suivre l'impact d'un cleaner" << endl;
@@ -146,7 +145,6 @@ void run()
         int radius;
         int exitStatus;
         int points;
-        int compteur;
         double lat;
         double lng;
         vector<Sensor> similarSensors;
@@ -176,7 +174,7 @@ void run()
                 cin >> radius;
                 radius *= 1000;
 
-                statisticsZone = statistics.computeZone(lat, lng, start, end, radius);
+                statisticsZone = statistics.computeZone(lat, lng, start, end, radius, 0, "../data/ParticulierData.csv");
 
                 if (statisticsZone.empty())
                 {
@@ -206,10 +204,14 @@ void run()
                 if (!similarSensors.empty())
                 {
                     cout << "Voici la liste des capteurs, triée par similarité décroissante avec le capteur considéré, sur la période considérée : " << endl;
-                    for (vector<Sensor>::iterator sensor = similarSensors.begin(); sensor != similarSensors.end(); sensor++)
+
+                    vector<Sensor>::iterator sensor = similarSensors.begin();
+                    for (int i = 1; i <= 10; i++)
                     {
-                        cout << sensor->getId() << " : " << ++compteur << "e; ";
+                        cout << sensor->getId() << " : " << i << "e; ";
+                        ++sensor;
                     }
+                    cout << endl;
                 }
 
                 break;

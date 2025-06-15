@@ -44,14 +44,13 @@ bool UserDataAccess::initializeCSVFile( string filename )
     return true;
 }
 
-vector<ParticulierData> UserDataAccess::loadParticulierData( )
+vector<ParticulierData> UserDataAccess::loadParticulierData( string path )
 // Algorithme :
 // Vérifier si l'ID utilisateur correspond à celui recherché en parcourant le fichier ParticulierData.csv
 // Si trouvé, retourner les points de l'utilisateur
 // Retourner -1 si l'utilisateur n'est pas trouvé
 {
-    string filename = "../data/ParticulierData.csv";
-    ifstream inFile(filename);
+    ifstream inFile(path);
 
     if (!inFile.is_open())
     {
@@ -96,7 +95,7 @@ vector<ParticulierData> UserDataAccess::loadParticulierData( )
     return particulierDataList;
 } //----- Fin de loadParticulierData
 
-int UserDataAccess::updateUserPoints( string userId )
+int UserDataAccess::updateUserPoints( string userId, string filename )
 // Algorithme :
 // Vérifier si l'ID utilisateur correspond à celui recherché en parcourant le fichier ParticulierData.csv
 // Si trouvé, incrémenter les points de 1
@@ -104,7 +103,6 @@ int UserDataAccess::updateUserPoints( string userId )
 // Retourner les nouveaux points de l'utilisateur
 {
     // Ouverture du fichier
-    string filename = "../data/ParticulierData.csv";
     initializeCSVFile(filename);
     ifstream inFile(filename);
     if (!inFile.is_open())
@@ -148,12 +146,12 @@ int UserDataAccess::updateUserPoints( string userId )
    //Utilisateur non trouvé, on l'ajoute avec 1 points
     if (!userFound)
     {
-        lines.push_back(userId + ";"+ to_string(POINT_ATTRIBUTION) +";false");
+        lines.push_back(userId + ";"+ to_string(POINT_ATTRIBUTION) + ";false");
         newPoints = POINT_ATTRIBUTION;
     }
 
     // Ouverture du fichier en écriture
-    ofstream outFile("../data/ParticulierData.csv");
+    ofstream outFile(filename);
     if (!outFile.is_open())
     {
         cerr << "Erreur d'écriture du fichier ParticulierData.csv" << endl;
@@ -170,7 +168,7 @@ int UserDataAccess::updateUserPoints( string userId )
     return newPoints; // Retourne les nouveaux points de l'utilisateur
 }//----- Fin de updateUserPoints
 
-int UserDataAccess::addExcludedUser( string userId )
+int UserDataAccess::addExcludedUser( string userId, string filename )
 // Algorithme :
 // Vérifier si l'ID utilisateur correspond à celui recherché en parcourant le fichier ParticulierData.csv
 // Si trouvé, vérifier le statut exclu
@@ -178,7 +176,6 @@ int UserDataAccess::addExcludedUser( string userId )
 // Si l'utilisateur n'est pas trouvé, l'ajouter avec le statut exclu
 // Retourner 0 si déjà exclu, 1 si succès, -1 en cas d'erreur
 {
-    string filename = "../data/ParticulierData.csv";
     initializeCSVFile(filename);
     ifstream inFile(filename);
 

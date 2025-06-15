@@ -10,14 +10,15 @@ Sensor  -  Objet métier stockant les informations d'un capteur
 
 //-------------------------------------------------------- Include système
 using namespace std;
+#define _USE_MATH_DEFINES
 #include <iostream>
-
-//------------------------------------------------------ Include personnel
-#include "Sensor.h"
 #include <vector>
 #include <cmath>
 #include <map>
 #include <algorithm>
+
+//------------------------------------------------------ Include personnel
+#include "Sensor.h"
 
 //------------------------------------------------------------- Constantes
 const double R = 6371e3; // Rayon de la Terre en mètres

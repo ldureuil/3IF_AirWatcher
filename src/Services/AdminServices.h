@@ -28,7 +28,7 @@ class AdminServices {
     //----------------------------------------------------------------- PUBLIC
 public:
     //----------------------------------------------------- Méthodes publiques
-    bool excludeSensor( string sensorId );
+    bool excludeSensor( string sensorId, string pointsFile = "../data/ParticulierData.csv" );
     // Mode d'emploi :
     //
     // Contrat :

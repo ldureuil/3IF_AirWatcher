@@ -34,12 +34,12 @@ public:
     // Mode d'emploi : Permet de créer un fichier CSV avec les en-têtes userId, points et excluded.
     // Si le fichier existe déjà, il ne sera pas créé à nouveau.
 
-    vector<ParticulierData> loadParticulierData( );
+    vector<ParticulierData> loadParticulierData( string path );
     // Mode d'emploi : Permet de créer pour chaaque utilisateur un objet ParticulierData
     // stockant son nombre de points et est-ce qu'il est exclus, à partir du fichier
     // ParticulierData.csv.
 
-    int updateUserPoints( string userId );
+    int updateUserPoints( string userId, string filename = "../data/ParticulierData.csv" );
     // Mode d'emploi : Permet de mettre à jour les points d'un utilisateur dans le fichier ParticulierData.csv.
     // Si le fichier n'xiste pas, il est créé avec l'userId donné en paramètre en lui donnant 10 points.
     // Si l'utilisateur existe déjà, ses points sont incrémentés de 10.
@@ -48,7 +48,7 @@ public:
     // Contrat : paramètre userId doit être une chaîne de caractères valide représentant
     // l'identifiant de l'utilisateur et se trouvant dans le fichier users.csv.
 
-    int addExcludedUser( string userId );
+    int addExcludedUser( string userId, string filename );
     // Mode d'emploi : Permet de changer le status d'un utilisateur dans le fichier ParticulierData.csv, il devient exclu.
     //
     // Contrat : paramètre userId doit être une chaîne de caractères valide représentant
