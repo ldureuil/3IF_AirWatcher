@@ -61,7 +61,8 @@ bool PointsManager::award(const vector<string>& sensorsUsed, string filename)
         }
         
         bool isExcluded = false;
-        ParticulierData *particulierDataUser = nullptr;
+        ParticulierData *particulierDataUser;
+
         for (ParticulierData& particulier : *(this->particulierData))
         {
             if (particulier.getId() == userSensorId)
@@ -90,8 +91,8 @@ bool PointsManager::award(const vector<string>& sensorsUsed, string filename)
 } //----- Fin de award
 
 int PointsManager::getPoints( string userId )
-// Algorithme :
-//
+// Algorithme : Vérifie que l'identifiant utilisateur est bien associé à un 
+// capteur, puis récupère son nombre de points dans ParticulierData.
 {
     // vérifie si l'utilisateur a les droits particulier
     if (!authService->checkRequiredRole(UserType::PARTICULIER))

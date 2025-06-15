@@ -1,5 +1,5 @@
 /*************************************************************************
-AdminServices  -  todo
+AdminServices  -  Services critiques associés au rôle administrateur
                              -------------------
     début                : 16/05/2025
 *************************************************************************/
@@ -26,8 +26,8 @@ using namespace std;
 
 //----------------------------------------------------- Méthodes publiques
 bool AdminServices::excludeSensor( string sensorId, string pointsFile )
-// Algorithme :
-//
+// Algorithme : Exclut l'utilisateur associé à un capteur, après avoir testé
+// que le capteur existe et appartient à un particulier.
 {
     // vérifie si l'utilisateur a les droits administrateur
     if (!authService->checkRequiredRole(UserType::ADMIN))
@@ -37,7 +37,7 @@ bool AdminServices::excludeSensor( string sensorId, string pointsFile )
     }
 
     bool exist = false;
-    Sensor* sensorExclu; 
+    Sensor* sensorExclu;
     for ( auto& sensor : *sensors )
     {
         if ( sensor.getId() == sensorId )
@@ -48,7 +48,7 @@ bool AdminServices::excludeSensor( string sensorId, string pointsFile )
         }
     }
 
-    if ( !exist )
+    if (!exist)
     {
         cerr << "Erreur : Le capteur " << sensorId << " n'existe pas." << endl;
         return false;
@@ -67,8 +67,9 @@ bool AdminServices::excludeSensor( string sensorId, string pointsFile )
 
 
 vector<double>  AdminServices::evaluate( Statistics & stats )
-// Algorithme :
-//
+// Algorithme : Teste et chronomètre à la suite chacune des requêtes 
+// effectuées au sein de l'application, sur une période, des coordonnées et
+// un rayon classiques.
 {
     // vérifie si l'utilisateur a les droits administrateur
     if (!authService->checkRequiredRole(UserType::ADMIN))

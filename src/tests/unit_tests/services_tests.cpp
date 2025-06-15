@@ -63,14 +63,14 @@ int services_tests::runTests( )
 
     // Tests pour PointsManager::award
     nbTestsOk += testAwardListeVide(); // T17
-    /*nbTestsOk += testAwardCapteurUnique(); // T18
+    nbTestsOk += testAwardCapteurUnique(); // T18
     nbTestsOk += testAwardDeuxCapteursUtilisateurs(); // T19
     nbTestsOk += testAwardDeuxCapteursMemUtilisateur(); // T20
     nbTestsOk += testAwardCapteurInconnu(); // T21
     nbTestsOk += testAwardCapteurExclu(); // T22
     nbTestsOk += testAwardCapteursValidesEtExclus(); // T23
     nbTestsOk += testAwardCapteurSansUtilisateur(); // T24
-    nbTestsOk += testAwardCapteursValidesEtSansUtilisateur(); // T25*/
+    nbTestsOk += testAwardCapteursValidesEtSansUtilisateur(); // T25
 
     // Tests pour PointsManager::getPoints
     nbTestsOk += testGetPointsUtilisateurInexistant(); // T26

@@ -100,6 +100,7 @@ ParticulierData::ParticulierData( const ParticulierData & unParticulierData )
 ParticulierData::ParticulierData( )
 // Algorithme :
 //
+: id(""), points(0), isExcluded(false)
 {
 #ifdef MAP
     cout << "Appel au constructeur de <ParticulierData>" << endl;

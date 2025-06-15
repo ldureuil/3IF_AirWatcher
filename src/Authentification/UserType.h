@@ -1,5 +1,5 @@
 /*************************************************************************
-UserType  -  description todo
+UserType  -  Énumération des 5 types d'utilisateurs de l'application
                              -------------------
     début                : 16/05/2025
 *************************************************************************/
@@ -10,8 +10,8 @@ UserType  -  description todo
 
 //------------------------------------------------------------------------
 // Rôle du module <UserType>
-// todo
-//
+// Énumération des 5 types d'utilisateurs de l'application, permettant de 
+// déterminer les fonctionnalités qui leur sont autorisées.
 //------------------------------------------------------------------------
 
 /////////////////////////////////////////////////////////////////  INCLUDE

@@ -1,5 +1,5 @@
 /*************************************************************************
-CLI  -  description todo
+CLI  -  interface utilisateur en ligne de commande de l'application AirWatcher
                              -------------------
     début                : 16/05/2025
 *************************************************************************/

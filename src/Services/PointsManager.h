@@ -36,7 +36,7 @@ public:
     //
 
     int getPoints(string userId);
-    // Mode d'emploi : permet de récupérer le nombre de points d'un utilisateur.
+    // Mode d'emploi : Permet de récupérer le nombre de points d'un utilisateur.
     //
     // Contrat : L'utilisateur doit exister dans le fichier ParticulierData.csv
 

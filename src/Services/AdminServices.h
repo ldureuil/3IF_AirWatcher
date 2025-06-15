@@ -1,5 +1,5 @@
 /*************************************************************************
-AdminServices  -  todo
+AdminServices  -  Services critiques associés au rôle administrateur
                              -------------------
     début                : 16/05/2025
 *************************************************************************/
@@ -20,8 +20,9 @@ AdminServices  -  todo
 
 //------------------------------------------------------------------------
 // Rôle de la classe <AdminServices>
-// todo
-//
+// Services associés au rôle administrateur, à savoir l'exclusion d'un capteur
+// suspect et l'évaluation des temps d'exécution des différentes requêtes de
+// l'application.
 //------------------------------------------------------------------------
 
 class AdminServices {
@@ -29,14 +30,14 @@ class AdminServices {
 public:
     //----------------------------------------------------- Méthodes publiques
     bool excludeSensor( string sensorId, string pointsFile = "../data/ParticulierData.csv" );
-    // Mode d'emploi :
-    //
+    // Mode d'emploi : Permet d'exclure le particulier correspondant au sensorId
+    // passé en paramètre, si le capteur appartient bien à un particulier.
     // Contrat :
     //
 
     vector<double> evaluate(Statistics& stats);
-    // Mode d'emploi :
-    //
+    // Mode d'emploi : Permet d'obtenir le temps d'exécution de chaque requête
+    // classique de l'application
     // Contrat :
     //
 

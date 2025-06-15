@@ -1,5 +1,5 @@
 /*************************************************************************
-Statistics  -  todo
+Statistics  -  Services métiers de base de l'application
                              -------------------
     début                : 16/05/2025
 *************************************************************************/
@@ -25,8 +25,10 @@ using namespace std;
 
 //----------------------------------------------------- Méthodes publiques
 int Statistics::analyzeSensor(string sensorID)
-// Algorithme :
-//
+// Algorithme : Récupère les mesures associées au capteur à analyser sur sa
+// période de fonctionnement, récupère ses voisins et leurs mesures et compare
+// les mesures effectuées à la même date. Si plus de 30% des mesures sont éloignées
+// de plus de 20% avec ses voisins, le capteur est jugé suspect.
 {
     // vérifie si l'utilisateur a les droits administrateur
     if (!authService->checkRequiredRole(UserType::ADMIN))
@@ -102,8 +104,6 @@ int Statistics::analyzeSensor(string sensorID)
         for (double v : neighbourValues) sum += v;
         double mean = sum / neighbourValues.size();
 
-        
-
         double diff = fabs(val - mean);
         if (mean > 0) // évite division par zéro
         {
@@ -133,56 +133,11 @@ int Statistics::analyzeSensor(string sensorID)
     return 1;
 }//----- Fin de analyzeSensor
 
-
-// int Statistics::analyzeSensor( string sensorID )
-// // Algorithme :
-// //
-// {
-//     Sensor *sensor = getSensorByID(sensorID);
-//     vector<Sensor> neighbours = sensor->getSensorNeighbours(sensors);
-//     vector<Measurement> sensorMeasurements = sensor->getAllMeasurements();
-
-//     if (sensorMeasurements.empty())
-//     {
-//         return -1;
-//     }
-
-//     for (auto& measurement : sensorMeasurements)
-//     {
-//         time_t ts = measurement.getTs( );
-//         struct tm *tm_info = localtime(&ts);
-//         tm_info->tm_hour = 0;
-//         tm_info->tm_min  = 0;
-//         tm_info->tm_sec  = 0;
-//         time_t start = mktime(tm_info);
-
-//         tm_info->tm_hour = 23;
-//         tm_info->tm_min  = 59;
-//         tm_info->tm_sec  = 59;
-//         time_t end = mktime(tm_info);
-
-//         for (auto& neighbour : neighbours)
-//         {
-//             vector<Measurement> neighbour_measures = neighbour.getMeasurements(start, end);
-//             for (auto& neighbour_measure : neighbour_measures)
-//             {
-//                 double diff = measurement.getValue() - neighbour_measure.getValue();
-//                 diff = (diff < 0) ? (-diff) : diff;
-
-//                 if (diff > 0.2 * measurement.getValue())
-//                 {
-//                     return 0;
-//                 }
-//             }
-//         }
-//     }
-
-//     return 1;
-// } //----- Fin de analyzeSensor
-
 vector<Measurement> Statistics::analyzeCleaner( string cleanerID, int radius )
-// Algorithme :
-//
+// Algorithme : Trouve les plus proches voisins du purificateur à analyser,
+// et les mesures juste avant sa mise en service et juste après la fin de
+// son fonctionnement. Compare ces mesures et renvoie des pourcentages d'amélioration
+// pour chacun des indicateurs mesurés.
 {
     // vérifie si l'utilisateur a les droits fournisseur/admin pour la mesure des performances
     if (!authService->checkRequiredRole(UserType::FOURNISSEUR) && !authService->checkRequiredRole(UserType::ADMIN))
@@ -259,8 +214,10 @@ vector<Measurement> Statistics::analyzeCleaner( string cleanerID, int radius )
 } //----- Fin de analyzeCleaner
 
 vector<Measurement> Statistics::computeZone( double lat, double lng, time_t period_start, time_t period_end, int radius, int radiusExtrapolation, string pointsFile )
-// Algorithme :
-//
+// Algorithme : Si le rayon est 0, fait appel à la fonction extrapolateAQI. Sinon,
+// récupère les capteurs présents dans la zone et les mesures appartenant à la
+// période considérée, puis fait la moyenne de toutes ses mesures pour chaque 
+// indicateur de l'AQI et renvoie ces moyennes.
 {
     // vérifie si l'utilisateur a les droits user/admin/particulier
     if (!authService->checkRequiredRole(UserType::USER) &&
@@ -357,8 +314,10 @@ vector<Measurement> Statistics::computeZone( double lat, double lng, time_t peri
 } //----- Fin de computeZone
 
 vector<Sensor> Statistics::compareSensors( string sensorId, time_t period_start, time_t period_end )
-// Algorithme :
-//
+// Algorithme : Récupère les valeurs de tous les capteurs sur la période considérée
+// et calcule les différences avec les mesures du capteur de référence. Calcule 
+// pour chaque capteur la différence moyenne avec le capteur de référence, et trie
+// les capteurs selon cette différence moyenne.
 {
     // vérifie si l'utilisateur a les droits user
     if (!authService->checkRequiredRole(UserType::USER) &&!authService->checkRequiredRole(UserType::ADMIN) )
@@ -408,7 +367,7 @@ vector<Sensor> Statistics::compareSensors( string sensorId, time_t period_start,
         scoredSensors.push_back(make_pair(s, avgDiff));
     }
 
-    // Tri des capteurs par similarité croissante
+    // Tri des capteurs par similarité décroissante
     sort(scoredSensors.begin(), scoredSensors.end(),
         [](const pair<Sensor, double>& a, const pair<Sensor, double>& b) {
             return a.second < b.second;
@@ -423,8 +382,10 @@ vector<Sensor> Statistics::compareSensors( string sensorId, time_t period_start,
 } //----- Fin de compareSensors
 
 vector<Measurement> Statistics::extrapolateAQI(double lat, double lng, time_t period_start, time_t period_end, int radiusExtrapolation)
-// Algorithme :
-//
+// Algorithme : S'il existe un capteur aux coordonnées considérées qui a mesuré
+// sur toute la période, récupérer ses mesures. Sinon, on fait un regroupement pondéré
+// pour chaque jour des mesures les plus proches, en complétant les jours manquant
+// par extrapolation.
 {
     vector<Measurement> result;
     vector<Measurement> exactMeasures;
