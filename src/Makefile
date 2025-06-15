@@ -55,7 +55,7 @@ $(BUILD_DIR):
 
 # Nettoyage du projet
 clean:
-	rm -rf $(BUILD_DIR) $(TARGET)
+	rm -rf $(BUILD_DIR) $(TARGET) $(TEST_FUNCTIONAL_TARGET) $(TEST_UNIT_TARGET)
 
 cleano:
 	rm -rf $(BUILD_DIR)
