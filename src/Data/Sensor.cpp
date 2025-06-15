@@ -100,6 +100,11 @@ vector<Measurement> Sensor::getClosestMeasurements( time_t instant, int before_a
         {
             filtered.push_back(m);
         }
+        // une semaine avant et une semaine après (0)
+        else if (before_after == 0 && ts >= instant - 7 * 24 * 3600 && ts <= instant + 7 * 24 * 3600)
+        {
+            filtered.push_back(m);
+        }
     }
 
     return filtered;
