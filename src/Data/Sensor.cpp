@@ -27,8 +27,8 @@ const double R = 6371e3; // Rayon de la Terre en mètres
 
 //----------------------------------------------------- Méthodes publiques
 double Sensor::distanceTo( double lat2, double lng2 )
-// Algorithme :
-//
+// Algorithme : Calcule la distance entre le capteur et les coordonnées
+// passées en paramètres grâce à la formule de Haversine.
 {
     double phi1 = this->lat * M_PI / 180.0;
     double phi2 = lat2 * M_PI / 180.0;
@@ -46,8 +46,8 @@ double Sensor::distanceTo( double lat2, double lng2 )
 } //----- Fin de distanceTo
 
 vector<Sensor> Sensor::getSensorNeighbours( vector<Sensor>* sensors, int radius )
-// Algorithme :
-//
+// Algorithme : Parcoure tous les capteurs et calcule leur distance au capteur
+// considéré, puis stocke ceux situés dans le rayon passé en paramètre.
 {
     vector<Sensor> nearby_sensors;
     int distance = 0;
@@ -63,8 +63,8 @@ vector<Sensor> Sensor::getSensorNeighbours( vector<Sensor>* sensors, int radius 
 } //----- Fin de getSensorNeighbours
 
 vector<Measurement> Sensor::getMeasurements( time_t period_start, time_t period_end )
-// Algorithme :
-//
+// Algorithme : Parcoure toutes les mesures et ajoute au résultat celles dont le
+// timestamp est compris entre les bornes passées en paramètres.
 {
     vector<Measurement> result;
     for (auto& m : measurements)
@@ -80,8 +80,9 @@ vector<Measurement> Sensor::getMeasurements( time_t period_start, time_t period_
 } //----- Fin de getMeasurements
 
 vector<Measurement> Sensor::getClosestMeasurements( time_t instant, int before_after )
-// Algorithme :
-//
+// Algorithme : Parcoure toutes les mesures et ajoute au résultat celles dont le timestamp
+// est inférieur ou supérieur à l'instant passé en paramètre, selon la valeur de
+// before_after (-1 pour avant, 1 pour après).
 {
     vector<Measurement> filtered;
 

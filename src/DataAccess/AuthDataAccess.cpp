@@ -29,10 +29,9 @@ namespace fs = std::filesystem;
 
 //----------------------------------------------------- Méthodes publiques
 Credentials AuthDataAccess::findCredentials( string credentialsFilePath, string p_login, string p_password )
-// Algorithme :
-// Cette méthode lit le fichier de credentials et cherche un utilisateur
+// Algorithme : Lit le fichier de credentials et cherche un utilisateur
 // avec le login et le mot de passe fournis. Si un utilisateur est trouvé,
-// elle retourne un objet Credentials contenant les informations de l'utilisateur.
+// retourne un objet Credentials contenant les informations de l'utilisateur.
 {
     ifstream file(credentialsFilePath);
 

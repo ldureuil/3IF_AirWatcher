@@ -28,8 +28,8 @@ class Measurement
 public:
     //----------------------------------------------------- Méthodes publiques
     bool isWithin( time_t period_start, time_t period_end );
-    // Mode d'emploi :
-    //
+    // Mode d'emploi : Renvoie true si la mesure a été réalisée dans la
+    // période considérée.
     // Contrat :
     //
 

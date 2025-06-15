@@ -1,5 +1,5 @@
 /*************************************************************************
-DataLoader  -  Charge les données de la base de données
+DataLoader  -  Chargement en mémoire des données de la base de données
                              -------------------
     début                : 16/05/2025
 *************************************************************************/
@@ -30,15 +30,15 @@ class DataLoader {
 public:
     //----------------------------------------------------- Méthodes publiques
     vector<Sensor>* loadSensor( string databasePath );
-    // Mode d'emploi :
-    //
-    // Contrat :
+    // Mode d'emploi : Renvoie un pointeur vers un vecteur contenant tous les
+    // capteurs présents dans la base de données.
+    // Contrat : Le chemin d'accès doit être valide et accessible.
     //
 
     vector<Cleaner>* loadCleaner( string databasePath );
-    // Mode d'emploi :
-    //
-    // Contrat :
+    // Mode d'emploi : Renvoie un pointeur vers un vecteur contenant tous les
+    // purificateurs présents dans la base de données.
+    // Contrat : Le chemin d'accès doit être valide et accessible.
     //
 
 

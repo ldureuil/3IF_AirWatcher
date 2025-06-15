@@ -29,9 +29,9 @@ class AuthDataAccess
 public:
     //----------------------------------------------------- Méthodes publiques
     Credentials findCredentials( string databasePath, string p_login, string p_password );
-    // Mode d'emploi :
-    //
-    // Contrat :
+    // Mode d'emploi : Renvoie un objet Credentials si les identifiants fournis
+    // en paramètres correspondent à un utilisateur de la base de données.
+    // Contrat : Le chemin d'accès aux fichiers doit être valide et accessible.
     //
 
 

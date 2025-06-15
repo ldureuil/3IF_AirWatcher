@@ -16,8 +16,8 @@ ParticulierData  -  Objet métier représentant les données d'un particulier
 
 //------------------------------------------------------------------------
 // Rôle de la classe <ParticulierData>
-// Représenter les données d'un particulier, y compris son identifiant, son nombre de points et son statut d'exclusion.
-//
+// Représenter les données d'un particulier, y compris son identifiant,
+// son nombre de points et son statut d'exclusion.
 //------------------------------------------------------------------------
 
 class ParticulierData

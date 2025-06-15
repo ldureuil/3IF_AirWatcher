@@ -1,6 +1,5 @@
 /*************************************************************************
-DataLoader  -  Charge les données de la base de données
-                              -------------------
+DataLoader  -  Chargement en mémoire des données de la base de données
                              -------------------
     début                : 16/05/2025
 *************************************************************************/

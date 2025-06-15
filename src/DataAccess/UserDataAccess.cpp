@@ -26,6 +26,7 @@ const int POINT_ATTRIBUTION = 1;
 //----------------------------------------------------- Méthodes publiques
 
 bool UserDataAccess::initializeCSVFile( string filename )
+// Algorithme : Vérifie si le fichier existe déjà, sinon le crée.
 {
     std::ifstream testFile(filename);
     if (testFile.good())

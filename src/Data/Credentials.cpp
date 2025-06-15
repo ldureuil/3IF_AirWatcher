@@ -1,5 +1,5 @@
 /*************************************************************************
-Credentials  -  Objet métier stockant les informations des Cleaners
+Credentials  -  Objet métier stockant les credentials d'un utilisateur
                              -------------------
     début                : 15/05/2025
 *************************************************************************/

@@ -21,8 +21,8 @@ using namespace std;
 
 //----------------------------------------------------- Méthodes publiques
 bool Measurement::isWithin( time_t period_start, time_t period_end )
-// Algorithme :
-//
+// Algorithme : compare le timestamp de la mesure avec les bornes temporelles
+// de la période considérée.
 {
     return ts >= period_start && ts <= period_end;
 } //----- Fin de isWithin

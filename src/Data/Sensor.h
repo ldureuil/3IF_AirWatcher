@@ -30,28 +30,27 @@ class Sensor {
 public:
     //----------------------------------------------------- Méthodes publiques
     double distanceTo( double lat, double lng );
-    // Mode d'emploi :
-    //
-    // Contrat :
+    // Mode d'emploi : Renvoie la distance entre le capteur et les coordonnées
+    // considérées, en mètres.
+    // Contrat : Les coordonnées doivent être valides.
     //
 
-    vector<Sensor> getSensorNeighbours( vector<Sensor>* sensors, int radius = 120 );
-    // Mode d'emploi :
-    //
-    // Contrat :
+    vector<Sensor> getSensorNeighbours( vector<Sensor>* sensors, int radius = 15000 );
+    // Mode d'emploi : Renvoie tous les capteurs dans le rayon indiqué du capteur
+    // considéré.
+    // Contrat : Le rayon doit être en mètres.
     //
 
     vector<Measurement> getMeasurements( time_t period_start, time_t period_end );
-    // Mode d'emploi :
-    //
+    // Mode d'emploi : Renvoie les mesures effectuées par le capteur durant la
+    // période considérée.
     // Contrat :
     //
 
     vector<Measurement> getClosestMeasurements( time_t instant, int before_after );
-    // Mode d'emploi :
-    //
-    // Contrat :
-    //
+    // Mode d'emploi : Renvoie les mesures effectuées par le capteur avant ou après
+    // l'instant donné.
+    // Contrat : before_after doit être -1 (avant) ou 1 (après).
 
     // ---------------------------------------------------- Getters / Setters
     string getId( );
