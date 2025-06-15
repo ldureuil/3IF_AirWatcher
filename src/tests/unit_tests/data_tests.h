@@ -24,11 +24,18 @@ class data_tests
     //----------------------------------------------------------------- PUBLIC
 public:
     //----------------------------------------------------- Méthodes publiques
-    void runTests();
+    int runTests();
     // Mode d'emploi : Exécute les tests unitaires pour les méthodes de la couche Data
     //
     // Contrat :
     //
+
+    bool testDistanceToIdentiques();
+    bool testDistanceToInvalides();
+    bool testDistanceToDifferentes();
+
+    bool testGetMeasurementsAucune();
+    bool testGetMeasurementsAvecDonnees();
 
     //-------------------------------------------- Constructeurs - destructeur
     data_tests( );

@@ -68,6 +68,8 @@ public:
     bool testExcludeSensorDejaExclu();
     bool testExcludeSensorValide();
 
+    bool testEvaluate();
+
     bool testLoginCombiValide();
     bool testLoginCombiInvalide();
     bool testCheckRequiredRolePrivilegeSuperieur();

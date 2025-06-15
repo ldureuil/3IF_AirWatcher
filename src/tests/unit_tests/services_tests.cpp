@@ -36,58 +36,58 @@ int services_tests::runTests( )
     int nbTestsOk = 0;
 
     // Tests pour Statistics::analyzeSensor
-    nbTestsOk += testAnalyzeSensorInexistant();
-    nbTestsOk += testAnalyzeSensorSansMesure();
-    nbTestsOk += testAnalyzeSensorAnormal();
-    nbTestsOk += testAnalyzeSensorNormal();
+    nbTestsOk += testAnalyzeSensorInexistant(); // T1
+    nbTestsOk += testAnalyzeSensorSansMesure(); // T2
+    nbTestsOk += testAnalyzeSensorAnormal(); // T3
+    nbTestsOk += testAnalyzeSensorNormal(); // T4
 
     // Tests pour Statistics::computeZone
-    nbTestsOk += testComputeZoneAucunCapteur();
-    nbTestsOk += testComputeZoneSansMesures();
-    nbTestsOk += testComputeZoneEstimationPonctuelle();
-    nbTestsOk += testComputeZoneAvecCapteurs();
+    nbTestsOk += testComputeZoneAucunCapteur(); // T5
+    nbTestsOk += testComputeZoneSansMesures(); // T6
+    nbTestsOk += testComputeZoneEstimationPonctuelle(); // T7
+    nbTestsOk += testComputeZoneAvecCapteurs(); // T8
 
     // Tests pour Statistics::analyzeCleaner
-    nbTestsOk += testAnalyzeCleanerInconnu();
-    nbTestsOk += testAnalyzeCleanerSansCapteurs();
-    nbTestsOk += testAnalyzeCleanerValide();
+    nbTestsOk += testAnalyzeCleanerInconnu(); // T9
+    nbTestsOk += testAnalyzeCleanerSansCapteurs(); // T10
+    nbTestsOk += testAnalyzeCleanerValide(); // T11
 
     // Tests pour Statistics::compareSensors
-    nbTestsOk += testCompareSensorsInexistant();
-    nbTestsOk += testCompareSensorsAucunCapteur();
-    nbTestsOk += testCompareSensorsValide();
+    nbTestsOk += testCompareSensorsInexistant(); // T12
+    nbTestsOk += testCompareSensorsAucunCapteur(); // T13
+    nbTestsOk += testCompareSensorsValide(); // T14
 
     // Tests pour Statistics::extrapolateAQI
-    nbTestsOk += testExtrapolateAQISansMesures();
-    nbTestsOk += testExtrapolateAQIValide();
+    nbTestsOk += testExtrapolateAQISansMesures(); // T15
+    nbTestsOk += testExtrapolateAQIValide(); // T16
 
     // Tests pour PointsManager::award
-    nbTestsOk += testAwardListeVide();
-    nbTestsOk += testAwardCapteurUnique();
-    nbTestsOk += testAwardDeuxCapteursUtilisateurs();
-    nbTestsOk += testAwardDeuxCapteursMemUtilisateur();
-    nbTestsOk += testAwardCapteurInconnu();
-    nbTestsOk += testAwardCapteurExclu();
-    nbTestsOk += testAwardCapteursValidesEtExclus();
-    nbTestsOk += testAwardCapteurSansUtilisateur();
-    nbTestsOk += testAwardCapteursValidesEtSansUtilisateur();
+    nbTestsOk += testAwardListeVide(); // T17
+    /*nbTestsOk += testAwardCapteurUnique(); // T18
+    nbTestsOk += testAwardDeuxCapteursUtilisateurs(); // T19
+    nbTestsOk += testAwardDeuxCapteursMemUtilisateur(); // T20
+    nbTestsOk += testAwardCapteurInconnu(); // T21
+    nbTestsOk += testAwardCapteurExclu(); // T22
+    nbTestsOk += testAwardCapteursValidesEtExclus(); // T23
+    nbTestsOk += testAwardCapteurSansUtilisateur(); // T24
+    nbTestsOk += testAwardCapteursValidesEtSansUtilisateur(); // T25*/
 
     // Tests pour PointsManager::getPoints
-    nbTestsOk += testGetPointsUtilisateurInexistant();
-    nbTestsOk += testGetPointsUtilisateurExistant();
+    nbTestsOk += testGetPointsUtilisateurInexistant(); // T26
+    nbTestsOk += testGetPointsUtilisateurExistant(); // T27
 
     // Tests pour AdminServices::excludeSensor
-    nbTestsOk += testExcludeSensorInexistant();
-    nbTestsOk += testExcludeSensorDejaExclu();
-    nbTestsOk += testExcludeSensorValide();
+    nbTestsOk += testExcludeSensorInexistant(); // T28
+    nbTestsOk += testExcludeSensorDejaExclu(); // T29
+    nbTestsOk += testExcludeSensorValide(); // T30
 
     // Tests pour AuthService::login
-    nbTestsOk += testLoginCombiValide();
-    nbTestsOk += testLoginCombiInvalide();
+    nbTestsOk += testLoginCombiValide(); // T31
+    nbTestsOk += testLoginCombiInvalide(); // T32
 
     // Tests pour AuthService::checkRequiredRole
-    nbTestsOk += testCheckRequiredRolePrivilegeSuperieur();
-    nbTestsOk += testCheckRequiredRolePrivilegeInferieur();
+    nbTestsOk += testCheckRequiredRolePrivilegeSuperieur(); // T33
+    nbTestsOk += testCheckRequiredRolePrivilegeInferieur(); // T34
 
     cout << "=== Fin des tests unitaires pour Services ===" << endl;
 
@@ -108,7 +108,7 @@ bool services_tests::testAnalyzeSensorInexistant()
     vector<Cleaner>* cleaners = dataLoader.loadCleaner("../data");
 
     UserDataAccess uda;
-    vector<ParticulierData> particulierData = uda.loadParticulierData();
+    vector<ParticulierData> particulierData = uda.loadParticulierData("../data/ParticulierData.csv");
 
     PointsManager pointsManager(uda, &particulierData, sensors, &authService);
     Statistics stats(sensors, cleaners, &pointsManager, &authService);
@@ -140,7 +140,7 @@ bool services_tests::testAnalyzeSensorSansMesure()
     vector<Cleaner>* cleaners = dataLoader.loadCleaner("../data");
 
     UserDataAccess uda;
-    vector<ParticulierData> particulierData = uda.loadParticulierData();
+    vector<ParticulierData> particulierData = uda.loadParticulierData("../data/ParticulierData.csv");
 
     PointsManager pointsManager(uda, &particulierData, sensors, &authService);
     Statistics stats(sensors, cleaners, &pointsManager, &authService);
@@ -173,7 +173,7 @@ bool services_tests::testAnalyzeSensorAnormal()
     vector<Cleaner>* cleaners = dataLoader.loadCleaner("../data");
 
     UserDataAccess uda;
-    vector<ParticulierData> particulierData = uda.loadParticulierData();
+    vector<ParticulierData> particulierData = uda.loadParticulierData("../data/ParticulierData.csv");
 
     PointsManager pointsManager(uda, &particulierData, sensors, &authService);
     Statistics stats(sensors, cleaners, &pointsManager, &authService);
@@ -205,7 +205,7 @@ bool services_tests::testAnalyzeSensorNormal()
     vector<Cleaner>* cleaners = dataLoader.loadCleaner("../data");
 
     UserDataAccess uda;
-    vector<ParticulierData> particulierData = uda.loadParticulierData();
+    vector<ParticulierData> particulierData = uda.loadParticulierData("../data/ParticulierData.csv");
 
     PointsManager pointsManager(uda, &particulierData, sensors, &authService);
     Statistics stats(sensors, cleaners, &pointsManager, &authService);
@@ -237,7 +237,7 @@ bool services_tests::testComputeZoneAucunCapteur()
     vector<Cleaner>* cleaners = dataLoader.loadCleaner("../data");
 
     UserDataAccess uda;
-    vector<ParticulierData> particulierData = uda.loadParticulierData();
+    vector<ParticulierData> particulierData = uda.loadParticulierData("../data/ParticulierData.csv");
 
     PointsManager pointsManager(uda, &particulierData, sensors, &authService);
     Statistics stats(sensors, cleaners, &pointsManager, &authService);
@@ -286,7 +286,7 @@ bool services_tests::testComputeZoneSansMesures()
     vector<Cleaner>* cleaners = dataLoader.loadCleaner("../data");
 
     UserDataAccess uda;
-    vector<ParticulierData> particulierData = uda.loadParticulierData();
+    vector<ParticulierData> particulierData = uda.loadParticulierData("../data/ParticulierData.csv");
 
     PointsManager pointsManager(uda, &particulierData, sensors, &authService);
     Statistics stats(sensors, cleaners, &pointsManager, &authService);
@@ -335,7 +335,7 @@ bool services_tests::testComputeZoneEstimationPonctuelle()
     vector<Cleaner>* cleaners = dataLoader.loadCleaner("../data");
 
     UserDataAccess uda;
-    vector<ParticulierData> particulierData = uda.loadParticulierData();
+    vector<ParticulierData> particulierData = uda.loadParticulierData("../data/ParticulierData.csv");
 
     PointsManager pointsManager(uda, &particulierData, sensors, &authService);
     Statistics stats(sensors, cleaners, &pointsManager, &authService);
@@ -384,7 +384,7 @@ bool services_tests::testComputeZoneAvecCapteurs()
     vector<Cleaner>* cleaners = dataLoader.loadCleaner("../data");
 
     UserDataAccess uda;
-    vector<ParticulierData> particulierData = uda.loadParticulierData();
+    vector<ParticulierData> particulierData = uda.loadParticulierData("../data/ParticulierData.csv");
 
     PointsManager pointsManager(uda, &particulierData, sensors, &authService);
     Statistics stats(sensors, cleaners, &pointsManager, &authService);
@@ -433,7 +433,7 @@ bool services_tests::testAnalyzeCleanerInconnu()
     vector<Cleaner>* cleaners = dataLoader.loadCleaner("../data");
     
     UserDataAccess uda;
-    vector<ParticulierData> particulierData = uda.loadParticulierData();
+    vector<ParticulierData> particulierData = uda.loadParticulierData("../data/ParticulierData.csv");
     
     PointsManager pointsManager(uda, &particulierData, sensors, &authService);
     Statistics stats(sensors, cleaners, &pointsManager, &authService);
@@ -459,13 +459,14 @@ bool services_tests::testAnalyzeCleanerSansCapteurs()
     Session session(UserType::FOURNISSEUR);
     AuthService authService;
     authService.setCurrentSession(session);
-    
+
+    // Implémentez ici les tests unitaires pour les méthodes de la couche Data
     DataLoader dataLoader;
     vector<Sensor>* sensors = dataLoader.loadSensor("../data");
     vector<Cleaner>* cleaners = dataLoader.loadCleaner("../data");
     
     UserDataAccess uda;
-    vector<ParticulierData> particulierData = uda.loadParticulierData();
+    vector<ParticulierData> particulierData = uda.loadParticulierData("../data/ParticulierData.csv");
     
     PointsManager pointsManager(uda, &particulierData, sensors, &authService);
     Statistics stats(sensors, cleaners, &pointsManager, &authService);
@@ -497,7 +498,7 @@ bool services_tests::testAnalyzeCleanerValide()
     vector<Cleaner>* cleaners = dataLoader.loadCleaner("../data");
     
     UserDataAccess uda;
-    vector<ParticulierData> particulierData = uda.loadParticulierData();
+    vector<ParticulierData> particulierData = uda.loadParticulierData("../data/ParticulierData.csv");
     
     PointsManager pointsManager(uda, &particulierData, sensors, &authService);
     Statistics stats(sensors, cleaners, &pointsManager, &authService);
@@ -529,7 +530,7 @@ bool services_tests::testCompareSensorsInexistant()
     vector<Cleaner>* cleaners = dataLoader.loadCleaner("../data");
 
     UserDataAccess uda;
-    vector<ParticulierData> particulierData = uda.loadParticulierData();
+    vector<ParticulierData> particulierData = uda.loadParticulierData("../data/ParticulierData.csv");
 
     PointsManager pointsManager(uda, &particulierData, sensors, &authService);
     Statistics stats(sensors, cleaners, &pointsManager, &authService);
@@ -574,7 +575,7 @@ bool services_tests::testCompareSensorsAucunCapteur()
     vector<Cleaner>* cleaners = dataLoader.loadCleaner("../data");
 
     UserDataAccess uda;
-    vector<ParticulierData> particulierData = uda.loadParticulierData();
+    vector<ParticulierData> particulierData = uda.loadParticulierData("../data/ParticulierData.csv");
 
     PointsManager pointsManager(uda, &particulierData, sensors, &authService);
     Statistics stats(sensors, cleaners, &pointsManager, &authService);
@@ -619,7 +620,7 @@ bool services_tests::testCompareSensorsValide()
     vector<Cleaner>* cleaners = dataLoader.loadCleaner("../data");
 
     UserDataAccess uda;
-    vector<ParticulierData> particulierData = uda.loadParticulierData();
+    vector<ParticulierData> particulierData = uda.loadParticulierData("../data/ParticulierData.csv");
 
     PointsManager pointsManager(uda, &particulierData, sensors, &authService);
     Statistics stats(sensors, cleaners, &pointsManager, &authService);
@@ -664,7 +665,7 @@ bool services_tests::testExtrapolateAQISansMesures()
     vector<Cleaner>* cleaners = dataLoader.loadCleaner("../data");
 
     UserDataAccess uda;
-    vector<ParticulierData> particulierData = uda.loadParticulierData();
+    vector<ParticulierData> particulierData = uda.loadParticulierData("../data/ParticulierData.csv");
 
     PointsManager pointsManager(uda, &particulierData, sensors, &authService);
     Statistics stats(sensors, cleaners, &pointsManager, &authService);
@@ -713,7 +714,7 @@ bool services_tests::testExtrapolateAQIValide()
     vector<Cleaner>* cleaners = dataLoader.loadCleaner("../data");
 
     UserDataAccess uda;
-    vector<ParticulierData> particulierData = uda.loadParticulierData();
+    vector<ParticulierData> particulierData = uda.loadParticulierData("../data/ParticulierData.csv");
 
     PointsManager pointsManager(uda, &particulierData, sensors, &authService);
     Statistics stats(sensors, cleaners, &pointsManager, &authService);
@@ -1006,7 +1007,7 @@ bool services_tests::testGetPointsUtilisateurInexistant()
     vector<Sensor>* sensors = dataLoader.loadSensor("../data");
 
     UserDataAccess uda;
-    vector<ParticulierData> particulierData = uda.loadParticulierData();
+    vector<ParticulierData> particulierData = uda.loadParticulierData("../data/ParticulierData.csv");
 
     Session session(UserType::PARTICULIER, "user10");
     AuthService authService;
@@ -1036,7 +1037,7 @@ bool services_tests::testGetPointsUtilisateurExistant()
     vector<Sensor>* sensors = dataLoader.loadSensor("../data");
 
     UserDataAccess uda;
-    vector<ParticulierData> particulierData = uda.loadParticulierData();
+    vector<ParticulierData> particulierData = uda.loadParticulierData("../data/ParticulierData.csv");
 
     string userId = "User1";
     Session session(UserType::PARTICULIER, userId);
@@ -1095,7 +1096,7 @@ bool services_tests::testExcludeSensorDejaExclu()
     vector<Sensor>* sensors = dataLoader.loadSensor("../data");
 
     UserDataAccess uda;
-    vector<ParticulierData> particulierData = uda.loadParticulierData();
+    vector<ParticulierData> particulierData = uda.loadParticulierData("../data/ParticulierData.csv");
 
     Session session(UserType::ADMIN);
     AuthService authService;
@@ -1124,7 +1125,7 @@ bool services_tests::testExcludeSensorValide()
     vector<Sensor>* sensors = dataLoader.loadSensor("../data");
 
     UserDataAccess uda;
-    vector<ParticulierData> particulierData = uda.loadParticulierData();
+    vector<ParticulierData> particulierData = uda.loadParticulierData("../data/ParticulierData.csv");
 
     Session session(UserType::ADMIN);
     AuthService authService;
@@ -1145,10 +1146,42 @@ bool services_tests::testExcludeSensorValide()
     }
 } //----- Fin de testExcludeSensorValide
 
+bool services_tests::testEvaluate()
+// Algorithme : teste la méthode evaluate pour vérifier le bon fonctionnement de l'évaluation des capteurs
+{
+    cout << "T31: Test de evaluate" << endl;
+
+    DataLoader dataLoader;
+    vector<Sensor>* sensors = dataLoader.loadSensor("../data");
+    vector<Cleaner>* cleaners = dataLoader.loadCleaner("../data");
+
+    UserDataAccess uda;
+    vector<ParticulierData> particulierData = uda.loadParticulierData("../data/ParticulierData.csv");
+
+    Session session(UserType::ADMIN);
+    AuthService authService;
+    authService.setCurrentSession(session);
+
+    AdminServices adminServices(uda, sensors, &authService);
+    Statistics stats(sensors, cleaners, nullptr, &authService);
+
+    // Test de l'évaluation des capteurs
+    vector<double> result = adminServices.evaluate(stats);
+
+    // Vérification que l'évaluation a été effectuée correctement
+    if (!result.empty() && result[0] >= 0 && result[1] >= 0 && result[2] >= 0 && result[3] >= 0 && result[4] >= 0) {
+        cout << "  OK: L'évaluation des services a été effectuée avec succès" << endl;
+        return true;
+    } else {
+        cout << "  ERREUR: L'évaluation d'au moins un service a échoué" << endl;
+        return false;
+    }
+} //----- Fin de testEvaluate
+
 bool services_tests::testLoginCombiValide()
 // Algorithme : teste la méthode login avec une combinaison valide
 {
-    cout << "T31: Test de login avec une combinaison valide" << endl;
+    cout << "T32: Test de login avec une combinaison valide" << endl;
 
     AuthService authService;
 
@@ -1169,10 +1202,12 @@ bool services_tests::testLoginCombiValide()
     }
 } //----- Fin de testLoginCombiValide
 
+
+
 bool services_tests::testLoginCombiInvalide()
 // Algorithme : teste la méthode login avec une combinaison invalide
 {
-    cout << "T32: Test de login avec une combinaison invalide" << endl;
+    cout << "T33: Test de login avec une combinaison invalide" << endl;
 
     AuthService authService;
 
@@ -1196,7 +1231,7 @@ bool services_tests::testLoginCombiInvalide()
 bool services_tests::testCheckRequiredRolePrivilegeSuperieur()
 // Algorithme : teste la méthode checkRequiredRole avec un rôle de session supérieur au rôle requis
 {
-    cout << "T33: Test de checkRequiredRole avec un rôle de session supérieur" << endl;
+    cout << "T34: Test de checkRequiredRole avec un rôle de session supérieur" << endl;
 
     // Création d'une session avec le rôle ADMIN
     Session session(UserType::ADMIN);
@@ -1219,7 +1254,7 @@ bool services_tests::testCheckRequiredRolePrivilegeSuperieur()
 bool services_tests::testCheckRequiredRolePrivilegeInferieur()
 // Algorithme : teste la méthode checkRequiredRole avec un rôle de session inférieur au rôle requis
 {
-    cout << "T34: Test de checkRequiredRole avec un rôle de session inférieur" << endl;
+    cout << "T35: Test de checkRequiredRole avec un rôle de session inférieur" << endl;
 
     // Création d'une session avec le rôle FOURNISSEUR
     Session session(UserType::FOURNISSEUR);

@@ -10,7 +10,7 @@ using namespace std;
 
 //------------------------------------------------------ Include personnel
 #include "unit_tests/dataLoader_tests.h"
-//#include "unit_tests/data_tests.h"
+#include "unit_tests/data_tests.h"
 #include "unit_tests/services_tests.h"
 
 int main() {
@@ -21,6 +21,10 @@ int main() {
     // Tests de la couche Services
     services_tests sTests;
     nbTestsOk += sTests.runTests();
+
+    // Tests de la couche Data
+    data_tests dTests;
+    nbTestsOk += dTests.runTests();
 
     // Tests de la couche DataLoader
     dataLoader_tests dlTests;
